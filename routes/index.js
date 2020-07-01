@@ -7,4 +7,5 @@ router.get('/', function(req, res, next) {
 });
 
 router.use('/group', require('./group'));
+router.use('/subway', require('./subway'));
 module.exports = router;

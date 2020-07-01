@@ -1,8 +1,9 @@
 /* request query = query?=고기집 */ 
 const request = require('request');
 const {client_id, client_secret} = require('../config/naverAPI');
+const {seoulKey} = require('../config/seoulAPI');
 module.exports = {
-  findAPI: (req,res) =>{
+  mapFindAPI: (req,res) =>{
     return new Promise((resolve, reject) =>{
       const api_url = 'https://openapi.naver.com/v1/search/local.json?query=' + encodeURI(req.query.query); // json 결과
       const options = {
@@ -18,11 +19,29 @@ module.exports = {
         });
         console.log(result)
         if(error){
-          console.log('request API error : '+ error);
+          console.log('naver request API error : '+ error);
           reject(error);
         }
         else {
           resolve(result);
+        }
+      })
+    })
+  },
+  subWayApi: (req,res) => {
+    return new Promise((resolve, reject) => {
+      const api_uri = 'http://openapi.seoul.go.kr:8088/'+seoulKey+'/json/SearchSTNBySubwayLineInfo/0/999/%20/%20/';
+
+      request.get(api_uri, async(error, response,body)=>{
+        let responseData = response.body;
+        console.log(responseData);
+        if(error){
+          console.log('subway request API error : ' + error);
+          reject(error);
+        }
+        else{
+          resolve(responseData)
+          res.status(200).json({responseData})
         }
       })
     })
