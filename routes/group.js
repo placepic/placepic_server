@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const mapAPI = require('../modules/mapAPI');
+const API = require('../modules/api');
 //const groupController = require('../controllers/groups');
 
 router.get('/', async(req,res)=>{
