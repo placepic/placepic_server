@@ -6,4 +6,5 @@ router.get('/', function(req, res, next) {
   res.status(200).json({message:"Hello place.pic"})
 });
 
+router.use('/group', require('./group'));
 module.exports = router;
