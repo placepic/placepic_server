@@ -26,6 +26,17 @@ const placeController = {
         }
     },
 
+    getPlacesByGroup: async (req, res) => {
+        try {
+            const result = await placeDB.getPlacesByGroup(req.params.groupIdx);
+            if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
+            else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
+        } catch(e) {
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
+        }
+    },
+
 };
 
 module.exports = placeController;

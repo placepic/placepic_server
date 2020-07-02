@@ -17,7 +17,16 @@ const place = {
             const result = await pool.queryParam(query);
             return result;
         } catch(e) {
-            
+            throw e;
+        }
+    },
+    getPlacesByGroup: async (groupIdx) => {
+        const query = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch(e) {
+            throw e;
         }
     }
 }
