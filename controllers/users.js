@@ -33,7 +33,7 @@ exports.signup = async (req, res) => {
         //성공
         return res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, responseMessage.CREATED_USER, {userId: idx}));
     } catch(err){
-        return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
+        return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(err.message));
         throw err;
     }
 };
