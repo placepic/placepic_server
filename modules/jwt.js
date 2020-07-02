@@ -9,7 +9,7 @@ module.exports = {
     sign: async (user) => {
         const payload = {
             idx: user.userIdx,
-            name: user.name
+            name: user.userName
         };
         const result = {
             token: jwt.sign(payload, secretKey, options),
