@@ -16,7 +16,12 @@ module.exports = {
     // 프로필 조회
     READ_PROFILE_SUCCESS: "프로필 조회 성공",
 
+    // place
+    SEARCH_PLACE_SUCCESS: "장소 조회 성공",
+    NO_PLACE: "장소 없음",
+
     //DB에러
     DB_ERROR: "DB에러",
+
 
 };
