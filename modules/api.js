@@ -41,7 +41,6 @@ module.exports = {
         }
         else{
           resolve(responseData)
-          res.status(200).json({responseData})
         }
       })
     })

@@ -6,7 +6,6 @@ const sc = require('../modules/statusCode');
 module.exports = {
     readCategory: async (req, res) => {
         try {
-            const userIdx = 2;
             const allCategory = await category.getCategory();
             return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_CATEGORY, allCategory));
         }catch(err){

@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const API = require('../modules/api');
+const subwayController = require('../controllers/subway');
+const authUtils = require('../middlewares/auth');
 
-router.get('/',API.subWayApi);
+router.get('/',authUtils.checkToken,subwayController.readStation);
 
 module.exports = router;

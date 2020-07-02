@@ -25,10 +25,13 @@ module.exports = {
     DB_ERROR: "DB에러",
 
     //서버에러
-    SERVER_ERROR:"서버 내부 에러",
+    INTERNAL_SERVER_ERROR:"서버 내부 에러",
 
     //CATEGORY
     READ_CATEGORY:"카테 고리 불러오기 성공",
-    NO_READ_CATEGORY:"카테고리 불러오기 실패"
+    NO_READ_CATEGORY:"카테고리 불러오기 실패",
+
+    //SUBWAY
+    READ_SUBWAY:"지하철 조회 성공"
 
 };
