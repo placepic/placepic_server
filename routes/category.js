@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/category');
-const checkToken = require('../middlewares/auth').checkToken;
+const authUtils = require('../middlewares/auth');
 
-router.get('/', checkToken ,categoryController.readCategory);
+router.get('/', authUtils.checkToken ,categoryController.readCategory);
 
 module.exports = router;

@@ -8,10 +8,10 @@ module.exports = {
         try {
             const userIdx = 2;
             const allCategory = await category.getCategory();
-            return await res.status(sc.OK).send(ut.success(rm.READ_CATEGORY, allCategory));
+            return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_CATEGORY, allCategory));
         }catch(err){
             if(err){
-                return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(rm.SERVER_ERROR));
+                return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.SERVER_ERROR));
             }
         }
     }

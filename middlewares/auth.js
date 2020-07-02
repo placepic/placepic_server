@@ -9,8 +9,10 @@ const authUtil = {
     checkToken: async (req, res, next) => {
         var token = req.headers.token;
         // 토큰 없음
-        if (!token)
-            return res.json(util.fail(CODE.BAD_REQUEST, MSG.EMPTY_TOKEN));
+        if (!token){
+            console.log('token없음')
+            return await res.json(util.fail(CODE.BAD_REQUEST, MSG.EMPTY_TOKEN));
+        }
         // decode
         const user = await jwt.verify(token);
         // 유효기간 만료
