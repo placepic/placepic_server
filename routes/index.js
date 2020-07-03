@@ -9,5 +9,5 @@ router.get('/', function(req, res, next) {
 router.use('/subway', require('./subway'));
 router.use('/auth', require('./auth'));
 router.use('/category', require('./category'));
-router.use('/place', require('./places'));
+router.use('/search', require('./search'));
 module.exports = router;
