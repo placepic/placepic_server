@@ -1,23 +1,27 @@
-const ut = require('../modules/util');
-const rm = require('../modules/responseMessage');
-const sc = require('../modules/statusCode');
+const responseMessage = require('../modules/responseMessage');
+const statusCode = require('../modules/statusCode');
+const util = require('../modules/util');
+
 const api = require('../modules/api');
-/*
-groupIdx에 있는  place 모두 가져오기
 
-query로 넘어온 데이터 가져오기
+const placeDB = require('../models/places');
 
-*/
-module.exports = {
-    apiSearch: async (req, res) => {
+const searchController = {
+    searchPlaceWithNaverAPI: async (req, res) => {
         try {
-            const searchName = req.query;
-            const apiResult = await api.mapFindAPI(searchName);
-            
-            return await res.status(sc.OK).send(ut.success(sc.OK,rm.SEARCH_API,apiResult)); // 데이터 0개일때도 생각해야함
-        }catch(err){
-            console.log(err);
-            return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR,rm.INTERNAL_SERVER_ERROR));
+            let result = await api.mapFindAPI(req, res);
+            const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx)).map(place => place.placeIdx);
+
+            result = result.map(r => {
+                r.title = r.title.replace(/<b>|<\/b>/g, ' ');
+                placeIdxInDB.indexOf(r.placeId * 1) !== -1 ? r.alreadyIn = true : r.alreadyIn = false;
+                return r;
+            });
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_NAVER_MAP, result));
+        } catch(e) {
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
-    }
-}
+    },
+};
+
+module.exports = searchController;

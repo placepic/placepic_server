@@ -21,6 +21,8 @@ const place = {
         }
     },
     getPlacesByGroup: async (groupIdx) => {
+        // TODO
+            // 역, 키워드, 장소정보 별로 필터링 기능 필요!
         const query = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
         try {
             const result = await pool.queryParam(query);
@@ -28,7 +30,7 @@ const place = {
         } catch(e) {
             throw e;
         }
-    }
+    },
 }
 
 module.exports = place;
