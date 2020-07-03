@@ -25,6 +25,9 @@ module.exports = {
     SEARCH_PLACE_SUCCESS: "장소 조회 성공",
     NO_PLACE: "장소 없음",
 
+    // api
+    SEARCH_NAVER_MAP: "네이버 맵 장소 조회 성공",
+
     //DB에러
     DB_ERROR: "DB에러",
 
