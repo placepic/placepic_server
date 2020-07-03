@@ -12,19 +12,21 @@ module.exports = {
       };
 
       request.get(options, async(error,response,body)=>{
-        let responseData = JSON.parse(response.body).items;
-        console.log('!!!!', responseData);
-        let result = [];
-        responseData.forEach(it => {
-          result.push({placeId:it.mapx+it.mapy, title:it.title, address:it.address, roadAddress:it.roadAddress,mapx:it.mapx, mapy:it.mapy})
+        const responseData = (JSON.parse(response.body).items).map(it => {
+          // link, category, description, telephone 추가 가능
+          return {placeId:it.mapx+it.mapy, title:it.title, address:it.address, roadAddress:it.roadAddress,mapx:it.mapx, mapy:it.mapy, link: it.link};
         });
+        // let result = [];
+        // responseData.forEach(it => {
+        //   result.push({placeId:it.mapx+it.mapy, title:it.title, address:it.address, roadAddress:it.roadAddress,mapx:it.mapx, mapy:it.mapy})
+        // });
         
         if(error){
           console.log('naver request API error : '+ error);
           reject(error);
         }
         else {
-          resolve(result);
+          resolve(responseData);
         }
       })
     })
