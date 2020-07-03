@@ -17,7 +17,7 @@ module.exports = {
         responseData.forEach(it => {
           result.push({placeId:it.mapx+it.mapy, title:it.title, address:it.address, roadAddress:it.roadAddress,mapx:it.mapx, mapy:it.mapy})
         });
-        console.log(result)
+        // console.log(result)
         if(error){
           console.log('naver request API error : '+ error);
           reject(error);
