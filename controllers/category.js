@@ -10,7 +10,7 @@ module.exports = {
             return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_CATEGORY, allCategory));
         }catch(err){
             if(err){
-                return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.SERVER_ERROR));
+                return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.INTERNAL_SERVER_ERROR));
             }
         }
     }
