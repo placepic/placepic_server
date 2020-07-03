@@ -39,10 +39,14 @@ module.exports = {
     READ_CATEGORY:"카테 고리 불러오기 성공",
     NO_READ_CATEGORY:"카테고리 불러오기 실패",
 
+    //TAG
+    READ_TAG:"태그 읽어오기 성공",
+
     //SUBWAY
     READ_SUBWAY:"지하철 조회 성공",
 
     SEARCH_API:"API데이터 가져오기 성공"
+
 
     
 
