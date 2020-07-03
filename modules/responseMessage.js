@@ -40,6 +40,10 @@ module.exports = {
     NO_READ_CATEGORY:"카테고리 불러오기 실패",
 
     //SUBWAY
-    READ_SUBWAY:"지하철 조회 성공"
+    READ_SUBWAY:"지하철 조회 성공",
+
+    SEARCH_API:"API데이터 가져오기 성공"
+
+    
 
 };
