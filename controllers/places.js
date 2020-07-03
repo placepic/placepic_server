@@ -41,6 +41,31 @@ const placeController = {
         }
     },
 
+    createPlace : async (req, res) =>{
+        const userIdx = req.userIdx;
+        const {placeName, placeAddress, placeRoadAddress, placeMapX, placeMapY, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayName, subwayLine} = req.body;
+        try{
+            if(!placeName || !placeAddress || !placeRoadAddress || !placeMapX || !placeMapY || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags || !subwayName|| !subwayLine){
+                console.log('place 필수 입력 갑이 없습니다.');
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
+            }
+            
+            /*
+            1. merge되면 바로 그룹 ,유저 relation TB 확인해서 유효성 검사 하기
+            2. category 유효성 검사
+            3. tags 유효성 검사
+            4. subway 유효성 검사
+            5. placeTable insert
+            6. placeImageTB insert
+            7. PLACE_TAG_RELATION_TB insert
+            */ 
+
+            
+        }catch(e){
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }
+    }
+
 };
 
 module.exports = placeController;

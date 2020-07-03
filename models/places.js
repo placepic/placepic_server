@@ -82,6 +82,9 @@ const place = {
             throw e;
         }
     },
+    createPlace : async () => {
+        
+    }
 }
 
 module.exports = place;
