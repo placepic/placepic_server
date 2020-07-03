@@ -13,7 +13,7 @@ const searchController = {
             const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx)).map(place => place.placeIdx);
 
             result = result.map(r => {
-                r.title = r.title.replace(/<b>|<\/b>/g, ' ');
+                r.title = r.title.replace(/<b>|<\/b>/g, '');
                 placeIdxInDB.indexOf(r.placeId * 1) !== -1 ? r.alreadyIn = true : r.alreadyIn = false;
                 return r;
             });
