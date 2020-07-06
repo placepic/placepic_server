@@ -41,6 +41,16 @@ const placeController = {
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
         }
     },
+    getPlacesByQuery: async (req, res) => {
+        try {
+            const result  = await placeDB.getPlacesByQuery(req.params.groupIdx, req.query.query);
+            console.log(result);
+            result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
+        } catch(e) {
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
+        }  
+    },
 
     createPlace : async (req, res) =>{
         const userIdx = req.userIdx;
