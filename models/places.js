@@ -161,6 +161,7 @@ const place = {
             const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
             const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
             const queryResult = new Map();
+
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
@@ -193,6 +194,7 @@ const place = {
                         });
                     }
                 });
+
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
             const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
@@ -200,7 +202,7 @@ const place = {
             images.forEach(img => {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
-
+            
             return [...queryResult.values()];
         } catch(e) {
             throw e;
