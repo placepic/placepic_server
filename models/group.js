@@ -1,14 +1,13 @@
 const pool = require('../modules/pool');
 const table = 'GROUP_USER_RELATION_TB';
-
+const groupTable = 'GROUP_TB';
+const STATE_PENDING = 2;
 const countStatusWaitNum = `SELECT COUNT(*) as countUser FROM GROUP_USER_RELATION_TB WHERE groupIdx = 1 and status = 2`;
 const countGroupUserNum = `SELECT COUNT(*) as countUser FROM GROUP_USER_RELATION_TB WHERE groupIdx = 1 and status NOT IN(2)`;
 const countPlace = `SELECT COUNT(*) as countPlace FROM PLACE_TB WHERE groupIdx = 1`;
 //const getGroupInfo = `SELECT groupName , groupImage FROM GROUP_TB WHERE groupIdx = 1`;
 
-
 const group = {
-
     // 그룹 신청하기
     apply: async (groupIdx,userIdx,part,phoneNumber) => {
         const fields = 'groupIdx,userIdx,part,phoneNumber';
@@ -26,7 +25,6 @@ const group = {
     },
 
     //유저 그룹 상태 가져오기
-
     callMyGroupStatus : async(userIdx) => {
         const getMygroupStatus = `SELECT state FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}`;
         try{
@@ -146,11 +144,18 @@ const group = {
             console.log('signup ERROR : ', err);
             throw err;
         }
+    },
 
+    validUserGroup : async(userIdx,groupIdx) =>{
+        const query = `SELECT * FROM ${userGroupTable} WHERE userIdx = "${userIdx}" and groupIdx = "${groupIdx}" and state NOT IN ("${STATE_PENDING}")`;
+        try{
+            const isValidUserGroup = await pool.queryParam(query);
+            return isValidUserGroup;
+        }catch(e){
+            console.log('validUserGroup ERROR'+ e);
+            throw e;
+        }
     }
-
-
-
 }
 module.exports = group;
 

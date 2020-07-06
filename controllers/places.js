@@ -3,7 +3,7 @@ const statusCode = require('../modules/statusCode');
 const util = require('../modules/util');
 
 const placeDB = require('../models/places');
-const groupDB = require('../models/placeGroup');
+const groupDB = require('../models/group');
 const categoryDB = require('../models/category');
 const tagsDB = require('../models/tag');
 const subwayDB = require('../models/subway');
