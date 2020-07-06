@@ -35,8 +35,6 @@ const place = {
             
             const queryResult = new Map();
 
-            console.log(await pool.queryParam(placeTagQuery));
-            console.log(await pool.queryParam(placeSubwayQuery));
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
@@ -68,8 +66,12 @@ const place = {
                         });
                     }
                 });
+            
+            
             // tag, subway로 필터링
             let result = [...queryResult.values()];
+            if(_.isNil(queryObject.category)) return result;
+            
             if (!_.isNil(queryObject.tagIdx)) {
                 result = result.filter(ele => {
                     for (let tagIdx of queryObject.tagIdx.split(',')) {
