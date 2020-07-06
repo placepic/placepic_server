@@ -62,26 +62,28 @@ exports.apply = async (req, res) => {
 
 
 
+
+
 exports.getMyGroupList =  async(req,res)=>{
 
     const userIdx = req.userIdx;
+    const waitQuery = req.query;
     try {
     
         
             const groupInfo = await Group.callMygroupInfo(userIdx); //그룹에 대한 이름, 이미지
             const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
             const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
-            const myGroupList = await Group.getMyGroupList(userIdx);
+            const myGroupList = await Group.getMyGroupList(userIdx,waitQuery);
 
             
             for(let i =0; i< myGroupList.length; i++) {
-                console.log('sdfsdfs :', (myGroupList[i].state));
-                if(myGroupList[i].state !== 2 ){
+               
                 const myGroupUserCnt = await Group.getGroupUserCnt(myGroupList[i].groupIdx);
-                const myGroupPostCnt = await Group.getGrouPostCnt(myGroupList[i].groupIdx);
+                const myGroupPostCnt = await Group.getGroupPostCnt(myGroupList[i].groupIdx);
                 myGroupList[i].UserCount = myGroupUserCnt;
                 myGroupList[i].PostCount = myGroupPostCnt;
-                }
+                
             }
             
     return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST, {
@@ -91,5 +93,5 @@ exports.getMyGroupList =  async(req,res)=>{
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
         throw err;
     }
-};
 
+};
