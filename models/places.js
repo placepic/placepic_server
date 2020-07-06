@@ -5,21 +5,26 @@ const placeImageTB = 'PLACEIMAGE_TB';
 const placeTagTB = 'PLACE_TAG_RELATION_TB';
 const moment = require('moment');
 
+const tableModule = require('../modules/table');
+
 const place = {
     getAllPlaces: async () => {
-        const query = `SELECT * FROM ${table}`;
         try {
-            const result = await pool.queryParam(query);
-            return result;
+            return await pool.queryParam(`SELECT * FROM ${table}`);
         } catch (e) {
             throw e;
         }
     },
     getPlace: async (placeIdx) => {
         try {
-            const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
+            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
+            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
+            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
+
+            const subwayTable = tableModule.getSubway();
+            const tagTable = tableModule.getTag();
+            const categoryTable = tableModule.getCategory();
+            
             let placeTable = `SELECT * FROM ${table} WHERE placeIdx=${placeIdx}`;
             
             const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
@@ -72,9 +77,12 @@ const place = {
 
     getPlacesByGroup: async (groupIdx, queryObject) => {
         try {
-            const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
+            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
+            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
+            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
+            const subwayTable = tableModule.getSubway();
+            const tagTable = tableModule.getTag();
+            const categoryTable = tableModule.getCategory();
 
             let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
             if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
@@ -153,9 +161,12 @@ const place = {
 
     getPlacesByQuery: async (groupIdx, query) => {
         try {
-            const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
+            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
+            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
+            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
+            const subwayTable = tableModule.getSubway();
+            const tagTable = tableModule.getTag();
+            const categoryTable = tableModule.getCategory();
 
             const placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx} AND (placeName LIKE "%${query}%")`;
             const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
