@@ -19,4 +19,18 @@ module.exports = {
     //DB에러
     DB_ERROR: "DB에러",
 
+    //그룹 신청
+    apply_SUCCESS : "그룹 신청 성공",
+    apply_ERROR : "그룹 신청 실패",
+
+
+    //그룹 리스트 불러오기
+    
+    CALL_GROUP_LIST : "그룹 리스트 불러오기 성공",
+
+    // 신청대기 갯수 불러오기
+    CALL_APPLYCOUNT_SUCCESS : "대기목록 갯수 불러오기 성공",
+    CALL_APPLYCOUNT_FAIL: "대기목록 갯수 불러오기 실패",
+
+
 };

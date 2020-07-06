@@ -1,7 +1,7 @@
 /* request query = query?=고기집 */ 
 const request = require('request');
-const {client_id, client_secret} = require('../config/naverAPI');
-const {seoulKey} = require('../config/seoulAPI');
+const {client_id, client_secret} = require('../config/naverAPI.js');
+const {seoulKey} = require('../config/seoulAPI.js');
 module.exports = {
   mapFindAPI: (req,res) =>{
     return new Promise((resolve, reject) =>{

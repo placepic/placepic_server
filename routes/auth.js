@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const userController = require('../controllers/userController');
-const authUtil  = require('../middlewares/auth').checkToken;
+const userController = require('../controllers/users');
+const groups = require('../controllers/groups');
+const authUtil  = require('../middlewares/auth');
 
 router.post('/signup', userController.signup);
 router.post('/signin',  userController.signin);
-
+router.get('/groups',authUtil.checkToken, groups.getMyGroupList);
+router.post('/groups/:groupIdx/apply',authUtil.checkToken, groups.apply);
 module.exports = router;
