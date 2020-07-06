@@ -26,7 +26,6 @@ const place = {
             const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
             
             const queryResult = new Map();
-            console.log((await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery)));
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
