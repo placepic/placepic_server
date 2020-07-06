@@ -1,0 +1,17 @@
+version : '3'
+services: 
+  proxy:
+    image: nginx #최신 버전의 nginx
+    container_name: proxy #  container 네임은 proxy
+    ports:
+      - "8080:80"
+     #restart: "unless-stopped"   #내부에서 에러로 인해 container가 죽을 경우 restart
+    depends_on:
+      - express
+    volumes: 
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  express:
+    image: dudgns3tp/placepic:0.0.1 #어느 이미지를 사용할지
+    container_name: express
+    ports:
+      - 3000:3000  #host os 3000:
