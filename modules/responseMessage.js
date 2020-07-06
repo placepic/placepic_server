@@ -24,6 +24,7 @@ module.exports = {
     // place
     SEARCH_PLACE_SUCCESS: "장소 조회 성공",
     NO_PLACE: "장소 없음",
+    POST_PLACE:"장소 글쓰기 완료",
 
     // api
     SEARCH_NAVER_MAP: "네이버 맵 장소 조회 성공",
@@ -41,11 +42,16 @@ module.exports = {
 
     //TAG
     READ_TAG:"태그 읽어오기 성공",
+    NO_MATCHED_CATEGORY_TAG:"입력한 기본 정보 태그와 카테고리 태그 정보와 맞지 않음",
+    NO_MATCHED_CATEGORY_INFO_TAG:"입력한 유용한 정보 태그와 카테고리 태그 정보와 맞지 않음",
 
     //SUBWAY
     READ_SUBWAY:"지하철 조회 성공",
 
-    SEARCH_API:"API데이터 가져오기 성공"
+    SEARCH_API:"API데이터 가져오기 성공",
+
+    //GROUP
+    INVALID_GROUP_USER:"일치하지 않는 유저 그룹."
 
 
     

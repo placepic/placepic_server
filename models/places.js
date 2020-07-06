@@ -1,5 +1,8 @@
 const pool = require('../modules/pool');
 const table = 'PLACE_TB';
+const placeImageTB = 'PLACEIMAGE_TB';
+const placeTagTB = 'PLACE_TAG_RELATION_TB';
+const moment = require('moment');
 
 const place = {
     getAllPlaces: async () => {
@@ -21,8 +24,6 @@ const place = {
         }
     },
     getPlacesByGroup: async (groupIdx) => {
-        // TODO
-            // 역, 키워드, 장소정보 별로 필터링 기능 필요!
         const query = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
         try {
             const result = await pool.queryParam(query);
@@ -31,8 +32,38 @@ const place = {
             throw e;
         }
     },
-    createPlace : async () => {
-        
+    addPlace : async ({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayName, subwayLine, userIdx, imageUrl}) => {
+        const nowUnixTime= parseInt(moment().format('X'));
+        const addPlaceQuery = `INSERT INTO ${table} (placeIdx, placeName, placeAddress, placeRoadAddress, placeMapX, placeMapY, placeCreatedAt, placeUpdatedAt, userIdx, placeReview, categoryIdx, groupIdx) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
+        const addPlaceValues =[placeIdx, title, address, roadAddress, mapx, mapy, nowUnixTime, nowUnixTime, userIdx, placeReview, categoryIdx,groupIdx];
+        const addPlaceImageQuery = `INSERT INTO ${placeImageTB} (placeIdx, placeImageUrl) VALUES(?,?)`;
+        const addPlaceTagQuery = `INSERT INTO ${placeTagTB} (placeIdx, tagIdx) VALUES (?,?)`;
+        let tagIdxData = [...tags, ...infoTags];
+        console.log('in the model');
+        try{
+            pool.Transaction( async (conn) =>{
+                let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
+                console.log(addPlaceResult);
+                let addPlaceImageResult = [];
+                for(let i = 0; i<imageUrl.length; i++){
+                    addPlaceImageResult.push(await conn.query(addPlaceImageQuery,[placeIdx, imageUrl[i]]));
+                }
+                let addPlaceTagRelationResult = [];
+                console.log('오로유로유로');
+                for(let i = 0; i<tagIdxData.length; i++){
+                    let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])])
+                    addPlaceTagRelationResult.push(tagData);
+                }
+                console.log('장소 추가 완료.');
+                console.log('태그들 :',addPlaceTagRelationResult);
+            }).catch((err)=>{
+                conn.rollback();
+                console.log('장소완전추가에러 :',err)
+            })
+        }catch(e){
+            console.log("장소 추가 에러 :", e);
+            throw(e);
+        }
     }
 }
 
