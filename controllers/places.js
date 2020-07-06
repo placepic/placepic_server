@@ -28,9 +28,6 @@ const placeController = {
 
     getPlacesByGroup: async (req, res) => {
         try {
-            // TODO
-                // 역, 키워드, 장소정보 별로 필터링 기능 필요!
-            console.log('asdfasdf', req.query);
             const result = await placeDB.getPlacesByGroup(req.params.groupIdx, req.query);
 
             if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
