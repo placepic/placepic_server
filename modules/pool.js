@@ -48,12 +48,11 @@ module.exports = {
                         await it(connection);
                     }
                     await connection.commit();
-                    pool.releaseConnection(connection);
-                    resolve(result);
                 } catch (err) {
-                    await connection.rollback()
-                    pool.releaseConnection(connection);
+                    await connection.rollback();
                     reject(err);
+                } finally{
+                    pool.releaseConnection(connection);
                 }
             } catch (err) {
                 reject(err);

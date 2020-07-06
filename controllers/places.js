@@ -102,7 +102,6 @@ const placeController = {
             }
             await placeDB.addPlace({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayName, subwayLine, userIdx, imageUrl});
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
-            // 7. PLACE_TAG_RELATION_TB insert
         }catch(e){
             console.log('장소 추가 에러 :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
