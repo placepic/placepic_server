@@ -135,7 +135,7 @@ const group = {
         }
     },
     
-    getGrouPostCnt : async(groupIdx) => {
+    getGroupPostCnt : async(groupIdx) => {
         const getGroupPostCnt = `SELECT count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx}`;
 
         try{
