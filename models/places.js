@@ -30,10 +30,13 @@ const place = {
             let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
             if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
             
-            const placeTagQuery = `SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB`;
-            const placeSubwayQuery = `SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB`;
+            const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
+            const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
             
             const queryResult = new Map();
+
+            console.log(await pool.queryParam(placeTagQuery));
+            console.log(await pool.queryParam(placeSubwayQuery));
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
@@ -49,13 +52,19 @@ const place = {
                             placeMapY: ele.placeMapY,
                             placeCreatedAt: ele.placeCreatedAt,
                             placeUpdatedAt: ele.placeUpdatedAt,
-                            userIdx: ele.userIdx,
+                            
                             placeReview: ele.placeReview,
                             category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
                             subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx)],
+                            user: {
+                                userIdx: ele.userIdx,
+                                userName: ele.userName ? ele.userName : '',
+                                email: ele.email ? ele.email : '',
+                                profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
+                            }
                         });
                     }
                 });
