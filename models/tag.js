@@ -23,6 +23,16 @@ const tag = {
             console.log('getCategoryDefaultTags err :', err);
             throw(err);
         }
+    },
+    getCategoryTags : async (categoryIdx) =>{
+        const categoryTagsQuery = `SELECT * FROM ${tagTable} WHERE categoryIdx = ${categoryIdx}`;
+        try{
+            const categoryTagsDto =await pool.queryParam(categoryTagsQuery);
+            return categoryTagsDto;
+        }catch(err){
+            console.log('getCategoryTags err :', err);
+            throw(err);
+        }
     }
 }
 
