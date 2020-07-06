@@ -10,10 +10,13 @@ const searchController = {
     searchPlaceWithNaverAPI: async (req, res) => {
         try {
             let result = await api.mapFindAPI(req, res);
-            const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx)).map(place => place.placeIdx);
+            const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx, {})).map(place => place.placeIdx);
 
+            // TODO
+                // property 이름 통일 해야하는데,,,,,,,
             result = result.map(r => {
                 r.title = r.title.replace(/<b>|<\/b>/g, '');
+                r.mobileNaverMapLink = `https://m.map.naver.com/search2/search.nhn?query=${encodeURI(r.title)}&sm=hty&style=v5#/map/1`;
                 placeIdxInDB.indexOf(r.placeId * 1) !== -1 ? r.alreadyIn = true : r.alreadyIn = false;
                 return r;
             });

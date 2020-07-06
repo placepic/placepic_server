@@ -32,7 +32,7 @@ const placeController = {
 
     getPlacesByGroup: async (req, res) => {
         try {
-            const result = await placeDB.getPlacesByGroup(req.params.groupIdx);
+            const result = await placeDB.getPlacesByGroup(req.params.groupIdx, req.query);
 
             if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
