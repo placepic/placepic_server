@@ -53,10 +53,10 @@ const group = {
     // 내 그룹 정보(이름과 사진) 불러오기
     callMygroupInfo : async(userIdx) => {
         //const getMygroupInfo = `SELECT groupName , groupImage FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
-       
-         const getMygroupInfo2 = `SELECT GROUP_TB.groupName, GROUP_TB.groupImage FROM GROUP_TB , GROUP_USER_RELATION_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} and GROUP_TB.groupIdx =  GROUP_USER_RELATION_TB.groupIdx `;
+    
+        const getMygroupInfo2 = `SELECT GROUP_TB.groupName, GROUP_TB.groupImage FROM GROUP_TB , GROUP_USER_RELATION_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} and GROUP_TB.groupIdx =  GROUP_USER_RELATION_TB.groupIdx `;
 
-       
+    
         try{
             const result = await pool.queryParam(getMygroupInfo2);
             return result;
@@ -107,8 +107,23 @@ const group = {
         }
     },
 
-    getMyGroupList : async(userIdx) => {
-        const getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `
+    getMyGroupList : async(userIdx,queryObject) => {
+        let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
+        if(queryObject.filter === 'wait') getMygroup += ` WHERE MYRELATIONGROUP.state = 2`;
+        else getMygroup +=  ` WHERE MYRELATIONGROUP.state NOT IN(2)` ;
+        try{
+            const result = await pool.queryParam(getMygroup);
+            return result;
+    
+        }catch(err) {
+            console.log('signup ERROR : ', err);
+            throw err;
+        }
+    },
+
+
+    getMyWaitGroupList : async(userIdx) => {
+        const getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB WHERE MYRELATIONGROUP.state = 2 `;
         try{
             const result = await pool.queryParam(getMygroup);
             return result;
