@@ -53,10 +53,18 @@ const place = {
                                 userName: _.isNil(ele.userName) ? '' : ele.userName,
                                 email: _.isNil(ele.email) ? '' : ele.email,
                                 profileURL: _.isNil(ele.userProfileImageUrl) ? '' : ele.userProfileImageUrl
-                            }
+                            },
+                            imageUrl: []
                         });
                     }
                 });
+
+            const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
+            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
+            images.forEach(img => {
+                if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
+            });
+
             return [...queryResult.values()];
         } catch(e) {
             throw e;
@@ -104,14 +112,21 @@ const place = {
                                 userName: ele.userName ? ele.userName : '',
                                 email: ele.email ? ele.email : '',
                                 profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
-                            }
+                            },
+                            imageUrl: []
                         });
                     }
                 });
             
-            
+            const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
+            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
+            images.forEach(img => {
+                if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
+            });
+
             // tag, subway로 필터링
             let result = [...queryResult.values()];
+
             if(_.isNil(queryObject.category)) return result;
             
             if (!_.isNil(queryObject.tagIdx)) {
