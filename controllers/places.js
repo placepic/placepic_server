@@ -8,6 +8,8 @@ const categoryDB = require('../models/category');
 const tagsDB = require('../models/tag');
 const subwayDB = require('../models/subway');
 
+const _ = require('lodash');
+
 const placeController = {
     getAllPlaces: async (req, res) => {
         try {
@@ -36,6 +38,16 @@ const placeController = {
 
             if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
+        } catch(e) {
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
+        }
+    },
+    getPlacesByQuery: async (req, res) => {
+        try {
+            if (_.isNil(req.query.query)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.BAD_REQUEST));
+            const result  = await placeDB.getPlacesByQuery(req.params.groupIdx, req.query.query);
+            result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
         } catch(e) {
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
