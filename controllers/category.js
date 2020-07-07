@@ -40,7 +40,6 @@ module.exports = {
         }
     },
     readAllCategoryTagData : async (req, res) =>{
-        let allCategoryDto = [];
         try{
             let categoryDto = await category.getCategory();
             categoryDto.map( async (it,idx) =>{
