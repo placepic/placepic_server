@@ -3,8 +3,10 @@
 <img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
 
-![node_badge](https://img.shields.io/badge/node-%3E%3D%208.0.0-green)
-![npm_bedge](https://img.shields.io/badge/npm-v6.10.1-blue)
+**![placepic_bedge](https://img.shields.io/badge/placepic-Sprint1-%23ff7adc)**
+![npm_bedge](https://img.shields.io/badge/npm-6.13.7-%23ff7adc)
+![node_bedge](https://img.shields.io/badge/node-13.11.0-%23ff7adc)
+
 
 * <b> SOPT 26th APPJAM
     
@@ -24,9 +26,9 @@
  Service key Feature
   * Exploration - 쉽고, 빠르게 원하는 장소를 탐색
 
-  * Discovery -  
+  * Discovery - 가보고 싶은 장소를 발견할 수 있어야함
 
-  * Interaction 
+  * Interaction - 상호작용, 소통할 수 있는 공간
 
 
 ## Core value
@@ -73,6 +75,9 @@ master
 
 ### [Server board](https://github.com/placepic/placepic_server/projects/1)
 
+### [Notion](https://www.notion.so/Team-place-pic-e2c9600fb4ab4380a05c49bf62a22573)
+
+### SLACK
 ## Role
  
  ### 김동관 
@@ -92,7 +97,7 @@ master
 ![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
 
 ## ERD
-이미지
+![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD.png?raw=true)
 
 ## Developer
 
