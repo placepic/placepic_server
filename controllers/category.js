@@ -1,4 +1,5 @@
 const category = require('../models/category');
+const subway = require('../models/subway');
 const tag = require('../models/tag');
 const ut = require('../modules/util');
 const rm = require('../modules/responseMessage');
@@ -42,10 +43,13 @@ module.exports = {
         let allCategoryDto = [];
         try{
             let categoryDto = await category.getCategory();
-            const categoryCnt = categoryDto.length;
-            categoryDto.map((it,idx) =>{
-                
-            })
+            categoryDto.map( async (it,idx) =>{
+                it["keyword"] = await tag.getCategoryTags(idx+1);
+            });
+
+            categoryDto.map( async (it,idx) =>{
+                it["feature"] = await tag.getCategoryDefaultTags(idx+1);
+            });
             return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_ALL_CATEGORY_TAGS,categoryDto));
         }catch(err){
             console.log(err);
