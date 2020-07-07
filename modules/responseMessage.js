@@ -47,12 +47,14 @@ module.exports = {
 
     //CATEGORY
     READ_CATEGORY:"카테 고리 불러오기 성공",
-    NO_READ_CATEGORY:"카테고리 불러오기 실패",
+    NO_READ_CATEGORY:"카테고리 불러오기 실패",    
 
     //TAG
     READ_TAG:"태그 읽어오기 성공",
     NO_MATCHED_CATEGORY_TAG:"입력한 기본 정보 태그와 카테고리 태그 정보와 맞지 않음",
     NO_MATCHED_CATEGORY_INFO_TAG:"입력한 유용한 정보 태그와 카테고리 태그 정보와 맞지 않음",
+    READ_ALL_TAG:"모든 태그 읽기 성공",
+    NO_READE_TAG:"태그 읽기 실패",
 
     //SUBWAY
     READ_SUBWAY:"지하철 조회 성공",
