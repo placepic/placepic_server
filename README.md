@@ -19,6 +19,17 @@ https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
 ## placepic service
 
+ <b>우리들끼리 공유하는 최애 장소, 플레이스픽 </b>
+
+ 플레이스픽은 신뢰있는 커뮤니티 기반의 장소 정보 공유 플랫폼입니다. 
+
+ Service key Feature
+  * Exploration - 쉽고, 빠르게 원하는 장소를 탐색
+
+  * Discovery -  
+
+  * Interaction 
+
 
 ## Core value
 
@@ -26,10 +37,10 @@ https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 * 우리가 쓸 수 있고, 쓰고 싶은 서비스를 만들어낼 것이다.
 
 ### 우리가 추구하는 가치
-* 사용자 경험에 대한 집착 - 서비스
+* 사용자 경험에 대한 집착 
 * 자기주도성
 * 린 스타트업 정신
-* 사명감
+* PRIDE
 
 ## Code convention
  
