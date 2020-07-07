@@ -1,4 +1,5 @@
 const category = require('../models/category');
+const tag = require('../models/tag');
 const ut = require('../modules/util');
 const rm = require('../modules/responseMessage');
 const sc = require('../modules/statusCode');
@@ -35,6 +36,20 @@ module.exports = {
             if(err){
                 return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.INTERNAL_SERVER_ERROR));
             }
+        }
+    },
+    readAllCategoryTagData : async (req, res) =>{
+        let allCategoryDto = [];
+        try{
+            let categoryDto = await category.getCategory();
+            const categoryCnt = categoryDto.length;
+            categoryDto.map((it,idx) =>{
+                
+            })
+            return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_ALL_CATEGORY_TAGS,categoryDto));
+        }catch(err){
+            console.log(err);
+            return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR,rm.INTERNAL_SERVER_ERROR))
         }
     }
 }

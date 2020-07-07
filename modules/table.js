@@ -19,5 +19,4 @@ module.exports = {
     getTag: () => queryResult.tag,
     getSubway: () => queryResult.subway,
     getOneCategory : (categoryIdx) => queryResult.category[parseInt(categoryIdx)-1]
-    
 };

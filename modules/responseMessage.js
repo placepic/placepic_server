@@ -47,7 +47,9 @@ module.exports = {
 
     //CATEGORY
     READ_CATEGORY:"카테 고리 불러오기 성공",
-    NO_READ_CATEGORY:"카테고리 불러오기 실패",    
+    NO_READ_CATEGORY:"카테고리 불러오기 실패",
+    READ_ALL_CATEGORY_TAGS:"모든 카테고리별 태그들 불러오기 성공",
+    NO_READ_ALL_CATEGORY_TAGS:"모든 카테고리별 태그들 불러오기 실패",
 
     //TAG
     READ_TAG:"태그 읽어오기 성공",
