@@ -1,7 +1,6 @@
 
-## placepic Server
+# placepic Server
 
-# placepic
 <img style="border: 1px solid black !important; border-radius:20px;" src="
 https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
