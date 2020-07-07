@@ -5,17 +5,20 @@ let User = require('../models/user');
 const crypto = require('crypto');
 const jwt = require('../modules/jwt');
 
+exports.checkEmail = async (req, res) => {
+    const email = req.body.email;
+    if (await User.checkUser(email)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_ID));
+    else return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POSSIBLE_ID, {email}));
+};
+
 exports.signup = async (req, res) => {
     const {email,password,userName,userBirth,gender} = req.body;
     try {
         // null 값 확인
-        // if (!email || password || userName || userBirth || gender)
-        //     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+        if (!email || !password || !userName || !userBirth || !gender) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
 
-        
-        // already Email
-        if (await User.checkUser(email))
-            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_ID));
+        // already Email    
+        if (await User.checkUser(email)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_ID));
 
         // password hash 해서 salt 값과 같이 저장
 
