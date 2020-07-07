@@ -62,5 +62,13 @@ module.exports = {
     SEARCH_API:"API데이터 가져오기 성공",
 
     //GROUP
-    INVALID_GROUP_USER:"일치하지 않는 유저 그룹."
+    INVALID_GROUP_USER:"일치하지 않는 유저 그룹.",
+
+    //ADMIN
+    CALL_MYWAITUSERLIST_SUCCESS: "내 그룹 대기유저 불러오기 성공",
+    CALL_MYWAITUSERLIST_FAIL: "내 그룹 대기유저 불러오기 실패",
+    EDIT_MYWAITUSERSTATE_SUCCESS: "내 그룹 대기유저 승인 성공",
+    EDIT_MYWAITUSERSTATE_FAIL: "내 그룹 대기유저 승인 실패",
+    DELETE_MYWAITUSER_SUCCESS: "내 그룹 대기유저 거절 성공",
+    DELETE_MYWAITUSER_FAIL: "내 그룹 대기유저 거절 실패"
 };

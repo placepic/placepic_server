@@ -95,3 +95,61 @@ exports.getMyGroupList =  async(req,res)=>{
     }
 
 };
+
+
+
+exports.getMyWaitUserList = async (req, res) => {
+    const groupIdx = req.params.groupIdx;
+    const userIdx = req.userIdx;
+
+    try { 
+        const waitUserList = await Group.getMywaitUserList(groupIdx);
+        
+        if (waitUserList === -1)
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
+
+        //성공
+        return res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, {
+          waitUserList  }));
+    } catch(err){
+        return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
+        throw err;
+    }
+};
+
+exports.editStatusApplyUser = async (req,res) => {
+
+    const groupIdx = req.params.groupIdx;
+    const userIdx = req.body.userIdx;
+
+    try {
+        const editStatusApplyUser = await Group.editStatusApplyUser(userIdx,groupIdx);
+
+        if(editStatusApplyUser.length === 0) 
+        return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
+
+        return res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, responseMessage.EDIT_MYWAITUSERSTATE_SUCCESS, ));
+    } catch(err){
+        return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
+        throw err;
+    }
+    };
+
+
+    exports.deleteStatusApplyUser = async (req,res) => {
+
+        const groupIdx = req.params.groupIdx;
+        const userIdx = req.body.userIdx;
+    
+        try {
+            const deleteStatusApplyUser = await Group.deleteStatusApplyUser(userIdx,groupIdx);
+    
+            if(deleteStatusApplyUser.length === 0) 
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
+    
+            return res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, responseMessage.DELETE_MYWAITUSER_SUCCESS ));
+        } catch(err){
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message)); 
+            throw err;
+        }
+        };
