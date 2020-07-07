@@ -13,5 +13,16 @@ module.exports = {
                 return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.INTERNAL_SERVER_ERROR));
             }
         }
+    },
+    readOneCategory: async (req, res) => {
+        const{categoryIdx} = req.params;
+        try {
+            const oneCategory = await category.getOneCategory(categoryIdx);
+            return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_CATEGORY, oneCategory));
+        }catch(err){
+            if(err){
+                return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.INTERNAL_SERVER_ERROR));
+            }
+        }
     }
 }
