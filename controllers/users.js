@@ -7,8 +7,12 @@ const jwt = require('../modules/jwt');
 
 exports.checkEmail = async (req, res) => {
     const email = req.body.email;
-    if (await User.checkUser(email)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_ID));
-    else return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POSSIBLE_ID, {email}));
+    if (await User.checkUser(email)) {
+        console.log('이미 존재하는 이메일 입니다.');
+        return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_ID));
+    }
+    console.log('이메일 추가 완료');
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POSSIBLE_ID, {email}));
 };
 
 exports.signup = async (req, res) => {

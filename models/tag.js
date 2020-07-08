@@ -5,7 +5,7 @@ const CATEGORY_TAG = 0;
 const table = require('../modules/table');
 
 const tag = {
-    getAllTags : async() =>{
+    getAllTags : () =>{
         try{
             const allTagsDto = table.getTag();
             console.log(allTagsDto);
@@ -15,7 +15,7 @@ const tag = {
             throw(err);
         }
     },
-    getCategoryTags : async(categoryIdx) =>{
+    getCategoryTags : (categoryIdx) =>{
         try{
             let allTagsDto = table.getTag();
             const categoryTagDto = allTagsDto.filter((it)=>it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === CATEGORY_TAG);
@@ -25,7 +25,7 @@ const tag = {
             throw(err);
         }
     },
-    getCategoryDefaultTags: async(categoryIdx) =>{
+    getCategoryDefaultTags: (categoryIdx) =>{
         try{
             let allTagsDto = table.getTag();
             const categoryDefaultTagDto = allTagsDto.filter((it)=>it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === DEFAULT_TAG);
