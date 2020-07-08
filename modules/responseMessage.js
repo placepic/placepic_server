@@ -60,6 +60,8 @@ module.exports = {
 
     //SUBWAY
     READ_SUBWAY:"지하철 조회 성공",
+    NO_READ_SUBWAY:"지히철 일치 실패.",
+
 
     SEARCH_API:"API데이터 가져오기 성공",
 

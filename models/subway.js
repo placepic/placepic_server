@@ -18,6 +18,7 @@ const subway = {
             throw err;
         }
     },
+    */
     isMatchedStation : async ({subwayName, subwayLine}) =>{
         try{
             const query = `SELECT * FROM ${subwayTable} WHERE  subwayName = "${subwayName}" and subwayLine = "${subwayLine}"`;
@@ -27,7 +28,7 @@ const subway = {
             console.log('isMatchedStation error : ', err);
             throw err;
         }
-    }*/
+    },
     getSubway : async () =>{
         try{
             const subwayDto = table.getSubway();

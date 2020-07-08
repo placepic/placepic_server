@@ -87,19 +87,22 @@ const placeController = {
             }
             
             // 3. tags 유효성 검사
-            const isValidTagsOfCategory = await tagsDB.getCategoryTags(categoryIdx);
+            const isValidTagsOfCategory = tagsDB.getCategoryTags(categoryIdx);
+            const isValidDefaultTagsOfCategory = tagsDB.getCategoryDefaultTags(categoryIdx);
             let allTagIdx = [];
             isValidTagsOfCategory.forEach((it) => {
                 allTagIdx.push(it.tagIdx);
             });
-            console.log('asdads');
-            console.log(allTagIdx);
+            
+            isValidDefaultTagsOfCategory.forEach((it) =>{
+                allTagIdx.push(it.tagIdx);
+            });
+
             tags.forEach((it)=>{
                 if(allTagIdx.indexOf(parseInt(it)) === -1){
                     console.log("기본 정보 태그 에러");
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_MATCHED_CATEGORY_TAG));
                 }
-                console.log('블라블라',allTagIdx.indexOf(parseInt(it)));
             });
 
             infoTags.forEach((it)=>{
@@ -108,12 +111,13 @@ const placeController = {
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_MATCHED_CATEGORY_INFO_TAG));
                 }
             });
-
+            
             //4. subway 유효성 검사
+            console.log({subwayName,subwayLine})
             const isMatchedSubway = await subwayDB.isMatchedStation({subwayName,subwayLine});
             if(isMatchedSubway[0] === undefined){
                 console.log("올바르지 않는 지하철 정보입니다. 호선과 지하철 이름을 다시 확인 해 주세요.");
-                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST))
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
             }
             await placeDB.addPlace({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayName, subwayLine, userIdx, imageUrl});
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
