@@ -21,8 +21,8 @@ exports.signup = async (req, res) => {
     const {email,password,userName,userBirth,gender} = req.body;
     try {
         // null 값 확인
-        if (!email || !password || !userName || !userBirth || !gender){
-            console.log("값이 다 들어가지 않았습니다.")
+        if (!email || !password || !userName || !userBirth || !(gender+1)){
+            console.log("값이 다 들어가지 않았습니다.");
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
         }
         // already Email    
