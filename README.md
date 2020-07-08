@@ -1,5 +1,5 @@
 
-# 🐷 placepic Server 🐷
+# 🐷 placepic Server 
 <img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
 
@@ -16,8 +16,8 @@
 
 <br>
 
-📍💻🖥👪
-## 📌 placepic service
+
+## 📍 placepic service
 
  <b>우리들끼리 공유하는 최애 장소, 플레이스픽 </b>
 
@@ -33,16 +33,16 @@
 
 ## Core value
 
-### App Jam Goal
+### 🔝 App Jam Goal
 * 우리가 쓸 수 있고, 쓰고 싶은 서비스를 만들어낼 것이다.
 
-### 우리가 추구하는 가치
+### 👥우리가 추구하는 가치
 * 사용자 경험에 대한 집착 
 * 자기주도성
 * 린 스타트업 정신
 * PRIDE
 
-## Code convention
+## 🖥 Code convention
  
 * git branch
 
@@ -75,7 +75,7 @@ master
 
 ### [Server board](https://github.com/placepic/placepic_server/projects/1)
 
-### Notion 🔐
+### 🔐Notion 
 
 ### SLACK
 ## Role
@@ -92,17 +92,17 @@ master
  - 장소 검색 API **SPRINT#1**
 
 
-## 📖 Dependencies 📖
+## 📖 Dependencies 
 
 ![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
 
-## ERD
+## 🔥 ERD
 ![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD.png?raw=true)
 
-## 💻 place pig developer 🖥
-💻🖥👪
+## 💻 place pig developer 
+
 ### **🙋 [김동관](https://github.com/dk-master)**
 
-### **🙋‍\ [최영훈](https://github.com/dudgns3tp)**
+### **🙋‍ [최영훈](https://github.com/dudgns3tp)**
 
 ### **🙋‍ [홍준엽](https://github.com/junyup0319)**
