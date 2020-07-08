@@ -59,7 +59,7 @@ master
    |--- cyh
 ```
 
-- **git commit message role** 
+- **git commit message rule** 
 ```
 [Feat] 기능 추가
 
