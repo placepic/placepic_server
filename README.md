@@ -13,8 +13,6 @@
     
 * 프로젝트 기간: 2020.06.28 ~ 2020.07.18
 
-* [SERVER API 문서](https://github.com/placepic/placepic_server/wiki)</b>
-
 <br>
 
 
@@ -83,13 +81,15 @@ master
 
 ### [Notion - 기능 명세서](https://www.notion.so/Server-Part-d88e5572975b4d4d89128f1bfc10b780)
 
+### [SERVER API 문서](https://github.com/placepic/placepic_server/wiki)</b>
+
 ### SLACK
 
 <br/>
 
 ## 🤝 Role
   
- ### 
+ ### With 
   - RDB 설계
   - 배포환경 구축
   
@@ -100,13 +100,23 @@ master
  - 그룹 리스트 조회 **SPRINT#1**
  ### 최영훈
  - place 업로드 **SPRINT#1**
- - 지하철 데이터 수집 **SPRINT#1**
- - 네이버 지도 API 모듈화 **SPRINT#1**
+ - 지하철 API 가공 **SPRINT#1**
+ - 네이버 지도 API **SPRINT#1**
  ### 홍준엽
  - 장소검색 필터링 **SPRINT#1**
  - 장소 검색 API **SPRINT#1**
 
 <br/>
+
+
+## ✔ Main Function
+- Upload
+    - 네이버 지도 API를 이용하여 사용자가 등록해놓은 좌표들을 기반으로 장소 정보 제공.
+    
+- Search
+    - 명확한 카테고리, keyWord, 장소 정보를 통해 사용자가 원하는 데이터를 **filltering**, **sorting** 
+
+<br />
 
 ## 📖 Dependencies 
 
