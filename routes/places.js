@@ -5,9 +5,9 @@ const authUtils = require('../middlewares/auth');
 const controller = require('../controllers/places');
 
 router.get('/', authUtils.checkToken, controller.getAllPlaces);
-router.get('/:placeIdx', controller.getPlace);
-router.get('/group/:groupIdx', controller.getPlacesByGroup);
-router.get('/search/group/:groupIdx', controller.getPlacesByQuery);
+router.get('/:placeIdx', authUtils.checkToken, controller.getPlace);
+router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);
+router.get('/search/group/:groupIdx', authUtils.checkToken, controller.getPlacesByQuery);
 router.post('/', authUtils.checkToken, uploads.array('image'), controller.createPlace);
 //router.post('/', authUtils.checkToken,controller.createPlace);
 router.post('/example',async (req,res)=>{

@@ -25,7 +25,6 @@ module.exports = {
         }
     },
     readAllTags : async(req, res) =>{
-        console.log(req)
         try{
             const allTagsData = await tag.getAllTags();
             return await res.status(sc.OK).send(ut.success(sc.OK,rm.READ_ALL_TAG,allTagsData));

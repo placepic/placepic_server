@@ -16,9 +16,9 @@ const tag = {
         }
     },
     getCategoryTags : async(categoryIdx) =>{
-        const onlyCategoryTagQuery = `SELECT * FROM ${tagTable} WHERE categoryIdx = "${categoryIdx}" and tagIsBasic = "${CATEGORY_TAG}"`;
         try{
-            const categoryTagDto = await pool.queryParam(onlyCategoryTagQuery);
+            let allTagsDto = table.getTag();
+            const categoryTagDto = allTagsDto.filter((it)=>it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === CATEGORY_TAG);
             return categoryTagDto;
         }catch(err){
             console.log('getCategoryTags err :',err);
@@ -26,10 +26,10 @@ const tag = {
         }
     },
     getCategoryDefaultTags: async(categoryIdx) =>{
-        const categoryDefaultTagQuery = `SELECT * FROM ${tagTable} WHERE categoryIdx = "${categoryIdx}" and tagIsBasic = "${DEFAULT_TAG}"`;
         try{
-            const categoryDefaultDto = await pool.queryParam(categoryDefaultTagQuery);
-            return categoryDefaultDto;
+            let allTagsDto = table.getTag();
+            const categoryDefaultTagDto = allTagsDto.filter((it)=>it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === DEFAULT_TAG);
+            return categoryDefaultTagDto;
         }catch(err){
             console.log('getCategoryDefaultTags err :', err);
             throw(err);

@@ -4,6 +4,7 @@ const userController = require('../controllers/users');
 const groups = require('../controllers/groups');
 const authUtil  = require('../middlewares/auth');
 
+router.get('/checkemail', userController.checkEmail);
 router.post('/signup', userController.signup);
 router.post('/signin',  userController.signin);
 router.get('/groups',authUtil.checkToken, groups.getMyGroupList); // 그룹신청 페이지에서 보여줘야 할것들
