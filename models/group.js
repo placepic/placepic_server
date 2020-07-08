@@ -24,6 +24,7 @@ const group = {
         }
     },
 
+
     //유저 그룹 상태 가져오기
     callMyGroupStatus : async(userIdx) => {
         const getMygroupStatus = `SELECT state FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}`;
@@ -36,11 +37,11 @@ const group = {
         }
     },
 
-    //유저 그룹인덱스 불러오기
-    callMyGroupIdx : async(id) => {
-        const getMygroupIdx = `SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx = ${id}`;
+    //
+    checkGroupIdx : async(id) => {
+        const checkGroupIdx  = `SELECT * FROM GROUP_TB WHERE groupIdx = ${id}`;
         try{
-            const result = await pool.queryParam(getMygroupIdx);
+            const result = await pool.queryParam(checkGroupIdx);
            
 
             return result;
@@ -121,12 +122,9 @@ const group = {
     
         else if(queryObject.filter === 'apply')
             getMygroup = getNotIngroupList
-
-        
-            
-            
         else  
             getMygroup +=  ` WHERE MYRELATIONGROUP.state NOT IN(2)` ;
+
         try{
             const result = await pool.queryParam(getMygroup);
             return result;
