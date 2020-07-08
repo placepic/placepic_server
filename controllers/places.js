@@ -80,7 +80,8 @@ const placeController = {
 
             //2. category 유효성 검사
             const isValidCategory = await categoryDB.getOneCategory(categoryIdx);
-            if(isValidCategory[0] === undefined){
+
+            if(isValidCategory.categoryIdx === undefined){
                 console.log('카테고리 정보 없음');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_CATEGORY));
             }
@@ -91,12 +92,14 @@ const placeController = {
             isValidTagsOfCategory.forEach((it) => {
                 allTagIdx.push(it.tagIdx);
             });
-
+            console.log('asdads');
+            console.log(allTagIdx);
             tags.forEach((it)=>{
                 if(allTagIdx.indexOf(parseInt(it)) === -1){
                     console.log("기본 정보 태그 에러");
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_MATCHED_CATEGORY_TAG));
                 }
+                console.log('블라블라',allTagIdx.indexOf(parseInt(it)));
             });
 
             infoTags.forEach((it)=>{

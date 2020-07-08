@@ -24,7 +24,7 @@ const category = {
             throw err;
         }
     }*/
-    getCategory :async () =>{
+    getCategory :() =>{
         try{
             const allCategoryDto = table.getCategory();
             return allCategoryDto;
@@ -33,7 +33,7 @@ const category = {
             throw err;
         }
     },
-    getOneCategory : async (categoryIdx) =>{
+    getOneCategory : (categoryIdx) =>{
         try{
             const oneCategoryDto = table.getOneCategory(categoryIdx);
             console.log(oneCategoryDto);

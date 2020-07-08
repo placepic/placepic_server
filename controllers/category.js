@@ -39,20 +39,18 @@ module.exports = {
             }
         }
     },
-    readAllCategoryTagData : async (req, res) =>{
+    readAllCategoryTagData :(req, res) =>{
         try{
-            let categoryDto = await category.getCategory();
-            categoryDto.map( async (it,idx) =>{
-                it["keyword"] = await tag.getCategoryTags(idx+1);
+            const categoryDto = category.getCategory();
+            categoryDto.forEach((it,idx) =>{
+                it["keyword"] = tag.getCategoryTags(idx+1);
+                it["feature"] = tag.getCategoryDefaultTags(idx+1);
             });
 
-            categoryDto.map( async (it,idx) =>{
-                it["feature"] = await tag.getCategoryDefaultTags(idx+1);
-            });
-            return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_ALL_CATEGORY_TAGS,categoryDto));
+            return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_ALL_CATEGORY_TAGS,categoryDto));
         }catch(err){
             console.log(err);
-            return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR,rm.INTERNAL_SERVER_ERROR))
+            return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR,rm.INTERNAL_SERVER_ERROR))
         }
     }
 }
