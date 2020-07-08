@@ -5,6 +5,8 @@ let User = require('../models/user');
 const crypto = require('crypto');
 const jwt = require('../modules/jwt');
 
+
+
 exports.checkEmail = async (req, res) => {
     const email = req.body.email;
     if (await User.checkUser(email)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_ID));
@@ -15,11 +17,13 @@ exports.signup = async (req, res) => {
     const {email,password,userName,userBirth,gender} = req.body;
     try {
         // null 값 확인
-        if (!email || !password || !userName || !userBirth || !gender) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
-
+        if (!email || !password || !userName || !userBirth || !gender){
+            console.log("값이 다 들어가지 않았습니다.")
+            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+        }
         // already Email    
         if (await User.checkUser(email)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_ID));
-
+        console.log("이미 존재하는 이메일 입니다.");
         // password hash 해서 salt 값과 같이 저장
 
         // 
@@ -34,7 +38,7 @@ exports.signup = async (req, res) => {
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
 
         //성공
-        return res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, responseMessage.CREATED_USER, {userId: idx}));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATED_USER, {userId: idx}));
     } catch(err){
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
         throw err;
