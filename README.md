@@ -75,7 +75,7 @@ master
 
 ### [Server board](https://github.com/placepic/placepic_server/projects/1)
 
-### [Notion](https://www.notion.so/Team-place-pic-e2c9600fb4ab4380a05c49bf62a22573)
+### Notion
 
 ### SLACK
 ## Role
