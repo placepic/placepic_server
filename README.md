@@ -81,7 +81,7 @@ master
 
 ### [Server - Kanban board](https://github.com/placepic/placepic_server/projects/1)
 
-### [Notion - 기능 명세서]
+### [Notion - 기능 명세서](https://www.notion.so/Server-Part-d88e5572975b4d4d89128f1bfc10b780)
 
 ### SLACK
 
