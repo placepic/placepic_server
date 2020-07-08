@@ -7,9 +7,11 @@ const authUtil  = require('../middlewares/auth');
 router.get('/checkemail', userController.checkEmail);
 router.post('/signup', userController.signup);
 router.post('/signin',  userController.signin);
-router.get('/groups',authUtil.checkToken, groups.getMyGroupList);
-router.post('/groups/apply/:groupIdx',authUtil.checkToken, groups.apply);
-router.get('/groups/myInfo/:groupIdx',authUtil.checkToken, groups.getMyWaitUserList);
+router.get('/groups',authUtil.checkToken, groups.getMyGroupList); // 그룹신청 페이지에서 보여줘야 할것들
+router.post('/groups/apply/:groupIdx',authUtil.checkToken, groups.apply); // 그룹신청할때
+router.get('/groups/myInfo/:groupIdx',authUtil.checkToken, groups.getMyWaitUserList); // 관리자
 router.put('/groups/edit/:groupIdx', groups.editStatusApplyUser);
 router.delete('/groups/delete/:groupIdx', groups.deleteStatusApplyUser);
+
+
 module.exports = router;
