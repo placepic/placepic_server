@@ -23,7 +23,7 @@
 
  플레이스픽은 신뢰있는 커뮤니티 기반의 장소 정보 공유 플랫폼입니다. 
 
- Service key Feature
+ **Service key Feature**
   * Exploration - 쉽고, 빠르게 원하는 장소를 탐색
 
   * Discovery - 가보고 싶은 장소를 발견할 수 있어야함
@@ -31,7 +31,7 @@
   * Interaction - 상호작용, 소통할 수 있는 공간
 
 
-## Core value
+## ✍ Core value
 
 ### 🔝 App Jam Goal
 * 우리가 쓸 수 있고, 쓰고 싶은 서비스를 만들어낼 것이다.
@@ -40,11 +40,11 @@
 * 사용자 경험에 대한 집착 
 * 자기주도성
 * 린 스타트업 정신
-* PRIDE
+* PRIDE✨
 
 ## 🖥 Code convention
  
-* git branch
+- **git branch**
 
 ```
 master
@@ -54,7 +54,7 @@ master
    |--- cyh
 ```
 
-* git commit message role
+- **git commit message role** 
 ```
 [Feat] 기능 추가
 
@@ -75,14 +75,20 @@ master
 
 ### [Server board](https://github.com/placepic/placepic_server/projects/1)
 
-### 🔐Notion 
+### Notion 
 
 ### SLACK
 ## Role
- 
+  
+ ### 
+  - RDB 설계
+  - 배포환경 구축
+  
  ### 김동관 
  - 회원가입, 로그인  **SPRINT#1**
- - 그룹인증 관리  **SPRINT#1**
+ - 그룹 인증 관리  **SPRINT#1**
+ - 그룹신청 승인 관리
+ - 그룹 리스트 조회
  ### 최영훈
  - place 업로드 **SPRINT#1**
  - 지하철 데이터 수집 **SPRINT#1**
@@ -99,7 +105,7 @@ master
 ## 🔥 ERD
 ![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD.png?raw=true)
 
-## 💻 place pig developer 
+## 💻 place pig's server developer 
 
 ### **🙋 [김동관](https://github.com/dk-master)**
 
