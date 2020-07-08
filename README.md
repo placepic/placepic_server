@@ -81,7 +81,7 @@ master
 
 ### [Server - Kanban board](https://github.com/placepic/placepic_server/projects/1)
 
-### Notion 
+### [Notion - 기능 명세서]
 
 ### SLACK
 
@@ -96,8 +96,8 @@ master
  ### 김동관 
  - 회원가입, 로그인  **SPRINT#1**
  - 그룹 인증 관리  **SPRINT#1**
- - 그룹신청 승인 관리
- - 그룹 리스트 조회
+ - 그룹신청 승인 관리 **SPRINT#1**
+ - 그룹 리스트 조회 **SPRINT#1**
  ### 최영훈
  - place 업로드 **SPRINT#1**
  - 지하철 데이터 수집 **SPRINT#1**
