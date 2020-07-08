@@ -218,7 +218,7 @@ const group = {
     },
 
     validUserGroup : async(userIdx,groupIdx) =>{
-        const query = `SELECT * FROM ${userGroupTable} WHERE userIdx = "${userIdx}" and groupIdx = "${groupIdx}" and state NOT IN ("${STATE_PENDING}")`;
+        const query = `SELECT * FROM ${table} WHERE userIdx = "${userIdx}" and groupIdx = "${groupIdx}" and state NOT IN ("${STATE_PENDING}")`;
         try{
             const isValidUserGroup = await pool.queryParam(query);
             return isValidUserGroup;
