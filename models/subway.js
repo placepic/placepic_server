@@ -23,6 +23,7 @@ const subway = {
         try{
             const query = `SELECT * FROM ${subwayTable} WHERE  subwayName = "${subwayName}" and subwayLine = "${subwayLine}"`;
             const subwayDto = await pool.queryParam(query);
+            console.log(subwayDto);
             return subwayDto;
         }catch(err){
             console.log('isMatchedStation error : ', err);
@@ -32,6 +33,7 @@ const subway = {
     getSubway : async () =>{
         try{
             const subwayDto = table.getSubway();
+            console.log(subwayDto);
             return subwayDto;
         }catch(err){
             console.log('subway error :', err);
