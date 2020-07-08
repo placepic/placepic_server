@@ -2,13 +2,14 @@
 # 🐷 placepic Server 
 <img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
+<br/>
 
 **![placepic_bedge](https://img.shields.io/badge/placepic-Sprint1-%23ff7adc)**
 ![npm_bedge](https://img.shields.io/badge/npm-6.13.7-%23ff7adc)
 ![node_bedge](https://img.shields.io/badge/node-13.11.0-%23ff7adc)
 
 
-* <b> SOPT 26th APPJAM
+* <b> SOPT 26th APPJAM - Team **placepic**
     
 * 프로젝트 기간: 2020.06.28 ~ 2020.07.18
 
@@ -30,6 +31,7 @@
 
   * Interaction - 상호작용, 소통할 수 있는 공간
 
+<br/>
 
 ## ✍ Core value
 
@@ -41,6 +43,8 @@
 * 자기주도성
 * 린 스타트업 정신
 * PRIDE✨
+
+<br/>
 
 ## 🖥 Code convention
  
@@ -68,6 +72,8 @@ master
 
 [Docs] 문서
 ```
+
+<br/>
 
 ## 👪 Communication
 
@@ -97,13 +103,18 @@ master
  - 장소검색 필터링 **SPRINT#1**
  - 장소 검색 API **SPRINT#1**
 
+<br/>
 
 ## 📖 Dependencies 
 
 ![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
 
+<br/>
+
 ## 🔥 ERD
 ![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD.png?raw=true)
+
+<br/>
 
 ## 💻 place pig's server developer 
 
