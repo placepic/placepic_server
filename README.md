@@ -1,5 +1,5 @@
 
-# 🐷 placepic Server 
+# 🐷 placepic_Server :Cutty Kitty Server
 <img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
 <br/>
@@ -77,14 +77,17 @@ master
 
 ## 👪 Communication
 
-### [PlacePic board](https://github.com/orgs/placepic/projects/1)
+### [PlacePic - Kanban board](https://github.com/orgs/placepic/projects/1)
 
-### [Server board](https://github.com/placepic/placepic_server/projects/1)
+### [Server - Kanban board](https://github.com/placepic/placepic_server/projects/1)
 
 ### Notion 
 
 ### SLACK
-## Role
+
+<br/>
+
+## 🤝 Role
   
  ### 
   - RDB 설계
