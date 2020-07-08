@@ -16,8 +16,8 @@
 
 <br>
 
-📍📌
-## placepic📌 service
+📍💻🖥👪
+## 📌 placepic service
 
  <b>우리들끼리 공유하는 최애 장소, 플레이스픽 </b>
 
@@ -69,13 +69,13 @@ master
 [Docs] 문서
 ```
 
-## Communication
+## 👪 Communication
 
 ### [PlacePic board](https://github.com/orgs/placepic/projects/1)
 
 ### [Server board](https://github.com/placepic/placepic_server/projects/1)
 
-### Notion
+### Notion 🔐
 
 ### SLACK
 ## Role
@@ -92,17 +92,17 @@ master
  - 장소 검색 API **SPRINT#1**
 
 
-## Dependencies
+## 📖 Dependencies 📖
 
 ![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
 
 ## ERD
 ![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD.png?raw=true)
 
-## Developer
-
+## 💻 place pig developer 🖥
+💻🖥👪
 ### **🙋 [김동관](https://github.com/dk-master)**
 
-### **🙋‍ [최영훈](https://github.com/dudgns3tp)**
+### **🙋‍\ [최영훈](https://github.com/dudgns3tp)**
 
 ### **🙋‍ [홍준엽](https://github.com/junyup0319)**
