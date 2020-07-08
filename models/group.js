@@ -109,8 +109,24 @@ const group = {
 
     getMyGroupList : async(userIdx,queryObject) => {
         let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
-        if(queryObject.filter === 'wait') getMygroup += ` WHERE MYRELATIONGROUP.state = 2`;
-        else getMygroup +=  ` WHERE MYRELATIONGROUP.state NOT IN(2)` ;
+
+        let getNotIngroupList = `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
+            (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
+            (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx}) Group by groupIdx) as GETGROUPINFO
+            natural join GROUP_TB
+            ) as GETPLACEINFO natural join PLACE_TB `;
+
+        if(queryObject.filter === 'wait') 
+            getMygroup += ` WHERE MYRELATIONGROUP.state = 2`;
+    
+        else if(queryObject.filter === 'apply')
+            getMygroup = getNotIngroupList
+
+        
+            
+            
+        else  
+            getMygroup +=  ` WHERE MYRELATIONGROUP.state NOT IN(2)` ;
         try{
             const result = await pool.queryParam(getMygroup);
             return result;
@@ -150,8 +166,15 @@ const group = {
     
     getGroupPostCnt : async(groupIdx) => {
         const getGroupPostCnt = `SELECT count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx}`;
-
-       
+        try{
+            const result = await pool.queryParam(getGroupPostCnt);
+            return result[0].postCount;
+    
+        }catch(err) {
+            console.log('signup ERROR : ', err);
+            throw err;
+        }
+        
     },
 
     getMywaitUserList : async(groupIdx) => {

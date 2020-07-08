@@ -67,14 +67,14 @@ exports.apply = async (req, res) => {
 exports.getMyGroupList =  async(req,res)=>{
 
     const userIdx = req.userIdx;
-    const waitQuery = req.query;
+    const QueryObject = req.query;
     try {
     
         
             const groupInfo = await Group.callMygroupInfo(userIdx); //그룹에 대한 이름, 이미지
             const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
             const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
-            const myGroupList = await Group.getMyGroupList(userIdx,waitQuery);
+            const myGroupList = await Group.getMyGroupList(userIdx,QueryObject);
 
             
             for(let i =0; i< myGroupList.length; i++) {
@@ -85,9 +85,10 @@ exports.getMyGroupList =  async(req,res)=>{
                 myGroupList[i].PostCount = myGroupPostCnt;
                 
             }
+
             
     return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST, {
-            myGroupList
+            myGroupList: myGroupList.filter(group => group.groupIdx !== null)
         }));
     } catch(err){
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
