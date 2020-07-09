@@ -4,6 +4,7 @@ const table = 'PLACE_TB';
 const placeImageTB = 'PLACEIMAGE_TB';
 const placeTagTB = 'PLACE_TAG_RELATION_TB';
 const moment = require('moment');
+const subwayPlaceTB = 'SUBWAY_PLACE_RELATION_TB';
 
 const tableModule = require('../modules/table');
 
@@ -227,24 +228,35 @@ const place = {
         }
         
     },
-    addPlace : async ({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayName, subwayLine, userIdx, imageUrl}) => {
+    addPlace : async ({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl}) => {
         const nowUnixTime= parseInt(moment().format('X'));
         const addPlaceQuery = `INSERT INTO ${table} (placeIdx, placeName, placeAddress, placeRoadAddress, placeMapX, placeMapY, placeCreatedAt, placeUpdatedAt, userIdx, placeReview, categoryIdx, groupIdx) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
         const addPlaceValues =[placeIdx, title, address, roadAddress, mapx, mapy, nowUnixTime, nowUnixTime, userIdx, placeReview, categoryIdx,groupIdx];
         const addPlaceImageQuery = `INSERT INTO ${placeImageTB} (placeIdx, placeImageUrl) VALUES(?,?)`;
         const addPlaceTagQuery = `INSERT INTO ${placeTagTB} (placeIdx, tagIdx) VALUES (?,?)`;
+        const addPlaceSubwayQuery = `INSERT INTO ${subwayPlaceTB} (subwayIdx, placeIdx) VALUES (?,?)`;
         let tagIdxData = [...tags, ...infoTags];
         try{
             pool.Transaction( async (conn) =>{
                 let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
                 let addPlaceImageResult = [];
+                let addPlaceTagRelationResult = [];
+                let addPlaceSubwayRelationResult = [];
                 for(let i = 0; i<imageUrl.length; i++){
                     addPlaceImageResult.push(await conn.query(addPlaceImageQuery,[placeIdx, imageUrl[i]]));
                 }
-                let addPlaceTagRelationResult = [];
+            
                 for(let i = 0; i<tagIdxData.length; i++){
-                    let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])])
+                    let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
                     addPlaceTagRelationResult.push(tagData);
+                }
+
+                for(let i = 0; i<subwayIdx.length; i++){
+                    console.log('여기.',subwayIdx[i]);
+                    console.log('어때',placeIdx)
+                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                    console.log(subwayData);
+                    addPlaceSubwayRelationResult.push(subwayData);
                 }
                 console.log('장소 추가 완료.');
             }).catch((err)=>{

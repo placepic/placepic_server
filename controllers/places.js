@@ -57,7 +57,7 @@ const placeController = {
     createPlace : async (req, res) =>{
         const userIdx = req.userIdx;
         console.log('user',userIdx)
-        const {placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayName, subwayLine} = req.body;
+        const {placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
         const imageFiles = req.files;
 
         if (imageFiles === undefined || imageFiles.length === 0) {
@@ -66,7 +66,7 @@ const placeController = {
 
         const imageUrl = imageFiles.map(img => img.location);
         try{
-            if(!placeIdx || !title || !address || !roadAddress || !mapx || !mapy || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags || !subwayName|| !subwayLine ||!imageUrl){
+            if(!placeIdx || !title || !address || !roadAddress || !mapx || !mapy || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags || !subwayIdx ||!imageUrl){
                 console.log('필수 입력 값이 없습니다.');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
             }
@@ -113,13 +113,13 @@ const placeController = {
             });
             
             //4. subway 유효성 검사
-            console.log({subwayName,subwayLine})
-            const isMatchedSubway = await subwayDB.isMatchedStation({subwayName,subwayLine});
+            console.log(subwayIdx)
+            const isMatchedSubway = await subwayDB.isMatchedStation(subwayIdx);
             if(isMatchedSubway[0] === undefined){
                 console.log("올바르지 않는 지하철 정보입니다. 호선과 지하철 이름을 다시 확인 해 주세요.");
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
             }
-            await placeDB.addPlace({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayName, subwayLine, userIdx, imageUrl});
+            await placeDB.addPlace({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
         }catch(e){
             console.log('장소 추가 에러 :', e);
