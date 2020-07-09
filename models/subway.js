@@ -21,11 +21,10 @@ const subway = {
         }
     },
     */
-    isMatchedStation : async (subwayName) =>{
+    isMatchedStation : async (subwayIdx) =>{
         try{
-            const query = `SELECT * FROM ${subwayTable} WHERE  subwayName = "${subwayName}"`;
+            const query = `SELECT * FROM ${subwayTable} WHERE  subwayIdx = "${subwayIdx}"`;
             const subwayDto = await pool.queryParam(query);
-            console.log(subwayDto);
             return subwayDto;
         }catch(err){
             console.log('isMatchedStation error : ', err);
