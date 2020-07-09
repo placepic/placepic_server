@@ -28,11 +28,13 @@ module.exports = {
                 subwayIdx: sub.subwayIdx,
                 subwayName: sub.subwayName,
                 subwayLine: queryResult.subwayLine.filter(subLine => subLine.subwayIdx === sub.subwayIdx)
-                    .map(ele => {
-                        const newEle = _.clone(ele);
-                        delete newEle.subwayIdx;
-                        return newEle;
-                    }),
+                    .map(ele => ele.subwayLineNumber
+                    //     {
+                    //     const newEle = _.clone(ele);
+                    //     delete newEle.subwayIdx;
+                    //     return newEle;
+                    // }
+                    ),
             });
         });
         if (subwayIdx !== undefined) return [...subwayMap.values()].filter(sub => sub.subwayIdx === subwayIdx)[0];

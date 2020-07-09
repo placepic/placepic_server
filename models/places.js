@@ -40,7 +40,7 @@ const place = {
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
                     } else {
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
@@ -56,7 +56,7 @@ const place = {
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: _.isNil(ele.userName) ? '' : ele.userName,
@@ -73,7 +73,6 @@ const place = {
             images.forEach(img => {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
-
             return [...queryResult.values()];
         } catch(e) {
             throw e;
@@ -85,7 +84,6 @@ const place = {
             // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
             // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
             // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
-            const subwayTable = tableModule.getSubway();
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
 
@@ -100,38 +98,38 @@ const place = {
                 natural left outer join USER_TB`;
             
             const queryResult = new Map();
-            const tagSubway = (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery));
-            tagSubway.forEach(ele => {
-                if(queryResult.has(ele.placeIdx)) {
-                    if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                    if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
-                } else {
-                    queryResult.set(ele.placeIdx, {
-                        placeIdx: ele.placeIdx,
-                        placeName: ele.placeName,
-                        placeAddress: ele.placeAddress,
-                        placeRoadAddress: ele.placeRoadAddress,
-                        placeMapX: ele.placeMapX,
-                        placeMapY: ele.placeMapY,
-                        placeCreatedAt: ele.placeCreatedAt,
-                        placeUpdatedAt: ele.placeUpdatedAt,
-                        
-                        placeReview: ele.placeReview,
-                        category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
-                        groupIdx: ele.groupIdx,
-                        placeViews: ele.placeViews,
-                        tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                        subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
-                        user: {
-                            userIdx: ele.userIdx,
-                            userName: ele.userName ? ele.userName : '',
-                            email: ele.email ? ele.email : '',
-                            profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
-                        },
-                        imageUrl: []
-                    });
-                }
-            });
+            (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
+                .forEach(ele => {
+                    if(queryResult.has(ele.placeIdx)) {
+                        if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
+                    } else {
+                        queryResult.set(ele.placeIdx, {
+                            placeIdx: ele.placeIdx,
+                            placeName: ele.placeName,
+                            placeAddress: ele.placeAddress,
+                            placeRoadAddress: ele.placeRoadAddress,
+                            placeMapX: ele.placeMapX,
+                            placeMapY: ele.placeMapY,
+                            placeCreatedAt: ele.placeCreatedAt,
+                            placeUpdatedAt: ele.placeUpdatedAt,
+                            
+                            placeReview: ele.placeReview,
+                            category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
+                            groupIdx: ele.groupIdx,
+                            placeViews: ele.placeViews,
+                            tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
+                            user: {
+                                userIdx: ele.userIdx,
+                                userName: ele.userName ? ele.userName : '',
+                                email: ele.email ? ele.email : '',
+                                profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
+                            },
+                            imageUrl: []
+                        });
+                    }
+                });
 
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
