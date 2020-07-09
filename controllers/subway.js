@@ -25,5 +25,14 @@ module.exports = {
             console.log(err);
             return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR,rm.INTERNAL_SERVER_ERROR));
         }
+    },
+    insertLineTable : async(req,res)=>{
+        try{
+            const result = await subway.insertLine();
+            return await res.status(sc.OK).send(ut.success(sc.OK, rm.READ_SUBWAY,result));
+        }catch(err){
+            console.log(err);
+            return await res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR,rm.INTERNAL_SERVER_ERROR));
+        }
     }
 }
