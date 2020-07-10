@@ -94,40 +94,41 @@ const placeController = {
             const isValidTagsOfCategory = tagsDB.getCategoryTags(categoryIdx);
             const isValidDefaultTagsOfCategory = tagsDB.getCategoryDefaultTags(categoryIdx);
             let allTagIdx = [];
-            isValidTagsOfCategory.forEach((it) => {
+
+            for(it of isValidTagsOfCategory){
                 allTagIdx.push(it.tagIdx);
-            });
-            
-            isValidDefaultTagsOfCategory.forEach((it) =>{
+            }
+
+            for(it of isValidDefaultTagsOfCategory){
                 allTagIdx.push(it.tagIdx);
-            });
+            }
             
-            tags.forEach((it)=>{
-                if(allTagIdx.indexOf(parseInt(it)) === -1){
+            for(it of isValidTagsOfCategory){
+                if(allTagIdx.indexOf(parseInt(it.tagIdx)) === -1){
                     console.log("기본 정보 태그 에러");
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_MATCHED_CATEGORY_TAG));
                 }
-            });
+            }
 
-            infoTags.forEach((it)=>{
-                if(allTagIdx.indexOf(parseInt(it)) === -1){
+            for(it of isValidDefaultTagsOfCategory){
+                if(allTagIdx.indexOf(parseInt(it.tagIdx)) === -1){
                     console.log("유용한 정보 태그 에러");
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_MATCHED_CATEGORY_INFO_TAG));
                 }
-            });
-            
+            }
+        
             //4. subway 유효성 검사
-            console.log(subwayIdx)
             const isMatchedSubway = await subwayDB.isMatchedStation(subwayIdx);
             if(isMatchedSubway[0] === undefined){
                 console.log("올바르지 않는 지하철 정보입니다.");
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
             }
-            await placeDB.addPlace({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
+            const placesResult = await placeDB.addPlace({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
+            console.log(placesResult); // undefined 
+            return await res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
         }catch(e){
             console.log('장소 추가 에러 :', e);
-            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+            return await res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
     }
 
