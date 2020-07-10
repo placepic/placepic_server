@@ -3,9 +3,9 @@ const request = require('request');
 const {client_id, client_secret} = require('../config/naverAPI.js');
 const {seoulKey} = require('../config/seoulAPI.js');
 module.exports = {
-  mapFindAPI: (req,res) =>{
+  mapFindAPI: (query) =>{
     return new Promise((resolve, reject) =>{
-      const api_url = 'https://openapi.naver.com/v1/search/local.json?query=' + encodeURI(req.query.query); // json 결과
+      const api_url = 'https://openapi.naver.com/v1/search/local.json?query=' + encodeURI(query) + '&display=5'; // json 결과
       const options = {
         url: api_url,
         headers: {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret': client_secret}
