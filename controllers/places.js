@@ -116,7 +116,7 @@ const placeController = {
             console.log(subwayIdx)
             const isMatchedSubway = await subwayDB.isMatchedStation(subwayIdx);
             if(isMatchedSubway[0] === undefined){
-                console.log("올바르지 않는 지하철 정보입니다. 호선과 지하철 이름을 다시 확인 해 주세요.");
+                console.log("올바르지 않는 지하철 정보입니다.");
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
             }
             await placeDB.addPlace({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
