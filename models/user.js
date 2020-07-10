@@ -1,12 +1,15 @@
 const pool = require('../modules/pool');
 const crypto = require('crypto');
 const table = 'USER_TB';
+const moment = require('moment');
 
 const user = {
     signup: async (email,password,salt,userName,userBirth,gender) => {
-        const fields = 'email,password,salt,userName,userBirth,gender';
-        const questions = `?, ?, ?, ?, ?, ?`;
-        const values = [email,password,salt,userName,userBirth,gender];
+        const nowUnixTime= parseInt(moment().format('X'));
+        console.log(nowUnixTime);
+        const fields = 'email,password,salt,userName,userBirth,gender,userCreatedAt';
+        const questions = `?, ?, ?, ?, ?, ?, ?`;
+        const values = [email,password,salt,userName,userBirth,gender,nowUnixTime];
         const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
         try {
             const result = await pool.queryParamArr(query, values);

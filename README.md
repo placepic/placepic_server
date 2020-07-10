@@ -1,5 +1,5 @@
 
-# 🐷 placepic_Server :Cutty Kitty Server
+# 🐷 placepic :Cutty Kitty Server
 <img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
 <br/>
@@ -9,9 +9,12 @@
 ![node_bedge](https://img.shields.io/badge/node-13.11.0-%23ff7adc)
 
 
-* <b> SOPT 26th APPJAM - Team **placepic**
+
+* <b> SOPT 26th APPJAM - Team **placepic** </b>
     
-* 프로젝트 기간: 2020.06.28 ~ 2020.07.18
+* <b> 프로젝트 기간: 2020.06.28 ~ 2020.07.18 </b>
+
+* <b> [Notion - 기능 명세서](https://www.notion.so/Server-Part-d88e5572975b4d4d89128f1bfc10b780) </b>
 
 <br>
 
@@ -56,7 +59,7 @@ master
    |--- cyh
 ```
 
-- **git commit message role** 
+- **git commit message rule** 
 ```
 [Feat] 기능 추가
 
@@ -79,9 +82,9 @@ master
 
 ### [Server - Kanban board](https://github.com/placepic/placepic_server/projects/1)
 
-### [Notion - 기능 명세서](https://www.notion.so/Server-Part-d88e5572975b4d4d89128f1bfc10b780)
+### [SERVER API 문서](https://github.com/placepic/placepic_server/wiki)
 
-### [SERVER API 문서](https://github.com/placepic/placepic_server/wiki)</b>
+### Notion
 
 ### SLACK
 
@@ -89,7 +92,7 @@ master
 
 ## 🤝 Role
   
- ### With 
+ ### 공통 
   - RDB 설계
   - 배포환경 구축
   

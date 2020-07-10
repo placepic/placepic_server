@@ -11,6 +11,7 @@ module.exports = {
     CREATED_USER: "회원 가입 성공",
     DELETE_USER: "회원 탈퇴 성공",
     ALREADY_ID: "이미 사용중인 아이디입니다.",
+    POSSIBLE_ID: "회원 가입이 가능한 아이디입니다.",
     
     // 로그인
     LOGIN_SUCCESS: "로그인 성공",
@@ -61,6 +62,8 @@ module.exports = {
 
     //SUBWAY
     READ_SUBWAY:"지하철 조회 성공",
+    NO_READ_SUBWAY:"지히철 일치 실패.",
+
 
     SEARCH_API:"API데이터 가져오기 성공",
 
