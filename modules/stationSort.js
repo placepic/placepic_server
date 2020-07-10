@@ -1,11 +1,11 @@
 module.exports ={
     stationSort: (data)=>{
-        const sortingData = data.reduce((ret, {subwayIdx,subwayName, subwayLineNumber})=>{
+        const sortingData = data.reduce((ret, {subwayIdx,subwayName, subwayLine})=>{
             if(ret[subwayName]){
-                ret[subwayName].push(subwayLineNumber);
+                ret[subwayName].push(subwayLine);
             }else{
                 ret[subwayName] = [subwayIdx];
-                ret[subwayName].push(subwayLineNumber);
+                ret[subwayName].push(subwayLine);
             }
             return ret;
         },{});  

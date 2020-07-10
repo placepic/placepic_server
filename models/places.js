@@ -232,11 +232,10 @@ const place = {
         const getPlaceIdxQuery = `SELECT placeIdx FROM ${table} where groupIdx =${groupIdx} and placeMapX = ${mapx} and placeMapY = ${mapy}`;
         let tagIdxData = [...tags, ...infoTags];
         try{
-            pool.Transaction( async (conn) =>{
+             pool.Transaction( async (conn) =>{
                 let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
                 let getPlaceIdsResult = await conn.query(getPlaceIdxQuery,[groupIdx,mapx,mapy]);
                 let placeIdx = addPlaceResult.insertId;
-                console.log("getPlaceIdx:",placeIdx);
                 let addPlaceImageResult = [];
                 let addPlaceTagRelationResult = [];
                 let addPlaceSubwayRelationResult = [];
@@ -248,14 +247,22 @@ const place = {
                     let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
                     addPlaceTagRelationResult.push(tagData);
                 }
-
-                for(let i = 0; i<subwayIdx.length; i++){
-                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                
+                console.log(subwayIdx);
+                if(Array.isArray(subwayIdx)){
+                    for(let i = 0; i<subwayIdx.length; i++){
+                        let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                        addPlaceSubwayRelationResult.push(subwayData);
+                    }
+                }else{
+                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx),parseInt(placeIdx)]);
                     addPlaceSubwayRelationResult.push(subwayData);
                 }
+                
                 console.log('장소 추가 완료.');
             }).catch((err)=>{
                 console.log('장소 추가 오류! :',err)
+                throw err;
             })
         }catch(e){
             console.log("장소 추가 에러 :", e);
