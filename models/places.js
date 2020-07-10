@@ -73,6 +73,7 @@ const place = {
             images.forEach(img => {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
+
             return [...queryResult.values()];
         } catch(e) {
             throw e;
@@ -133,7 +134,9 @@ const place = {
 
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
-            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
+
+            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${placeIdxSet.size === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ')})`);
+            
             images.forEach(img => {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
@@ -159,6 +162,7 @@ const place = {
                     return false;
                 });
             }
+            console.log('GET places in group');
             return result;
         } catch(e) {
             throw e;
