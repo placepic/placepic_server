@@ -15,7 +15,6 @@ const queryResult = {};
     queryResult.subway = await pool.queryParam(`SELECT * FROM ${table.subway}`);
     queryResult.subwayLine = await pool.queryParam(`SELECT * FROM ${table.subwayLine}`);
     queryResult.subwayAndLine = await pool.queryParam(`SELECT ${table.subway}.subwayIdx, ${table.subway}.subwayName, ${table.subwayLine}.subwayLineNumber FROM ${table.subway} LEFT JOIN ${table.subwayLine} ON ${table.subway}.subwayIdx = ${table.subwayLine}.subwayIdx`);
-    console.log(queryResult.subwayAndLine);
 })();
 
 module.exports = {
