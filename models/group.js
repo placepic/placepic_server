@@ -44,22 +44,22 @@ const group = {
             const result = await pool.queryParam(checkGroupIdx);
            
 
-            return result;
+            return result.length;
         }catch(err) {
             console.log('signup ERROR : ', err);
             throw err;
         }
     },
 
-    // 내 그룹 정보(이름과 사진) 불러오기
-    callMygroupInfo : async(userIdx) => {
-        //const getMygroupInfo = `SELECT groupName , groupImage FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
+    //그룹 정보(이름과 사진) 불러오기
+    callMygroupInfo : async(groupIdx) => {
+        const getMygroupInfo = `SELECT groupName , groupImage FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
     
-        const getMygroupInfo2 = `SELECT GROUP_TB.groupName, GROUP_TB.groupImage FROM GROUP_TB , GROUP_USER_RELATION_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} and GROUP_TB.groupIdx =  GROUP_USER_RELATION_TB.groupIdx `;
+        //const getMygroupInfo2 = `SELECT GROUP_TB.groupName, GROUP_TB.groupImage FROM GROUP_TB , GROUP_USER_RELATION_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} and GROUP_TB.groupIdx =  GROUP_USER_RELATION_TB.groupIdx `;
 
     
         try{
-            const result = await pool.queryParam(getMygroupInfo2);
+            const result = await pool.queryParam(getMygroupInfo);
             return result;
         }catch(err) {
             console.log('signup ERROR : ', err);
@@ -108,14 +108,14 @@ const group = {
         }
     },
 
-    getMyGroupList : async(userIdx,queryObject) => {
+    getMyGroupList : async(userIdx,queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
         let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
 
         let getNotIngroupList = `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
             (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
-            (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx}) Group by groupIdx) as GETGROUPINFO
+            (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
             natural join GROUP_TB
-            ) as GETPLACEINFO natural join PLACE_TB `;
+            ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx `;
 
         if(queryObject.filter === 'wait') 
             getMygroup += ` WHERE MYRELATIONGROUP.state = 2`;
@@ -224,8 +224,19 @@ const group = {
             console.log('validUserGroup ERROR'+ e);
             throw e;
         }
+    },
+
+    checkAlreadyGroup : async(userIdx,groupIdx) =>{
+        const query = `SELECT groupIdx FROM ${table} WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx} `;
+        try{
+            const result = await pool.queryParam(query);
+            console.log('bbbbb',result[0]);
+            return result.length === 0; /// 이렇게 주면 결과값이 true,false로 나온다.
+        }catch(e) {
+            throw e;
+        }
+        }
     }
-}
 module.exports = group;
 
 

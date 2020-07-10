@@ -38,6 +38,7 @@ module.exports = {
 
     //그룹 리스트 불러오기
     CALL_GROUP_LIST : "그룹 리스트 불러오기 성공",
+    CALL_GROUP_FAIL : "해당 그룹이 존재하지 않습니다.",
 
     // 신청대기 갯수 불러오기
     CALL_APPLYCOUNT_SUCCESS : "대기목록 갯수 불러오기 성공",
@@ -68,6 +69,7 @@ module.exports = {
 
     //GROUP
     INVALID_GROUP_USER:"일치하지 않는 유저 그룹.",
+    ALREADY_GROUP_USER:"이미 가입된 그룹",
 
     //ADMIN
     CALL_MYWAITUSERLIST_SUCCESS: "내 그룹 대기유저 불러오기 성공",
