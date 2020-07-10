@@ -61,7 +61,7 @@ const placeController = {
     createPlace : async (req, res) =>{
         const userIdx = req.userIdx;
         console.log('user',userIdx)
-        const {placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
+        const {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
         const imageFiles = req.files;
 
         if (imageFiles === undefined || imageFiles.length === 0) {
@@ -70,7 +70,7 @@ const placeController = {
 
         const imageUrl = imageFiles.map(img => img.location);
         try{
-            if(!placeIdx || !title || !address || !roadAddress || !mapx || !mapy || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags || !subwayIdx ||!imageUrl){
+            if(!title || !address || !roadAddress || !mapx || !mapy || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags || !subwayIdx ||!imageUrl){
                 console.log('필수 입력 값이 없습니다.');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
             }
@@ -101,7 +101,7 @@ const placeController = {
             isValidDefaultTagsOfCategory.forEach((it) =>{
                 allTagIdx.push(it.tagIdx);
             });
-
+            
             tags.forEach((it)=>{
                 if(allTagIdx.indexOf(parseInt(it)) === -1){
                     console.log("기본 정보 태그 에러");
@@ -123,7 +123,7 @@ const placeController = {
                 console.log("올바르지 않는 지하철 정보입니다.");
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
             }
-            await placeDB.addPlace({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
+            await placeDB.addPlace({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
         }catch(e){
             console.log('장소 추가 에러 :', e);
