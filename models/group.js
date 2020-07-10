@@ -130,7 +130,7 @@ const group = {
     },
 
     getMyApplyGroupList: async (userIdx) => {
-        const query = `SELECT * FROM (SELECT groupIdx, count(*) as memberCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${83} ) Group by groupIdx) as T natural join GROUP_TB;`
+        const query = `SELECT * FROM (SELECT groupIdx, count(*) as memberCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
         try {
             const groupResult = await pool.queryParam(query);
             const groupIdxs = groupResult.map(group => group.groupIdx);
