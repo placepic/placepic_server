@@ -18,13 +18,9 @@ const place = {
     },
     getPlace: async (placeIdx) => {
         try {
-            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
-
-            const subwayTable = tableModule.getSubway();
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
+            const subwayTable = tableModule.getSubwayGroup();
             
             let placeTable = `SELECT * FROM ${table} WHERE placeIdx=${placeIdx}`;
             
@@ -40,7 +36,7 @@ const place = {
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(subway => subway.subwayIdx === ele.subwayIdx));
                     } else {
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
@@ -56,7 +52,7 @@ const place = {
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(subway => subway.subwayIdx === ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: _.isNil(ele.userName) ? '' : ele.userName,
@@ -82,11 +78,9 @@ const place = {
 
     getPlacesByGroup: async (groupIdx, queryObject) => {
         try {
-            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
+            const subwayTable = tableModule.getSubwayGroup();
 
             let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
             if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
@@ -99,11 +93,12 @@ const place = {
                 natural left outer join USER_TB`;
             
             const queryResult = new Map();
+            
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
                     } else {
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
@@ -120,7 +115,7 @@ const place = {
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: ele.userName ? ele.userName : '',
@@ -171,10 +166,7 @@ const place = {
 
     getPlacesByQuery: async (groupIdx, query) => {
         try {
-            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
-            const subwayTable = tableModule.getSubway();
+            const subwayTable = tableModule.getSubwayGroup();
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
 

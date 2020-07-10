@@ -14,7 +14,8 @@ const queryResult = {};
     queryResult.tag = await pool.queryParam(`SELECT * FROM ${table.tag}`);
     queryResult.subway = await pool.queryParam(`SELECT * FROM ${table.subway}`);
     queryResult.subwayLine = await pool.queryParam(`SELECT * FROM ${table.subwayLine}`);
-    queryResult.subwayAndLine = await pool.queryParam(`SELECT ${table.subway}.subwayIdx, ${table.subway}.subwayName, ${table.subwayLine}.subwayLine FROM ${table.subway} LEFT JOIN ${table.subwayLine} ON ${table.subway}.subwayIdx = ${table.subwayLine}.subwayIdx`);
+    // queryResult.subwayAndLine = await pool.queryParam(`SELECT ${table.subway}.subwayIdx, ${table.subway}.subwayName, ${table.subwayLine}.subwayLineNumber FROM ${table.subway} LEFT JOIN ${table.subwayLine} ON ${table.subway}.subwayIdx = ${table.subwayLine}.subwayIdx`);
+    queryResult.subwayAndLine = await pool.queryParam(`SELECT * FROM ${table.subway} NATURAL LEFT JOIN ${table.subwayLine};`);
 })();
 
 module.exports = {
@@ -23,23 +24,22 @@ module.exports = {
     getSubway: () => queryResult.subway,
     getOneCategory : (categoryIdx) => queryResult.category[parseInt(categoryIdx)-1],
     getSubwayJoinLine : () => queryResult.subwayAndLine,
-    getSubwayWithSubwayLine: (subwayIdx) => {
-        const subwayMap = new Map();
-        queryResult.subway.forEach(sub => {
-            subwayMap.set(sub.subwayIdx, {
-                subwayIdx: sub.subwayIdx,
-                subwayName: sub.subwayName,
-                subwayLine: queryResult.subwayLine.filter(subLine => subLine.subwayIdx === sub.subwayIdx)
-                    .map(ele => ele.subwayLineNumber
-                    //     {
-                    //     const newEle = _.clone(ele);
-                    //     delete newEle.subwayIdx;
-                    //     return newEle;
-                    // }
-                    ),
-            });
-        });
-        if (subwayIdx !== undefined) return [...subwayMap.values()].filter(sub => sub.subwayIdx === subwayIdx)[0];
-        else return [...subwayMap.values()];
-    }
+    getSubwayGroup: () => {
+        return _(queryResult.subwayAndLine)
+            .groupBy('subwayIdx')
+            .values()
+            .map(subArr => {
+                let subwayObject;
+                subArr.forEach((sub, i) => {
+                    if (i === 0) {
+                        subwayObject = {
+                            subwayIdx: sub.subwayIdx,
+                            subwayName: sub.subwayName,
+                            subwayLine: [sub.subwayLine]
+                        };
+                    } else subwayObject.subwayLine.push(sub.subwayLine);
+                });
+                return subwayObject;
+            }).value();
+    },
 };
