@@ -50,18 +50,23 @@ exports.signin =  async(req,res)=>{
 
     try {
         // request data null 값 확인
-        if (!email || !password)
+        if (!email || !password){
+            console.log("정확한 값을 입력해주세요.")
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+            }
 
         // 아이디 존재 확인
-        if (await User.checkUser(email) === false)
+        if (await User.checkUser(email) === false){
+            console.log("이미 이메일이 존재합니다.");
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
+        }
 
         const user = await User.signin(email, password);
         // 비밀번호 확인
-        if (user === false)
+        if (user === false) {
+            console.log("비밀번호가 일치하지 않습니다.");
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.MISS_MATCH_PW));
-
+        }
         // jwt
         const {token, _} = await jwt.sign(user[0]);
 
