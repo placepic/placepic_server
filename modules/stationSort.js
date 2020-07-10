@@ -9,7 +9,6 @@ module.exports ={
             }
             return ret;
         },{});  
-        console.log(sortingData)
         const result = Object.entries(sortingData).reduce((arr,[subwayName,subwayLine])=>{
             let subwayIdx = subwayLine[0];
             subwayLine.shift();

@@ -28,15 +28,19 @@ const place = {
             
             let placeTable = `SELECT * FROM ${table} WHERE placeIdx=${placeIdx}`;
             
-            const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
-            const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
+            const placeTagQuery = `SELECT * FROM 
+                (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG 
+                natural left outer join USER_TB`;
+            const placeSubwayQuery = `SELECT * FROM
+                (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB)
+                as PLACESUBWAY natural left outer join USER_TB`;
             
             const queryResult = new Map();
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
                     } else {
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
@@ -52,7 +56,7 @@ const place = {
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: _.isNil(ele.userName) ? '' : ele.userName,
@@ -81,23 +85,25 @@ const place = {
             // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
             // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
             // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
-            const subwayTable = tableModule.getSubway();
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
 
             let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
             if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
             
-            const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
-            const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
+            const placeTagQuery = `SELECT * FROM 
+                (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG 
+                natural left outer join USER_TB`;
+            const placeSubwayQuery = `SELECT * FROM 
+                (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY 
+                natural left outer join USER_TB`;
             
             const queryResult = new Map();
-
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
                     } else {
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
@@ -114,7 +120,7 @@ const place = {
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: ele.userName ? ele.userName : '',
@@ -128,7 +134,9 @@ const place = {
 
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
-            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
+
+            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${placeIdxSet.size === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ')})`);
+            
             images.forEach(img => {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
@@ -154,6 +162,7 @@ const place = {
                     return false;
                 });
             }
+            console.log('GET places in group');
             return result;
         } catch(e) {
             throw e;

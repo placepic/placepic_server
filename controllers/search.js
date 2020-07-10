@@ -9,20 +9,21 @@ const placeDB = require('../models/places');
 const searchController = {
     searchPlaceWithNaverAPI: async (req, res) => {
         try {
-            let result = await api.mapFindAPI(req, res);
-            const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx, {})).map(place => place.placeIdx);
+            let result = await api.mapFindAPI(req.query.query);
+            console.log(`[GET] naver API places: query=${req.query.query}`);
+            const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx, {})).map(place => '' + place.placeMapX + place.placeMapY);
 
             result = result.map(r => {
                 return {
-                    placeIdx: r.placeId,
                     placeName: r.title.replace(/<b>|<\/b>/g, ''),
                     placeAddress: r.address,
                     placeRoadAddress: r.roadAddress,
                     placeMapX: r.mapx,
                     placeMapY: r.mapy,
                     link: r.link,
+                    // TODO 여기 노가다해야됨
                     mobileNaverMapLink: `https://m.map.naver.com/search2/search.nhn?query=${encodeURI(r.title.replace(/<b>|<\/b>/g, ''))}&sm=hty&style=v5#/map/1`,
-                    alreadyIn: placeIdxInDB.indexOf(r.placeId * 1) !== -1,
+                    alreadyIn: placeIdxInDB.indexOf(r.placeId) !== -1,
                 };
             });
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_NAVER_MAP, result));

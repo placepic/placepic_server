@@ -33,7 +33,7 @@ const subway = {
     },
     getSubway : async () =>{
         try{
-            const subwayDto = table.getSubway();
+            const subwayDto = table.getSubwayJoinLine();
             return subwayDto;
         }catch(err){
             console.log('subway error :', err);
