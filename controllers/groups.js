@@ -60,7 +60,7 @@ exports.getMyGroupList = async (req, res) => {
         const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
         const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
         const myGroupList = await Group.getMyGroupList(userIdx, QueryObject);
-
+        console.log('11');
 
         for (let i = 0; i < myGroupList.length; i++) {
 
