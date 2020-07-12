@@ -33,7 +33,7 @@ const subway = {
     },
     getSubway : async () =>{
         try{
-            const subwayDto = table.getSubway();
+            const subwayDto = table.getSubwayJoinLine();
             return subwayDto;
         }catch(err){
             console.log('subway error :', err);
@@ -44,7 +44,7 @@ const subway = {
         try{
             const subwayDto = table.getSubway();
             let sortedDto = subwaySorting.stationSort(subwayDto);
-            const addSubwayLine = `INSERT INTO ${subwayLineTB} (subwayLineNumber, subwayIdx) VALUES (?,?)`;
+            const addSubwayLine = `INSERT INTO ${subwayLineTB} (subwayLine, subwayIdx) VALUES (?,?)`;
             for(let i = 0; i <sortedDto.length; i++){
                 console.log("subwayIdx:", sortedDto[i].subwayIdx)
                 console.log("subway Name :", sortedDto[i].subwayName);

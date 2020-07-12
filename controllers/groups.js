@@ -60,7 +60,7 @@ exports.getMyGroupList = async (req, res) => {
         const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
         const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
         const myGroupList = await Group.getMyGroupList(userIdx, QueryObject);
-
+        console.log('11');
 
         for (let i = 0; i < myGroupList.length; i++) {
 
@@ -159,3 +159,13 @@ exports.deleteStatusApplyUser = async (req, res) => {
         throw err;
     }
 };
+
+exports.getMyApplyGroupList = async (req, res) => {
+    try {
+        const result = await Group.getMyApplyGroupList(req.userIdx);
+        console.log("승인대기 인원 리스트를 불러오는데 성공하였습니다.");
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, result));
+    } catch(e) {
+        return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
+    }
+}

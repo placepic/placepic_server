@@ -18,13 +18,9 @@ const place = {
     },
     getPlace: async (placeIdx) => {
         try {
-            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
-
-            const subwayTable = tableModule.getSubway();
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
+            const subwayTable = tableModule.getSubwayGroup();
             
             let placeTable = `SELECT * FROM ${table} WHERE placeIdx=${placeIdx}`;
             
@@ -40,7 +36,7 @@ const place = {
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(subway => subway.subwayIdx === ele.subwayIdx));
                     } else {
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
@@ -56,7 +52,7 @@ const place = {
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(subway => subway.subwayIdx === ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: _.isNil(ele.userName) ? '' : ele.userName,
@@ -73,6 +69,7 @@ const place = {
             images.forEach(img => {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
+
             return [...queryResult.values()];
         } catch(e) {
             throw e;
@@ -81,11 +78,9 @@ const place = {
 
     getPlacesByGroup: async (groupIdx, queryObject) => {
         try {
-            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
+            const subwayTable = tableModule.getSubwayGroup();
 
             let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
             if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
@@ -98,11 +93,12 @@ const place = {
                 natural left outer join USER_TB`;
             
             const queryResult = new Map();
+            
             (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(tableModule.getSubwayWithSubwayLine(ele.subwayIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
                     } else {
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
@@ -119,7 +115,7 @@ const place = {
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [tableModule.getSubwayWithSubwayLine(ele.subwayIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: ele.userName ? ele.userName : '',
@@ -133,7 +129,9 @@ const place = {
 
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
-            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
+
+            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${placeIdxSet.size === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ')})`);
+            
             images.forEach(img => {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
@@ -159,6 +157,7 @@ const place = {
                     return false;
                 });
             }
+            console.log('GET places in group');
             return result;
         } catch(e) {
             throw e;
@@ -167,10 +166,7 @@ const place = {
 
     getPlacesByQuery: async (groupIdx, query) => {
         try {
-            // const subwayTable = await pool.queryParam('SELECT * FROM SUBWAY_TB');
-            // const tagTable = await pool.queryParam('SELECT * FROM TAG_TB');
-            // const categoryTable = await pool.queryParam('SELECT * FROM CATEGORY_TB');
-            const subwayTable = tableModule.getSubway();
+            const subwayTable = tableModule.getSubwayGroup();
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
 
@@ -226,17 +222,20 @@ const place = {
         }
         
     },
-    addPlace : async ({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl}) => {
+    addPlace : async ({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl}) => {
         const nowUnixTime= parseInt(moment().format('X'));
-        const addPlaceQuery = `INSERT INTO ${table} (placeIdx, placeName, placeAddress, placeRoadAddress, placeMapX, placeMapY, placeCreatedAt, placeUpdatedAt, userIdx, placeReview, categoryIdx, groupIdx) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
-        const addPlaceValues =[placeIdx, title, address, roadAddress, mapx, mapy, nowUnixTime, nowUnixTime, userIdx, placeReview, categoryIdx,groupIdx];
+        const addPlaceQuery = `INSERT INTO ${table} (placeName, placeAddress, placeRoadAddress, placeMapX, placeMapY, placeCreatedAt, placeUpdatedAt, userIdx, placeReview, categoryIdx, groupIdx) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+        const addPlaceValues =[title, address, roadAddress, mapx, mapy, nowUnixTime, nowUnixTime, userIdx, placeReview, categoryIdx,groupIdx];
         const addPlaceImageQuery = `INSERT INTO ${placeImageTB} (placeIdx, placeImageUrl) VALUES(?,?)`;
         const addPlaceTagQuery = `INSERT INTO ${placeTagTB} (placeIdx, tagIdx) VALUES (?,?)`;
         const addPlaceSubwayQuery = `INSERT INTO ${subwayPlaceTB} (subwayIdx, placeIdx) VALUES (?,?)`;
+        const getPlaceIdxQuery = `SELECT placeIdx FROM ${table} where groupIdx =${groupIdx} and placeMapX = ${mapx} and placeMapY = ${mapy}`;
         let tagIdxData = [...tags, ...infoTags];
         try{
-            pool.Transaction( async (conn) =>{
+             pool.Transaction( async (conn) =>{
                 let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
+                let getPlaceIdsResult = await conn.query(getPlaceIdxQuery,[groupIdx,mapx,mapy]);
+                let placeIdx = addPlaceResult.insertId;
                 let addPlaceImageResult = [];
                 let addPlaceTagRelationResult = [];
                 let addPlaceSubwayRelationResult = [];
@@ -248,17 +247,22 @@ const place = {
                     let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
                     addPlaceTagRelationResult.push(tagData);
                 }
-
-                for(let i = 0; i<subwayIdx.length; i++){
-                    console.log('여기.',subwayIdx[i]);
-                    console.log('어때',placeIdx)
-                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
-                    console.log(subwayData);
+                
+                console.log(subwayIdx);
+                if(Array.isArray(subwayIdx)){
+                    for(let i = 0; i<subwayIdx.length; i++){
+                        let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                        addPlaceSubwayRelationResult.push(subwayData);
+                    }
+                }else{
+                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx),parseInt(placeIdx)]);
                     addPlaceSubwayRelationResult.push(subwayData);
                 }
+                
                 console.log('장소 추가 완료.');
             }).catch((err)=>{
                 console.log('장소 추가 오류! :',err)
+                throw err;
             })
         }catch(e){
             console.log("장소 추가 에러 :", e);

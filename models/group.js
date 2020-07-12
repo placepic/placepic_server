@@ -126,12 +126,41 @@ const group = {
             getMygroup +=  ` WHERE MYRELATIONGROUP.state NOT IN(2)` ;
 
         try{
-            const result = await pool.queryParam(getMygroup);
+            const result = await pool.queryParam(query);
+            
             return result;
     
         }catch(err) {
             console.log('signup ERROR : ', err);
             throw err;
+        }
+    },
+
+    getMyApplyGroupList: async (userIdx) => {
+        const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
+        try {
+            const groupResult = await pool.queryParam(query);
+            const groupIdxs = groupResult.map(group => group.groupIdx);
+            const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
+            const resultMap = new Map();
+            groupResult.forEach((group) => {
+                resultMap.set(group.groupIdx, {
+                    groupIdx: group.groupIdx,
+                    groupUserIdx: group.groupUserIdx,
+                    state: group.state,
+                    part: group.part,
+                    phoneNumber: group.phoneNumber,
+                    groupName: group.groupName,
+                    groupImage: group.groupImage,
+                    userCount: group.userCount,
+                    postCount: 0,
+                });
+            });
+            placeResult.forEach(place => resultMap.get(place.groupIdx).placeCount = place.placeCount);;
+            console.log(resultMap);
+            return [...resultMap.values()];
+        } catch(e) {
+            throw e;
         }
     },
 

@@ -18,6 +18,7 @@ const placeController = {
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
         } catch(e) {
+            console.log('get all places error :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
     },
@@ -28,6 +29,7 @@ const placeController = {
             if (result.length === 0) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result[0]));
         } catch(e) {
+            console.log('get places error :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR)); 
         }
     },
@@ -40,6 +42,7 @@ const placeController = {
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
         } catch(e) {
+            console.log('getPlacesByGroup error :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
     },
@@ -50,6 +53,7 @@ const placeController = {
             result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
         } catch(e) {
+            console.log('get places By Query error :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
     },
@@ -57,7 +61,7 @@ const placeController = {
     createPlace : async (req, res) =>{
         const userIdx = req.userIdx;
         console.log('user',userIdx)
-        const {placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
+        const {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
         const imageFiles = req.files;
 
         if (imageFiles === undefined || imageFiles.length === 0) {
@@ -66,7 +70,7 @@ const placeController = {
 
         const imageUrl = imageFiles.map(img => img.location);
         try{
-            if(!placeIdx || !title || !address || !roadAddress || !mapx || !mapy || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags || !subwayIdx ||!imageUrl){
+            if(!title || !address || !roadAddress || !mapx || !mapy || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags || !subwayIdx ||!imageUrl){
                 console.log('필수 입력 값이 없습니다.');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
             }
@@ -90,40 +94,41 @@ const placeController = {
             const isValidTagsOfCategory = tagsDB.getCategoryTags(categoryIdx);
             const isValidDefaultTagsOfCategory = tagsDB.getCategoryDefaultTags(categoryIdx);
             let allTagIdx = [];
-            isValidTagsOfCategory.forEach((it) => {
-                allTagIdx.push(it.tagIdx);
-            });
-            
-            isValidDefaultTagsOfCategory.forEach((it) =>{
-                allTagIdx.push(it.tagIdx);
-            });
 
-            tags.forEach((it)=>{
-                if(allTagIdx.indexOf(parseInt(it)) === -1){
+            for(it of isValidTagsOfCategory){
+                allTagIdx.push(it.tagIdx);
+            }
+
+            for(it of isValidDefaultTagsOfCategory){
+                allTagIdx.push(it.tagIdx);
+            }
+            
+            for(it of isValidTagsOfCategory){
+                if(allTagIdx.indexOf(parseInt(it.tagIdx)) === -1){
                     console.log("기본 정보 태그 에러");
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_MATCHED_CATEGORY_TAG));
                 }
-            });
+            }
 
-            infoTags.forEach((it)=>{
-                if(allTagIdx.indexOf(parseInt(it)) === -1){
+            for(it of isValidDefaultTagsOfCategory){
+                if(allTagIdx.indexOf(parseInt(it.tagIdx)) === -1){
                     console.log("유용한 정보 태그 에러");
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_MATCHED_CATEGORY_INFO_TAG));
                 }
-            });
-            
+            }
+        
             //4. subway 유효성 검사
-            console.log(subwayIdx)
             const isMatchedSubway = await subwayDB.isMatchedStation(subwayIdx);
             if(isMatchedSubway[0] === undefined){
-                console.log("올바르지 않는 지하철 정보입니다. 호선과 지하철 이름을 다시 확인 해 주세요.");
+                console.log("올바르지 않는 지하철 정보입니다.");
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
             }
-            await placeDB.addPlace({placeIdx, title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
+            const placesResult = await placeDB.addPlace({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
+            console.log(placesResult); // undefined 
+            return await res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
         }catch(e){
             console.log('장소 추가 에러 :', e);
-            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+            return await res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
     }
 
