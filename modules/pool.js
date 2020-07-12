@@ -48,13 +48,16 @@ module.exports = {
                         await it(connection);
                     }
                     await connection.commit();
+                    resolve(true);
                 } catch (err) {
                     await connection.rollback();
+                    console.log('transaction error :', err);
                     reject(err);
                 } finally{
                     pool.releaseConnection(connection);
                 }
             } catch (err) {
+                console.log('connection error :', err);
                 reject(err);
             }
         });
