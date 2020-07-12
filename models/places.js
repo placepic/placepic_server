@@ -231,15 +231,16 @@ const place = {
         const addPlaceTagQuery = `INSERT INTO ${placeTagTB} (placeIdx, tagIdx) VALUES (?,?)`;
         const addPlaceSubwayQuery = `INSERT INTO ${subwayPlaceTB} (subwayIdx, placeIdx) VALUES (?,?)`;
         const getPlaceIdxQuery = `SELECT placeIdx FROM ${table} where groupIdx =${groupIdx} and placeMapX = ${mapx} and placeMapY = ${mapy}`;
+        let addPlaceImageResult = [];
+        let addPlaceTagRelationResult = [];
+        let addPlaceSubwayRelationResult = [];
         let tagIdxData = [...tags, ...infoTags];
         try{
-             pool.Transaction( async (conn) =>{
+            await pool.Transaction( async (conn) =>{
                 let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
                 let getPlaceIdsResult = await conn.query(getPlaceIdxQuery,[groupIdx,mapx,mapy]);
                 let placeIdx = addPlaceResult.insertId;
-                let addPlaceImageResult = [];
-                let addPlaceTagRelationResult = [];
-                let addPlaceSubwayRelationResult = [];
+                
                 for(let i = 0; i<imageUrl.length; i++){
                     addPlaceImageResult.push(await conn.query(addPlaceImageQuery,[placeIdx, imageUrl[i]]));
                 }
