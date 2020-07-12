@@ -15,7 +15,7 @@ router.get('/groups/admin/:groupIdx',authUtil.checkToken, admin.getMyWaitUserLis
 router.put('/groups/admin/edit/:groupIdx', admin.editStatusApplyUser);
 router.delete('/groups/admin/delete/:groupIdx', admin.deleteStatusApplyUser);
 
-//router.get('/myInfo/:groupIdx')
+router.get('/myInfo/:groupIdx',admin.getMyInfo); //만약 state가 2이면 못들어오게
 
 
 module.exports = router;
