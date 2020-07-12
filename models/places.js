@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const pool = require('../modules/pool');
+const moment = require('moment');
 const table = 'PLACE_TB';
 const placeImageTB = 'PLACEIMAGE_TB';
 const placeTagTB = 'PLACE_TAG_RELATION_TB';
-const moment = require('moment');
+const userTB = 'USER_TB';
 const subwayPlaceTB = 'SUBWAY_PLACE_RELATION_TB';
 const likeTB = 'LIKE_TB';
 
@@ -275,7 +276,6 @@ const place = {
         const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx) VALUES (?,?)`
         try{
             const addLikeResult = await pool.queryParamArr(addLikeQuery,[userIdx, placeIdx]);
-            console.log(addLikeResult);
             return addLikeResult.insertId;
         }catch(err){
             console.log('addLike 에러',err);
@@ -292,7 +292,7 @@ const place = {
             throw err;
         }
     },
-    isDeleteLike : async ({userIdx,placeIdx}) =>{
+    deleteLike : async ({userIdx,placeIdx}) =>{
         const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
         try{
             const result = await pool.queryParam(deleteLikeQuery);
@@ -309,7 +309,20 @@ const place = {
             return result;
         }catch(err){
             console.log('get Like err', err);
-            return err;
+            throw err;
+        }
+    },
+    getLikeList : async(placeIdx) =>{
+        const getLikeListQuery = `select l.userIdx, u.userName, u.profileImageUrl 
+                                from ${likeTB} as l 
+                                LEFT JOIN ${userTB} as u on l.userIdx = u.userIdx 
+                                where placeIdx = ${placeIdx}`;
+        try{
+            const result =await pool.queryParam(getLikeListQuery);
+            return result;
+        }catch(err){
+            console.log('get like list err', err);
+            throw err;
         }
     }
 }
