@@ -218,6 +218,29 @@ const placeController = {
             console.log('좋아요 에러.',err);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
+    },
+    deleteBookmark : async (req,res) =>{
+        const userIdx = req.userIdx;
+        const placeIdx = req.params.placeIdx;
+
+        try{
+            const isPlace = await placeDB.isCheckPlace(placeIdx);
+            if(isPlace.length === 0){
+                console.log('유효하지 않는 placeIdx 입니다.');
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
+            }
+
+            const isLiked = await placeDB.getBookmarkIdx({userIdx,placeIdx}); 
+            if(isLiked.length === 0){
+                console.log('좋아요가 없습니다.');
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_BOOKMARK));
+            }
+            const result = await placeDB.deleteBookmark({userIdx,placeIdx});
+            return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.DELETE_BOOKMARK));
+        }catch(err){
+            console.log('deleteLike err ',err);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }
     }
 
 };

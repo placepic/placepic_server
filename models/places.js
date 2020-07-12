@@ -345,6 +345,16 @@ const place = {
             throw err;
         }
     },
+    deleteBookmark : async ({userIdx,placeIdx}) =>{
+        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(deleteBookmarkQuery);
+            return result;
+        }catch(err){
+            console.log('delete bookmark 에러', err);
+            throw err;
+        }
+    }
 }
 
 module.exports = place;

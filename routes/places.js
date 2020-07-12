@@ -7,6 +7,7 @@ const controller = require('../controllers/places');
 router.get('/', authUtils.checkToken, controller.getAllPlaces);
 router.post('/like', authUtils.checkToken, controller.addLike);
 router.post('/bookmark', authUtils.checkToken, controller.addBookmark);
+router.delete('/bookmark/:placeIdx', authUtils.checkToken, controller.deleteBookmark)
 router.delete('/like/:placeIdx', authUtils.checkToken, controller.deleteLike);
 router.get('/like/:placeIdx', authUtils.checkToken, controller.getLikeList);
 router.get('/:placeIdx', authUtils.checkToken, controller.getPlace);
