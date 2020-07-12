@@ -31,6 +31,7 @@ module.exports = {
     ALREADY_LIKE : "이미 등록된 좋아요",
     NO_LIKE:"좋아요가 없습니다.",
     DELETE_LIKE:"좋아요 삭제 성공",
+    GET_LIKE_LIST:"좋아요 리스트 불러오기 성공",
 
     // api
     SEARCH_NAVER_MAP: "네이버 맵 장소 조회 성공",
@@ -79,6 +80,5 @@ module.exports = {
     EDIT_MYWAITUSERSTATE_SUCCESS: "내 그룹 대기유저 승인 성공",
     EDIT_MYWAITUSERSTATE_FAIL: "내 그룹 대기유저 승인 실패",
     DELETE_MYWAITUSER_SUCCESS: "내 그룹 대기유저 거절 성공",
-    DELETE_MYWAITUSER_FAIL: "내 그룹 대기유저 거절 실패",
-    test:"xtx"
+    DELETE_MYWAITUSER_FAIL: "내 그룹 대기유저 거절 실패"
 };
