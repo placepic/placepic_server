@@ -111,22 +111,20 @@ const group = {
     getMyGroupList : async(userIdx,queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
         let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
 
-        let getNotIngroupList = `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
-            (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
-            (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
-            natural join GROUP_TB
-            ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx`;
+        // let getNotIngroupList = `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
+        //     (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
+        //     (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
+        //     natural join GROUP_TB
+        //     ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx`;
 
         if(queryObject.filter === 'wait') 
-            getMygroup += ` WHERE MYRELATIONGROUP.state = 2`;
-    
-        else if(queryObject.filter === 'apply')
-            getMygroup = getNotIngroupList
+            getMygroup += `WHERE MYRELATIONGROUP.state = 2`;
+
         else  
-            getMygroup +=  ` WHERE MYRELATIONGROUP.state NOT IN(2)` ;
+            getMygroup +=  `WHERE MYRELATIONGROUP.state NOT IN(2)` ;
 
         try{
-            const result = await pool.queryParam(query);
+            const result = await pool.queryParam(getMygroup);
             
             return result;
     
