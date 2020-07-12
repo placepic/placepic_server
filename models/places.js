@@ -292,10 +292,11 @@ const place = {
             throw err;
         }
     },
-    isDeleteLike : async ({userIdx,placeIdx}) =>{
+    deleteLike : async ({userIdx,placeIdx}) =>{
         const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
         try{
             const result = await pool.queryParam(deleteLikeQuery);
+            console.log('delete model :',result);
             return result;
         }catch(err){
             console.log('deleteLike 에러', err);

@@ -6,6 +6,7 @@ const controller = require('../controllers/places');
 
 router.get('/', authUtils.checkToken, controller.getAllPlaces);
 router.post('/like', authUtils.checkToken, controller.addLike);
+router.delete('/like/:placeIdx', authUtils.checkToken, controller.deleteLike);
 router.get('/:placeIdx', authUtils.checkToken, controller.getPlace);
 router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);
 router.get('/search/group/:groupIdx', authUtils.checkToken, controller.getPlacesByQuery);
