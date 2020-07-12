@@ -13,7 +13,7 @@ const group = {
         const fields = 'groupIdx,userIdx,part,phoneNumber';
         const questions = `?, ?, ?, ?`;
         const values = [groupIdx,userIdx,part,phoneNumber];
-        const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
+        const query = `INSERT INTO GROUP_USER_RELATION_TB (groupIdx,userIdx,part,phoneNumber) VALUES()`;
         try {
             const result = await pool.queryParamArr(query, values);
             const insertId = result.insertId;
@@ -108,16 +108,22 @@ const group = {
         }
     },
 
-    getMyGroupList : async (userIdx, queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
-        let query;
-        
-        if (queryObject.filter === 'wait') query = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB WHERE MYRELATIONGROUP.state = 2;`;
-        // else if (queryObject.filter === 'apply') query += `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
-        //     (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
-        //     (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
-        //     natural join GROUP_TB
-        //     ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx `;
-        else query = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB WHERE MYRELATIONGROUP.state NOT IN(2);`;
+    getMyGroupList : async(userIdx,queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
+        let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
+
+        let getNotIngroupList = `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
+            (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
+            (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
+            natural join GROUP_TB
+            ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx`;
+
+        if(queryObject.filter === 'wait') 
+            getMygroup += ` WHERE MYRELATIONGROUP.state = 2`;
+    
+        else if(queryObject.filter === 'apply')
+            getMygroup = getNotIngroupList
+        else  
+            getMygroup +=  ` WHERE MYRELATIONGROUP.state NOT IN(2)` ;
 
         try{
             const result = await pool.queryParam(query);
@@ -134,14 +140,18 @@ const group = {
         const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
         try {
             const groupResult = await pool.queryParam(query);
+            console.log(groupResult)
+            console.log("----------------------------------")
             const groupIdxs = groupResult.map(group => group.groupIdx);
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
+            console.log(placeResult);
+            console.log("----------------------------")
             const resultMap = new Map();
             groupResult.forEach((group) => {
                 resultMap.set(group.groupIdx, {
                     groupIdx: group.groupIdx,
                     groupUserIdx: group.groupUserIdx,
-                    state: group.state,
+                    state: group.state, 
                     part: group.part,
                     phoneNumber: group.phoneNumber,
                     groupName: group.groupName,
@@ -150,8 +160,10 @@ const group = {
                     postCount: 0,
                 });
             });
-            placeResult.forEach(place => resultMap.get(place.groupIdx).placeCount = place.placeCount);;
+            placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
             console.log(resultMap);
+            console.log('-----------------------------');
+            console.log(placeResult);
             return [...resultMap.values()];
         } catch(e) {
             throw e;
@@ -202,7 +214,7 @@ const group = {
 
         const getMywaitUserList = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state = 2) AS MYGROUPWAITUSER natural join USER_TB `;
 
-        try{
+        try{    
             const result = await pool.queryParam(getMywaitUserList);
             return result;
     
@@ -258,7 +270,23 @@ const group = {
         }catch(e) {
             throw e;
         }
-        }
+        },
+
+
+        getMyInfo : async(groupIdx) => {
+
+            const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} ) AS MYGROUPWAITUSER natural join USER_TB `;
+            console.log(getMyInfo)
+    
+            try{    
+                const result = await pool.queryParam(getMywaitUserList);
+                return result;
+        
+            }catch(err) {
+                console.log('signup ERROR : ', err);
+                throw err;
+            }
+        },
     }
 module.exports = group;
 
