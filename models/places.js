@@ -5,6 +5,7 @@ const placeImageTB = 'PLACEIMAGE_TB';
 const placeTagTB = 'PLACE_TAG_RELATION_TB';
 const moment = require('moment');
 const subwayPlaceTB = 'SUBWAY_PLACE_RELATION_TB';
+const likeTB = 'LIKE_TB';
 
 const tableModule = require('../modules/table');
 
@@ -100,7 +101,6 @@ const place = {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
                         if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
                     } else {
-                        console.log(ele);
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
                             placeName: ele.placeName,
@@ -269,6 +269,48 @@ const place = {
         }catch(e){
             console.log("장소 추가 에러 :", e);
             throw(e);
+        }
+    },
+    addLike : async ({userIdx,placeIdx}) =>{
+        const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx) VALUES (?,?)`
+        try{
+            const addLikeResult = await pool.queryParamArr(addLikeQuery,[userIdx, placeIdx]);
+            console.log(addLikeResult);
+            return addLikeResult.insertId;
+        }catch(err){
+            console.log('addLike 에러',err);
+            throw err;
+        }
+    },
+    isPlaceUser : async ({userIdx, placeIdx}) =>{
+        const isCheckPlace = `SELECT * FROM ${table} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(isCheckPlace);
+            return result;
+        }catch(err){
+            console.log('place, user 에러 체크 오류', err);
+            throw err;
+        }
+    },
+    isDeleteLike : async ({userIdx,placeIdx}) =>{
+        const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(deleteLikeQuery);
+            return result;
+        }catch(err){
+            console.log('deleteLike 에러', err);
+            throw err;
+        }
+    },
+    getLikeIdx : async({userIdx,placeIdx}) =>{
+        const getLikeQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(getLikeQuery);
+            console.log('get like : ', result);
+            return result;
+        }catch(err){
+            console.log('get Like err', err);
+            return err;
         }
     }
 }

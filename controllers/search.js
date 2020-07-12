@@ -26,7 +26,7 @@ const searchController = {
                     alreadyIn: placeIdxInDB.indexOf(r.placeId) !== -1,
                 };
             });
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_NAVER_MAP, result));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_NAVER_MAP, {result, count: result.length}));
         } catch(e) {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
