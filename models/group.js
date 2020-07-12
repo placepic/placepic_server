@@ -16,7 +16,7 @@ const group = {
         const query = `INSERT INTO GROUP_USER_RELATION_TB (${fields}) VALUES(${questions})`;
         //`INSERT INTO ${subwayLineTB} (subwayLine, subwayIdx) VALUES (?,?)`;
         try {
-            const result = await pool.queryParamArr(query, values);
+            const result = await pool.queryParamArr(query, values); 
             const insertId = result.insertId;
             return insertId;
         } catch (err) {
@@ -150,6 +150,7 @@ const group = {
                 resultMap.set(group.groupIdx, {
                     groupIdx: group.groupIdx,
                     groupUserIdx: group.groupUserIdx,
+                    userIdx: group.userIdx,
                     state: group.state, 
                     part: group.part,
                     phoneNumber: group.phoneNumber,
