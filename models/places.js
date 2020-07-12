@@ -7,7 +7,7 @@ const placeTagTB = 'PLACE_TAG_RELATION_TB';
 const userTB = 'USER_TB';
 const subwayPlaceTB = 'SUBWAY_PLACE_RELATION_TB';
 const likeTB = 'LIKE_TB';
-
+const bookmarkTB = 'BOOKMARK_TB';
 const tableModule = require('../modules/table');
 
 const place = {
@@ -324,7 +324,27 @@ const place = {
             console.log('get like list err', err);
             throw err;
         }
-    }
+    },
+    getBookmarkIdx : async({userIdx,placeIdx}) =>{
+        const getBookmarkQuery = `SELECT * FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(getBookmarkQuery);
+            return result;
+        }catch(err){
+            console.log('get bookmarkIdx err', err);
+            throw err;
+        }
+    },
+    addBookmark : async ({userIdx,placeIdx}) =>{
+        const addBookmarkQuery = `INSERT INTO ${bookmarkTB} (userIdx,placeIdx) VALUES (?,?)`
+        try{
+            const addBookmarkResult = await pool.queryParamArr(addBookmarkQuery,[userIdx, placeIdx]);
+            return addBookmarkResult.insertId;
+        }catch(err){
+            console.log('add bookmark 에러',err);
+            throw err;
+        }
+    },
 }
 
 module.exports = place;
