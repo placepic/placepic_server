@@ -282,13 +282,13 @@ const place = {
             throw err;
         }
     },
-    isPlaceUser : async ({userIdx, placeIdx}) =>{
-        const isCheckPlace = `SELECT * FROM ${table} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+    isCheckPlace : async ({placeIdx}) =>{
+        const isCheckPlace = `SELECT * FROM ${table} WHERE ${placeIdx}`;
         try{
             const result = await pool.queryParam(isCheckPlace);
             return result;
         }catch(err){
-            console.log('place, user 에러 체크 오류', err);
+            console.log('place 체크 오류', err);
             throw err;
         }
     },

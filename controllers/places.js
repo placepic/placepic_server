@@ -138,6 +138,12 @@ const placeController = {
         
         //placeIdx, 유효성 검사 userIdx, placeIdx 받아서 검색
         try{
+            const isPlace = await placeDB.isCheckPlace(placeIdx);
+            if(isPlace.length === 0){
+                console.log('유효하지 않는 placeIdx 입니다.');
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_LIKE));
+            }
+
             const isLiked = await placeDB.getLikeIdx({userIdx,placeIdx}); 
             if(isLiked.length !== 0){
                 console.log('이미 좋아요가 되어있습니다.');
