@@ -1,5 +1,5 @@
 const pool = require('../modules/pool');
-
+const table = 'GROUP_USER_RELATION_TB';
 const admin = {
 
 
@@ -42,6 +42,22 @@ const admin = {
             throw err;
         }
     },
+
+
+    getMyInfo : async(userIdx,groupIdx) => { //이름,소속,이미지,상태,유저 총 글 수
+
+        const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx}) AS MYGROUPWAITUSER natural join USER_TB `;
+
+        try{    
+            const result = await pool.queryParam(getMyInfo);
+            return result;
+    
+        }catch(err) {
+            console.log('signup ERROR : ', err);
+            throw err;
+        }
+    },
+
 }
 
 

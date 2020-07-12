@@ -96,3 +96,5 @@ exports.getMyApplyGroupList = async (req, res) => {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
     }
 };
+
+
