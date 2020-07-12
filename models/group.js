@@ -13,7 +13,8 @@ const group = {
         const fields = 'groupIdx,userIdx,part,phoneNumber';
         const questions = `?, ?, ?, ?`;
         const values = [groupIdx,userIdx,part,phoneNumber];
-        const query = `INSERT INTO GROUP_USER_RELATION_TB (groupIdx,userIdx,part,phoneNumber) VALUES()`;
+        const query = `INSERT INTO GROUP_USER_RELATION_TB (${fields}) VALUES(${questions})`;
+        //`INSERT INTO ${subwayLineTB} (subwayLine, subwayIdx) VALUES (?,?)`;
         try {
             const result = await pool.queryParamArr(query, values);
             const insertId = result.insertId;
