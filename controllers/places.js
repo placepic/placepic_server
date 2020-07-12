@@ -16,7 +16,7 @@ const placeController = {
             const result = await placeDB.getAllPlaces();
             if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {result, count: result.length}));
         } catch(e) {
             console.log('get all places error :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
@@ -40,7 +40,7 @@ const placeController = {
 
             if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {result, count: result.length}));
         } catch(e) {
             console.log('getPlacesByGroup error :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
@@ -51,7 +51,7 @@ const placeController = {
             if (_.isNil(req.query.query)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.BAD_REQUEST));
             const result  = await placeDB.getPlacesByQuery(req.params.groupIdx, req.query.query);
             result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {result, count: result.length}));
         } catch(e) {
             console.log('get places By Query error :', e);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
