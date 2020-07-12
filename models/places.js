@@ -282,13 +282,13 @@ const place = {
             throw err;
         }
     },
-    isPlaceUser : async ({userIdx, placeIdx}) =>{
-        const isCheckPlace = `SELECT * FROM ${table} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+    isCheckPlace : async (placeIdx) =>{
+        const isCheckPlace = `SELECT * FROM ${table} WHERE placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(isCheckPlace);
             return result;
         }catch(err){
-            console.log('place, user 에러 체크 오류', err);
+            console.log('place 체크 오류', err);
             throw err;
         }
     },
@@ -303,10 +303,9 @@ const place = {
         }
     },
     getLikeIdx : async({userIdx,placeIdx}) =>{
-        const getLikeQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        const getLikeQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(getLikeQuery);
-            console.log('get like : ', result);
             return result;
         }catch(err){
             console.log('get Like err', err);
