@@ -282,8 +282,8 @@ const place = {
             throw err;
         }
     },
-    isCheckPlace : async ({placeIdx}) =>{
-        const isCheckPlace = `SELECT * FROM ${table} WHERE ${placeIdx}`;
+    isCheckPlace : async (placeIdx) =>{
+        const isCheckPlace = `SELECT * FROM ${table} WHERE placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(isCheckPlace);
             return result;
