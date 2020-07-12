@@ -11,7 +11,7 @@ exports.getMyWaitUserList = async (req, res) => { // 내 그룹(관리자일때)
     const userIdx = req.userIdx; 
 
     try {
-        const waitUserList = await Group.getMywaitUserList(groupIdx);
+        const waitUserList = await Admin.getMywaitUserList(groupIdx);
 
         // if (waitUserList === -1)
         //     console.log("값이 들어오지 않았습니다.");
@@ -39,7 +39,7 @@ exports.editStatusApplyUser = async (req, res) => {
             console.log("충분한 값이 들어오지 않았습니다.");
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
         }
-        const editStatusApplyUser = await Group.editStatusApplyUser(userIdx, groupIdx);
+        const editStatusApplyUser = await Admin.editStatusApplyUser(userIdx, groupIdx);
 
         if (editStatusApplyUser.length === 0)
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
@@ -65,7 +65,7 @@ exports.deleteStatusApplyUser = async (req, res) => {
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
         }
 
-        const deleteStatusApplyUser = await Group.deleteStatusApplyUser(userIdx, groupIdx);
+        const deleteStatusApplyUser = await Admin.deleteStatusApplyUser(userIdx, groupIdx);
 
         if (deleteStatusApplyUser.length === 0)
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
