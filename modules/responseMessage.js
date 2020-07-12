@@ -26,6 +26,9 @@ module.exports = {
     SEARCH_PLACE_SUCCESS: "장소 조회 성공",
     NO_PLACE: "장소 없음",
     POST_PLACE:"장소 글쓰기 완료",
+    NO_MATCHED_PLACE_USER:"유저 정보 게시글 일치하지 않음",
+    ADD_LIKE : "좋아요 성공",
+    ALREADY_LIKE : "이미 등록된 좋아요",
 
     // api
     SEARCH_NAVER_MAP: "네이버 맵 장소 조회 성공",
@@ -63,9 +66,6 @@ module.exports = {
     //SUBWAY
     READ_SUBWAY:"지하철 조회 성공",
     NO_READ_SUBWAY:"지히철 일치 실패.",
-
-
-    SEARCH_API:"API데이터 가져오기 성공",
 
     //GROUP
     INVALID_GROUP_USER:"일치하지 않는 유저 그룹.",
