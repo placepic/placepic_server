@@ -303,10 +303,9 @@ const place = {
         }
     },
     getLikeIdx : async({userIdx,placeIdx}) =>{
-        const getLikeQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        const getLikeQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(getLikeQuery);
-            console.log('get like : ', result);
             return result;
         }catch(err){
             console.log('get Like err', err);
