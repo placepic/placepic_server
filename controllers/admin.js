@@ -19,9 +19,9 @@ exports.getMyWaitUserList = async (req, res) => { // 내 그룹(관리자일때)
 
         //성공
         console.log("승인대기 인원 리스트를 불러오는데 성공하였습니다.");
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, {
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, 
             waitUserList
-        }));
+        ));
     } catch (err) {
         console.log("승인대기 인원 리스트를 불러오는데 실패했습니다.");
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
