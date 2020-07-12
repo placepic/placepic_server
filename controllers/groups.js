@@ -168,4 +168,4 @@ exports.getMyApplyGroupList = async (req, res) => {
     } catch(e) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
     }
-}
+};
