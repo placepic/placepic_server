@@ -32,6 +32,10 @@ module.exports = {
     NO_LIKE:"좋아요가 없습니다.",
     DELETE_LIKE:"좋아요 삭제 성공",
     GET_LIKE_LIST:"좋아요 리스트 불러오기 성공",
+    ADD_BOOKMARK : "북마크 성공",
+    ALREADY_BOOKMARK : "이미 등록된 북마크",
+    NO_BOOKMARK:"북마크가 없습니다.",
+    DELETE_BOOKMARK:"북마크 삭제 성공",
 
     // api
     SEARCH_NAVER_MAP: "네이버 맵 장소 조회 성공",
