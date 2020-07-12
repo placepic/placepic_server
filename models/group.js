@@ -139,12 +139,8 @@ const group = {
         const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
         try {
             const groupResult = await pool.queryParam(query);
-            console.log(groupResult)
-            console.log("----------------------------------")
             const groupIdxs = groupResult.map(group => group.groupIdx);
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
-            console.log(placeResult);
-            console.log("----------------------------")
             const resultMap = new Map();
             groupResult.forEach((group) => {
                 resultMap.set(group.groupIdx, {
@@ -161,9 +157,7 @@ const group = {
                 });
             });
             placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
-            console.log(resultMap);
-            console.log('-----------------------------');
-            console.log(placeResult);
+         
             return [...resultMap.values()];
         } catch(e) {
             throw e;
