@@ -101,7 +101,6 @@ const place = {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
                         if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
                     } else {
-                        console.log(ele);
                         queryResult.set(ele.placeIdx, {
                             placeIdx: ele.placeIdx,
                             placeName: ele.placeName,
