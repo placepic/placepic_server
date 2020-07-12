@@ -13,7 +13,7 @@ const group = {
         const fields = 'groupIdx,userIdx,part,phoneNumber';
         const questions = `?, ?, ?, ?`;
         const values = [groupIdx,userIdx,part,phoneNumber];
-        const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
+        const query = `INSERT INTO GROUP_USER_RELATION_TB (groupIdx,userIdx,part,phoneNumber) VALUES()`;
         try {
             const result = await pool.queryParamArr(query, values);
             const insertId = result.insertId;
@@ -115,7 +115,7 @@ const group = {
             (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
             (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
             natural join GROUP_TB
-            ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx `;
+            ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx`;
 
         if(queryObject.filter === 'wait') 
             getMygroup += ` WHERE MYRELATIONGROUP.state = 2`;

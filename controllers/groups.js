@@ -73,8 +73,9 @@ exports.getMyGroupList = async (req, res) => {
 
         console.log("그룹을 성공적으로 불러왔습니다.")
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST, 
-           // myGroupList: myGroupList.filter(group => group.groupIdx !== null) model부분에 groupIdx 처리 안해준거
-           myGroupList // model부분에 GroupBy 처리 해준것
+            myGroupList
+        //    myGroupList: myGroupList.filter(group => group.groupIdx !== null)
+          // model부분에 GroupBy 처리 해준것
         ));
     } catch (err) {
         console.log("그룹을 불러오지 못했습니다.")
