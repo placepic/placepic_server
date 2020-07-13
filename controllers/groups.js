@@ -29,7 +29,6 @@ exports.apply = async (req, res) => {
         //2. 이미 신청한 그룹인지
         console.log(await Group.checkAlreadyGroup(userIdx,groupIdx))
         if(!(await Group.checkAlreadyGroup(userIdx,groupIdx))) {
-            
             console.log("이미 가입된 그룹입니다.");
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_GROUP_USER));
         }
