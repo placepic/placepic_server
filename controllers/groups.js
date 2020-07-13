@@ -58,8 +58,8 @@ exports.getMyGroupList = async (req, res) => {
         for (let i = 0; i < myGroupList.length; i++) {
             const myGroupUserCnt = await Group.getGroupUserCnt(myGroupList[i].groupIdx);
             const myGroupPostCnt = await Group.getGroupPostCnt(myGroupList[i].groupIdx);
-            myGroupList[i].UserCount = myGroupUserCnt;
-            myGroupList[i].PostCount = myGroupPostCnt;
+            myGroupList[i].userCount = myGroupUserCnt;
+            myGroupList[i].postCount = myGroupPostCnt;
         }
 
         console.log("그룹을 성공적으로 불러왔습니다.")
