@@ -264,21 +264,47 @@ const group = {
         },
 
 
-        getMyInfo : async(groupIdx) => {
-
-            const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} ) AS MYGROUPWAITUSER natural join USER_TB `;
-            console.log(getMyInfo)
-    
-            try{    
-                const result = await pool.queryParam(getMywaitUserList);
-                return result;
-        
-            }catch(err) {
-                console.log('signup ERROR : ', err);
-                throw err;
+    getMyGroupRanking: async (groupIdx) => {
+            const query = `SELECT * FROM (SELECT * FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join placepic.USER_TB;`
+            try {
+                const groupResult = await pool.queryParam(query);
+                if(_.isNil(groupResult)){
+                    return groupResult; //groupResult 가 [] 일때.
+                }
+                const userIdxs = groupResult.map(group => group.userIdx);
+                const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx IN (${userIdxs.join(', ')}) GROUP BY userIdx`);
+                const resultMap = new Map();
+                groupResult.forEach((group) => {
+                    resultMap.set(group.userIdx, { //key = group.userIdx, value = 객체
+                        groupIdx: group.groupIdx,
+                        userIdx: group.userIdx,
+                        userName: group.userName,
+                        profileImageUrl : group.profileImageUrl,
+                        state: group.state, 
+                        part: group.part,
+                        postCount: 0,
+                    });
+                });
+                console.log()
+                placeResult.forEach(place => resultMap.get(place.userIdx).postCount = place.postCount);
+            
+                return [...resultMap.values()].sort((a, b) => {
+                    if(b.postCount !== a.postCount)  return  b.postCount - a.postCount;
+                    else  return a.userName < b.userName? -1 : a.userName > b.userName ? 1 : 0;
+                })
+                
+              
+              
+            } catch(e) {
+                console.log('get my apply group list error :',e);
+                throw e;
             }
         },
-    }
+
+        
+        }
+        
+
 module.exports = group;
 
 

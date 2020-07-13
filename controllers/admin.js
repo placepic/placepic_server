@@ -58,7 +58,7 @@ exports.editStatusApplyUser = async (req, res) => {
 exports.deleteStatusApplyUser = async (req, res) => {
 
     const groupIdx = req.params.groupIdx;
-    const userIdx = req.body.userIdx;
+    const userIdx = req.params.userIdx;
 
     try {
         if (!groupIdx || !userIdx) {
