@@ -1,7 +1,6 @@
 const responseMessage = require('../modules/responseMessage');
 const statusCode = require('../modules/statusCode');
 const util = require('../modules/util');
-
 const placeDB = require('../models/places');
 const groupDB = require('../models/group');
 const categoryDB = require('../models/category');
@@ -22,10 +21,11 @@ const placeController = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
     },
-
     getPlace: async (req, res) => {
+        const placeIdx = req.params.placeIdx;
+        const userIdx = req.userIdx;
         try {
-            const result = await placeDB.getPlace(req.params.placeIdx);
+            const result = await placeDB.getPlace(placeIdx,userIdx);
             if (result.length === 0) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, result[0]));
         } catch(e) {
@@ -33,7 +33,6 @@ const placeController = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR)); 
         }
     },
-
     getPlacesByGroup: async (req, res) => {
         try {
             const result = await placeDB.getPlacesByGroup(req.params.groupIdx, req.query);
@@ -239,6 +238,17 @@ const placeController = {
             return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.DELETE_BOOKMARK));
         }catch(err){
             console.log('deleteLike err ',err);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }
+    },
+    getOnePlace : async (req,res)=>{
+        const userIdx = req.userIdx;
+        const placeIdx = req.params.placeIdx;
+        try{
+            const result = await placeDB.getOnePlace({userIdx, placeIdx});
+            return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.READ_PLACES, result));
+        }catch(err){
+            console.log('place 생성 에러 ',err);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
     }
