@@ -8,6 +8,7 @@ const userTB = 'USER_TB';
 const subwayPlaceTB = 'SUBWAY_PLACE_RELATION_TB';
 const likeTB = 'LIKE_TB';
 const bookmarkTB = 'BOOKMARK_TB';
+const subwayTB = 'SUBWAY_TB';
 const tableModule = require('../modules/table');
 
 const place = {
@@ -18,9 +19,9 @@ const place = {
             throw e;
         }
     },
-    getPlace: async (placeIdx) => {
+    getPlace: async (placeIdx,userIdx) => {
         try {
-            const tagTable = tableModule.getTag();
+            const tagTable = tableModule.getTagName();
             const categoryTable = tableModule.getCategory();
             const subwayTable = tableModule.getSubwayGroup();
             
@@ -32,9 +33,23 @@ const place = {
             const placeSubwayQuery = `SELECT * FROM
                 (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB)
                 as PLACESUBWAY natural left outer join USER_TB`;
-            
+            const placeLikeQuery = `SELECT COUNT(*) as likeCnt FROM ${likeTB} WHERE placeIdx = ${placeIdx}`;
+            const isLikedQuery = `SELECT COUNT(*) as isLiked FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+            const isBookmarkedQuery = `SELECT COUNT(*) as isBookmarked FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+
             const queryResult = new Map();
-            (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
+            const placeTagResult = await pool.queryParam(placeTagQuery);
+            const placeSubwayResult = await pool.queryParam(placeSubwayQuery);
+            const likeCntResult = await pool.queryParam(placeLikeQuery); //좋아요
+            const isLikedResult = await pool.queryParam(isLikedQuery);
+            const isBookmarkedResult = await pool.queryParam(isBookmarkedQuery);
+            console.log('likeCnt :',likeCntResult);
+            console.log('liked :',isLikedResult)
+            console.log('bookmark  :',isBookmarkedResult);
+            let result = placeTagResult
+            .concat(placeSubwayResult)
+
+                result
                 .forEach(ele => {
                     if(queryResult.has(ele.placeIdx)) {
                         if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
@@ -48,30 +63,41 @@ const place = {
                             placeMapX: ele.placeMapX,
                             placeMapY: ele.placeMapY,
                             placeCreatedAt: ele.placeCreatedAt,
-                            placeUpdatedAt: ele.placeUpdatedAt,
                             placeReview: ele.placeReview,
                             category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
                             groupIdx: ele.groupIdx,
                             placeViews: ele.placeViews,
+                            likeCnt : '',
+                            liked : false,
+                            bookmark :false,
                             tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
                             subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(subway => subway.subwayIdx === ele.subwayIdx)],
                             user: {
                                 userIdx: ele.userIdx,
                                 userName: _.isNil(ele.userName) ? '' : ele.userName,
                                 email: _.isNil(ele.email) ? '' : ele.email,
-                                profileURL: _.isNil(ele.userProfileImageUrl) ? '' : ele.userProfileImageUrl
+                                profileURL: _.isNil(ele.userProfileImageUrl) ? '' : ele.userProfileImageUrl,
                             },
-                            imageUrl: []
+                            imageUrl: [],
+                            likes :[]
                         });
                     }
                 });
+                
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
             const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
             images.forEach(img => {
-                if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
+                if(queryResult.has(img.placeIdx)) {
+                    queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
+                }
             });
 
+            queryResult.get(placeIdx).likes.push({
+                likeCnt: likeCntResult[0].likeCnt, 
+                isLiked : isLikedResult[0].isLiked,
+                bookmarked : isBookmarkedResult[0].isBookmarked
+            })
             return [...queryResult.values()];
         } catch(e) {
             throw e;
@@ -273,9 +299,10 @@ const place = {
         }
     },
     addLike : async ({userIdx,placeIdx}) =>{
-        const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx) VALUES (?,?)`
+        const nowUnixTime= parseInt(moment().format('X'));
+        const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx,likeCreatedAt) VALUES (?,?,?)`
         try{
-            const addLikeResult = await pool.queryParamArr(addLikeQuery,[userIdx, placeIdx]);
+            const addLikeResult = await pool.queryParamArr(addLikeQuery,[userIdx, placeIdx,nowUnixTime]);
             return addLikeResult.insertId;
         }catch(err){
             console.log('addLike 에러',err);
@@ -313,7 +340,7 @@ const place = {
         }
     },
     getLikeList : async(placeIdx) =>{
-        const getLikeListQuery = `select l.userIdx, u.userName, u.profileImageUrl 
+        const getLikeListQuery = `select l.userIdx, u.userName, u.profileImageUrl, l.likeCreatedAt,
                                 from ${likeTB} as l 
                                 LEFT JOIN ${userTB} as u on l.userIdx = u.userIdx 
                                 where placeIdx = ${placeIdx}`;
@@ -354,7 +381,83 @@ const place = {
             console.log('delete bookmark 에러', err);
             throw err;
         }
+    },
+    getOnePlace : async ({userIdx, placeIdx}) =>{
+        /*
+            subway place RE tb
+            image place RE  place join
+            category join tag   join place
+        */
+        const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt FROM ${table} WHERE placeIdx =${placeIdx}`;
+        const subwayNameQuery = `SELECT * FROM ${subwayTB} WHERE subwayIdx IN (SELECT subwayIdx FROM ${table} as p LEFT JOIN ${subwayPlaceTB} as r on p.placeIdx=r.placeIdx WHERE p.placeIdx = ${placeIdx})`;
+        const placeImageQuery = `SELECT * FROM ${placeImageTB} WHERE placeIdx = ${placeIdx}`;
+        const tagQuery = `SELECT tagName, tagIsBasic FROM PLACE_TAG_RELATION_TB as p LEFT JOIN TAG_TB as t on p.tagIdx = t.tagIdx WHERE placeIdx = ${placeIdx}`;
+        const isBookmarkedQuery = `SELECT * FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        const isLikedQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        const likeCountQuery = `SELECT COUNT(*) as likeCnt FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        const bookmarkCountQuery = `SELECT COUNT(*) as bookmarkCnt FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        const userQuery = `SELECT u.userName, u.profileImageUrl, g.part FROM USER_TB as u LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx});`
+        const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`
+        const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
+                                    FROM LIKE_TB as l
+                                    LEFT JOIN (SELECT u.userIdx, u.userName, u.profileImageUrl, g.part FROM USER_TB as u 
+                                    LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
+                                    WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = 60)) as u on l.userIdx = u.userIdx 
+                                    where placeIdx = ${placeIdx};`;
+        try{
+            let retObj = {};
+            const placeResult = await pool.queryParam(placeQuery);
+            const subwayName = await pool.queryParam(subwayNameQuery);
+            const placeImageUrl = await pool.queryParam(placeImageQuery);
+            const tag = await pool.queryParam(tagQuery);
+            const isLikedResult = await pool.queryParam(isLikedQuery);
+            const isBookmarkedResult = await pool.queryParam(isBookmarkedQuery);
+            const likeCount = await pool.queryParam(likeCountQuery);
+            const bookmarkCount = await pool.queryParam(bookmarkCountQuery);
+            const writer = await pool.queryParam(userQuery);
+            const postCount = await pool.queryParam(postQuery);
+            const likeInteraction = await pool.queryParam(getLikeListQuery);
+
+            retObj = {...placeResult[0]};
+            retObj.isLiked = isLikedResult.length ? "true" : "false";
+            retObj.isBookmarked = isBookmarkedResult.length ? "true" : "false";
+            retObj.likeCount = likeCount[0].likeCnt;
+            retObj.bookmarkCount = bookmarkCount[0].bookmarkCnt;
+
+            retObj.subway = [];
+            for(let it in subwayName){
+                retObj.subway.push(subwayName[it].subwayName);
+            }
+
+            retObj.imageUrl = [];
+            for(let it in placeImageUrl){
+                retObj.imageUrl.push(placeImageUrl[it].placeImageUrl);
+            }
+
+            retObj.keyword = [];
+            retObj.placeInfo = [];
+            for(let it in tag){
+                if(tag[it].tagIsBasic === 0){
+                    retObj.keyword.push(tag[it].tagName);
+                }else{
+                    retObj.placeInfo.push(tag[it].tagName)
+                }
+                console.log(tag[it].tagIsBasic);
+            }
+            console.log(likeInteraction);
+            writer[0].postCount = postCount[0].postCount; 
+            retObj.uploader = writer[0];
+            retObj.likeList = [];
+            for(let it in likeInteraction){
+                retObj.likeList.push(likeInteraction[it])
+            }
+            return retObj;
+        }catch(err){
+            console.log('get one place err', err);
+            throw err;
+        }
     }
+    
 }
 
 module.exports = place;
