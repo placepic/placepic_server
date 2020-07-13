@@ -133,7 +133,7 @@ const group = {
         const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
         try {
             const groupResult = await pool.queryParam(query);
-            if(!_.isNil(groupResult)){
+            if(_.isNil(groupResult)){
                 return groupResult; //groupResult 가 [] 일때.
             }
             const groupIdxs = groupResult.map(group => group.groupIdx);
@@ -154,7 +154,6 @@ const group = {
                 });
             });
             placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
-         
             return [...resultMap.values()];
         } catch(e) {
             console.log('get my apply group list error :',err);

@@ -75,8 +75,6 @@ exports.getMyGroupList = async (req, res) => {
     }
 };
 
-
-
 exports.getMyApplyGroupList = async (req, res) => {
     try {
         const result = await Group.getMyApplyGroupList(req.userIdx);
