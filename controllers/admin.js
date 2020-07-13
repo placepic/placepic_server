@@ -32,7 +32,7 @@ exports.getMyWaitUserList = async (req, res) => { // 내 그룹(관리자일때)
 exports.editStatusApplyUser = async (req, res) => {
 
     const groupIdx = req.params.groupIdx;
-    const userIdx = req.params.userIdx;
+    const userIdx = req.body.userIdx;
 
     try {
         if (!groupIdx || !userIdx) {
@@ -57,7 +57,7 @@ exports.editStatusApplyUser = async (req, res) => {
 exports.deleteStatusApplyUser = async (req, res) => {
 
     const groupIdx = req.params.groupIdx;
-    const userIdx = req.body.userIdx;
+    const userIdx = req.params.userIdx;
 
     try {
         if (!groupIdx || !userIdx) {
