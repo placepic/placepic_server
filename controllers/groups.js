@@ -89,7 +89,7 @@ exports.getMyGroupRanking = async (req, res) => {
     try {
         const userIdx = req.userIdx;
         const groupIdx = req.params.groupIdx;
-        const result = await Group.getMyGroupRanking(userIdx,groupIdx);
+        const result = await Group.getMyGroupRanking(groupIdx);
         console.log("승인대기 인원 리스트를 불러오는데 성공하였습니다.");
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, result));
     } catch(e) {
