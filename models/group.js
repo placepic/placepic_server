@@ -267,21 +267,44 @@ const group = {
         },
 
 
-        getMyInfo : async(groupIdx) => {
-
-            const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} ) AS MYGROUPWAITUSER natural join USER_TB `;
-            console.log(getMyInfo)
-    
-            try{    
-                const result = await pool.queryParam(getMywaitUserList);
-                return result;
+    getMyGroupRanking : async(userIdx,groupIdx) => { //이름,소속,이미지,상태,유저 총 글 수
         
-            }catch(err) {
-                console.log('signup ERROR : ', err);
-                throw err;
-            }
-        },
-    }
+                try{    
+                    const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state = 1) AS MYGROUPWAITUSER natural join USER_TB `;
+                    const groupResult = await pool.queryParam(getMyInfo);
+                    // 그룹별로 묶는거 대신 유저별로 묶는거 생각하기
+                    const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} GROUP BY groupIdx`);
+                    console.log(placeResult);
+                
+                    const resultMap = new Map();
+                    groupResult.forEach((group) => {
+                    resultMap.set(group.groupIdx, {
+                            userName : group.userName,
+                            part : group.part,
+                            userImage : group.profileImageUrl,
+                            state : group.state,
+                            postCount : 0,
+        
+                    });
+                    });
+                    placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
+                    // console.log(resultMap);
+                    // console.log('-----------------------------');
+                    // console.log(placeResult);
+                    return [...resultMap.values()];
+             
+        
+                }catch(err) {
+                    console.log('signup ERROR : ', err);
+                    throw err;
+                }
+            },
+
+
+        
+        }
+        
+
 module.exports = group;
 
 
