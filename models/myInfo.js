@@ -4,16 +4,15 @@ const myInfo = {
 
     getMyInfo : async(userIdx,groupIdx) => { //이름,소속,이미지,상태,유저 총 글 수
 
-    
         try{    
             const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx}) AS MYGROUPWAITUSER natural join USER_TB `;
             const groupResult = await pool.queryParam(getMyInfo);
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} GROUP BY groupIdx`);
             console.log(placeResult);
-          
-             const resultMap = new Map();
-             groupResult.forEach((group) => {
-               resultMap.set(group.groupIdx, {
+        
+            const resultMap = new Map();
+            groupResult.forEach((group) => {
+            resultMap.set(group.groupIdx, {
                     userName : group.userName,
                     part : group.part,
                     userImage : group.profileImageUrl,
@@ -21,8 +20,8 @@ const myInfo = {
                     postCount : 0,
 
             });
-             });
-             placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
+            });
+            placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
             // console.log(resultMap);
             // console.log('-----------------------------');
             // console.log(placeResult);
