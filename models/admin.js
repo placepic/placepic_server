@@ -5,7 +5,7 @@ const admin = {
 
     getMywaitUserList : async(groupIdx) => {
 
-        const getMywaitUserList = `SELECT username,part,userBirth,phoneNumber,gender FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state = 2) AS MYGROUPWAITUSER natural join USER_TB `;
+        const getMywaitUserList = `SELECT userIdx,username,part,userBirth,phoneNumber,gender,groupIdx FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state = 2) AS MYGROUPWAITUSER natural join USER_TB `;
 
         try{    
             const result = await pool.queryParam(getMywaitUserList);
