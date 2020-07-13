@@ -2,6 +2,7 @@ const pool = require('../modules/pool');
 const table = 'GROUP_USER_RELATION_TB';
 const groupTable = 'GROUP_TB';
 const STATE_PENDING = 2;
+const _ = require('lodash');
 const countStatusWaitNum = `SELECT COUNT(*) as countUser FROM GROUP_USER_RELATION_TB WHERE groupIdx = 1 and status = 2`;
 const countGroupUserNum = `SELECT COUNT(*) as countUser FROM GROUP_USER_RELATION_TB WHERE groupIdx = 1 and status NOT IN(2)`;
 const countPlace = `SELECT COUNT(*) as countPlace FROM PLACE_TB WHERE groupIdx = 1`;
@@ -102,33 +103,26 @@ const group = {
         try{
             const result = await pool.queryParam(countStatusWaitNum);
             return result;
-    
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('call status wait ERROR : ', err);
             throw err;
         }
     },
 
     getMyGroupList : async(userIdx,queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
         let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
-
         // let getNotIngroupList = `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
         //     (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
         //     (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
         //     natural join GROUP_TB
         //     ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx`;
-
         if(queryObject.filter === 'wait') 
             getMygroup += `WHERE MYRELATIONGROUP.state = 2`;
-
         else  
             getMygroup +=  `WHERE MYRELATIONGROUP.state NOT IN(2)` ;
-
         try{
             const result = await pool.queryParam(getMygroup);
-            
             return result;
-    
         }catch(err) {
             console.log('signup ERROR : ', err);
             throw err;
@@ -139,6 +133,9 @@ const group = {
         const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
         try {
             const groupResult = await pool.queryParam(query);
+            if(!_.isNil(groupResult)){
+                return groupResult; //groupResult 가 [] 일때.
+            }
             const groupIdxs = groupResult.map(group => group.groupIdx);
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
             const resultMap = new Map();
@@ -160,6 +157,7 @@ const group = {
          
             return [...resultMap.values()];
         } catch(e) {
+            console.log('get my apply group list error :',err);
             throw e;
         }
     },
