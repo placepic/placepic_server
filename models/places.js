@@ -1,12 +1,13 @@
 const _ = require('lodash');
 const pool = require('../modules/pool');
+const moment = require('moment');
 const table = 'PLACE_TB';
 const placeImageTB = 'PLACEIMAGE_TB';
 const placeTagTB = 'PLACE_TAG_RELATION_TB';
-const moment = require('moment');
+const userTB = 'USER_TB';
 const subwayPlaceTB = 'SUBWAY_PLACE_RELATION_TB';
 const likeTB = 'LIKE_TB';
-
+const bookmarkTB = 'BOOKMARK_TB';
 const tableModule = require('../modules/table');
 
 const place = {
@@ -275,7 +276,6 @@ const place = {
         const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx) VALUES (?,?)`
         try{
             const addLikeResult = await pool.queryParamArr(addLikeQuery,[userIdx, placeIdx]);
-            console.log(addLikeResult);
             return addLikeResult.insertId;
         }catch(err){
             console.log('addLike 에러',err);
@@ -292,7 +292,7 @@ const place = {
             throw err;
         }
     },
-    isDeleteLike : async ({userIdx,placeIdx}) =>{
+    deleteLike : async ({userIdx,placeIdx}) =>{
         const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
         try{
             const result = await pool.queryParam(deleteLikeQuery);
@@ -309,7 +309,50 @@ const place = {
             return result;
         }catch(err){
             console.log('get Like err', err);
-            return err;
+            throw err;
+        }
+    },
+    getLikeList : async(placeIdx) =>{
+        const getLikeListQuery = `select l.userIdx, u.userName, u.profileImageUrl 
+                                from ${likeTB} as l 
+                                LEFT JOIN ${userTB} as u on l.userIdx = u.userIdx 
+                                where placeIdx = ${placeIdx}`;
+        try{
+            const result =await pool.queryParam(getLikeListQuery);
+            return result;
+        }catch(err){
+            console.log('get like list err', err);
+            throw err;
+        }
+    },
+    getBookmarkIdx : async({userIdx,placeIdx}) =>{
+        const getBookmarkQuery = `SELECT * FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(getBookmarkQuery);
+            return result;
+        }catch(err){
+            console.log('get bookmarkIdx err', err);
+            throw err;
+        }
+    },
+    addBookmark : async ({userIdx,placeIdx}) =>{
+        const addBookmarkQuery = `INSERT INTO ${bookmarkTB} (userIdx,placeIdx) VALUES (?,?)`
+        try{
+            const addBookmarkResult = await pool.queryParamArr(addBookmarkQuery,[userIdx, placeIdx]);
+            return addBookmarkResult.insertId;
+        }catch(err){
+            console.log('add bookmark 에러',err);
+            throw err;
+        }
+    },
+    deleteBookmark : async ({userIdx,placeIdx}) =>{
+        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(deleteBookmarkQuery);
+            return result;
+        }catch(err){
+            console.log('delete bookmark 에러', err);
+            throw err;
         }
     }
 }
