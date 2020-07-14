@@ -8,7 +8,6 @@ const myInfo = {
             const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx}) AS MYGROUPWAITUSER natural join USER_TB `;
             const groupResult = await pool.queryParam(getMyInfo);
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} GROUP BY groupIdx`);
-            console.log(placeResult);
         
             const resultMap = new Map();
             groupResult.forEach((group) => {
@@ -29,7 +28,7 @@ const myInfo = {
      
 
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getMyInfo ERROR : ', err);
             throw err;
         }
     },

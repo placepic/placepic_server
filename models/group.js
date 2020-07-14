@@ -21,7 +21,7 @@ const group = {
             const insertId = result.insertId;
             return insertId;
         } catch (err) {
-            console.log('signup ERROR : ', err);
+            console.log('apply ERROR : ', err);
             throw err;
         }
     },
@@ -34,7 +34,7 @@ const group = {
             const result = await pool.queryParam(getMygroupStatus);
             return result;
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('callMyGroupStatus ERROR : ', err);
             throw err;
         }
     },
@@ -48,7 +48,7 @@ const group = {
 
             return result.length;
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('checkGroupIdx ERROR : ', err);
             throw err;
         }
     },
@@ -64,7 +64,7 @@ const group = {
             const result = await pool.queryParam(getMygroupInfo);
             return result;
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('callMygroupInfo ERROR : ', err);
             throw err;
         }
     },
@@ -80,7 +80,7 @@ const group = {
             const result = await pool.queryParam(getMygroupUserCnt);
             return result;
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('callMygroupUserCnt ERROR : ', err);
             throw err;
         }    
     },
@@ -93,7 +93,7 @@ const group = {
             const result = await pool.queryParam(getMygroupInfo2);
             return result;
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('callMygroupPostCnt ERROR : ', err);
             throw err;
         }   
     },
@@ -104,7 +104,7 @@ const group = {
             const result = await pool.queryParam(countStatusWaitNum);
             return result;
         }catch(err) {
-            console.log('call status wait ERROR : ', err);
+            console.log('callStatusWait ERROR : ', err);
             throw err;
         }
     },
@@ -124,7 +124,7 @@ const group = {
             const result = await pool.queryParam(getMygroup);
             return result;
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getMyGroupList ERROR : ', err);
             throw err;
         }
     },
@@ -156,7 +156,7 @@ const group = {
             placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
             return [...resultMap.values()];
         } catch(e) {
-            console.log('get my apply group list error :',err);
+            console.log('getMyApplyGroupList error :',err);
             throw e;
         }
     },
@@ -169,7 +169,7 @@ const group = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getMyWaitGroupList ERROR : ', err);
             throw err;
         }
     },
@@ -183,7 +183,7 @@ const group = {
             return result[0].userCount;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getGroupUserCnt ERROR : ', err);
             throw err;
         }
     },
@@ -195,7 +195,7 @@ const group = {
             return result[0].postCount;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getGroupPostCnt ERROR : ', err);
             throw err;
         }
         
@@ -210,7 +210,7 @@ const group = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getMywaitUserList ERROR : ', err);
             throw err;
         }
     },
@@ -223,7 +223,7 @@ const group = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('editStatusApplyUser ERROR : ', err);
             throw err;
         }
     },
@@ -236,7 +236,7 @@ const group = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('deleteStatusApplyUser ERROR : ', err);
             throw err;
         }
     },
@@ -256,7 +256,6 @@ const group = {
         const query = `SELECT groupIdx FROM ${table} WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx} `;
         try{
             const result = await pool.queryParam(query);
-            console.log('bbbbb',result[0]);
             return result.length === 0; /// 이렇게 주면 결과값이 true,false로 나온다.
         }catch(e) {
             throw e;
@@ -265,8 +264,6 @@ const group = {
 
 
     getMyGroupRanking: async (groupIdx) => {
-
-        
         const query = `SELECT * FROM (SELECT * FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join placepic.USER_TB ;`
             try {
                 const groupResult = await pool.queryParam(query);
@@ -289,7 +286,6 @@ const group = {
                 });
                 
                 placeResult.forEach(place => resultMap.get(place.userIdx).postCount = place.postCount);
-                console.log([...resultMap.values()].length)
                 return [...resultMap.values()].sort((a, b) => {
                     if(b.postCount !== a.postCount)  return  b.postCount - a.postCount;
                     else  return a.userName < b.userName? -1 : a.userName > b.userName ? 1 : 0;
@@ -297,7 +293,7 @@ const group = {
                 
     
             } catch(e) {
-                console.log('get my apply group list error :',e);
+                console.log('getMyGroupRanking error :',e);
                 throw e;
             }
         },
