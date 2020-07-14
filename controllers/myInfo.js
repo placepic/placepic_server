@@ -12,7 +12,7 @@ exports.getMyInfo = async (req, res) => {
         const userIdx = req.userIdx;
         const groupIdx = req.params.groupIdx;
         const result = await myInfo.getMyInfo(userIdx,groupIdx);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, result));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, result[0]));
     } catch(e) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
     }

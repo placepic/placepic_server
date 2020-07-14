@@ -42,9 +42,13 @@ const user = {
             const hashedPassword = await crypto.pbkdf2Sync(password, result[0].salt, 1, 32, 'sha512').toString('hex');
 
             if(result[0].password === hashedPassword) return result;
-            else return false;
+
+            else{
+            return false;
+            }
         } catch(err){
-            console.log('signin ERROR : ', err);
+            
+            console.log('sigin in error : ', err);
             throw err;
         }
     },

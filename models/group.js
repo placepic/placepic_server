@@ -39,13 +39,10 @@ const group = {
         }
     },
 
-    //
     checkGroupIdx : async(id) => {
         const checkGroupIdx  = `SELECT * FROM GROUP_TB WHERE groupIdx = ${id}`;
         try{
             const result = await pool.queryParam(checkGroupIdx);
-           
-
             return result.length;
         }catch(err) {
             console.log('checkGroupIdx ERROR : ', err);
@@ -56,10 +53,6 @@ const group = {
     //그룹 정보(이름과 사진) 불러오기
     callMygroupInfo : async(groupIdx) => {
         const getMygroupInfo = `SELECT groupName , groupImage FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
-    
-        //const getMygroupInfo2 = `SELECT GROUP_TB.groupName, GROUP_TB.groupImage FROM GROUP_TB , GROUP_USER_RELATION_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} and GROUP_TB.groupIdx =  GROUP_USER_RELATION_TB.groupIdx `;
-
-    
         try{
             const result = await pool.queryParam(getMygroupInfo);
             return result;
@@ -68,14 +61,12 @@ const group = {
             throw err;
         }
     },
+
     // 그룹 총 유저 수 체크
     callMygroupUserCnt : async(userIdx) => {
-        // const getMygroupUserCnt = `SELECT COUNT(*) as countUser FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx} and state NOT IN(2)`;    
 
         const getMygroupUserCnt = `SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx} and state not  in(2) ` ;
-        // const getMygroupUserCnt = `SELECT COUNT`
-        
-        
+ 
         try{
             const result = await pool.queryParam(getMygroupUserCnt);
             return result;
@@ -86,8 +77,6 @@ const group = {
     },
     // 그룹 게시물 등록갯수 체크
     callMygroupPostCnt : async(userIdx) => {
-       // const getMygroupPostCnt =  `SELECT COUNT(*) as countPlace FROM PLACE_TB WHERE groupIdx = ${id}`;
-
         const getMygroupInfo2 = `SELECT COUNT(*) postCnt FROM  GROUP_USER_RELATION_TB, PLACE_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} GROUP BY GROUP_USER_RELATION_TB.groupIdx`
         try{
             const result = await pool.queryParam(getMygroupInfo2);
@@ -111,11 +100,6 @@ const group = {
 
     getMyGroupList : async(userIdx,queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
         let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
-        // let getNotIngroupList = `SELECT groupIdx, groupName, groupImage, memberCount, count(*) as placeCount FROM (SELECT * FROM
-        //     (SELECT groupIdx, count(*) as memberCount FROM GROUP_USER_RELATION_TB WHERE groupIdx NOT IN
-        //     (SELECT groupIdx FROM GROUP_USER_RELATION_TB WHERE userIdx= ${userIdx} ) Group by groupIdx) as GETGROUPINFO
-        //     natural join GROUP_TB
-        //     ) as GETPLACEINFO natural join PLACE_TB Group by groupIdx`;
         if(queryObject.filter === 'wait') 
             getMygroup += `WHERE MYRELATIONGROUP.state = 2`;
         else  
@@ -124,7 +108,7 @@ const group = {
             const result = await pool.queryParam(getMygroup);
             return result;
         }catch(err) {
-            console.log('getMyGroupList ERROR : ', err);
+            console.log('그룹들을 불러오지 못했습니다 getMyGroupList err. : ', err);
             throw err;
         }
     },
@@ -134,6 +118,7 @@ const group = {
         try {
             const groupResult = await pool.queryParam(query);
             if(_.isNil(groupResult)){
+                console.log("불러올 지원가능한 그룹이 없습니다.");
                 return groupResult; //groupResult 가 [] 일때.
             }
             const groupIdxs = groupResult.map(group => group.groupIdx);
@@ -156,7 +141,7 @@ const group = {
             placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
             return [...resultMap.values()];
         } catch(e) {
-            console.log('getMyApplyGroupList error :',err);
+            console.log('getMyApplyGroupList error(지원가능한 그룹목록을 불러오지 못했습니다.) :',err);
             throw e;
         }
     },
@@ -298,7 +283,7 @@ const group = {
             }
         },
 
-        
+    // 페이지네이션 
     // getMyGroupRanking: async (page,groupIdx) => {
 
     //     const limit = 3;

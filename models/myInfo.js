@@ -17,22 +17,14 @@ const myInfo = {
                     userImage : group.profileImageUrl,
                     state : group.state,
                     postCount : 0,
-
             });
             });
             placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
-            // console.log(resultMap);
-            // console.log('-----------------------------');
-            // console.log(placeResult);
-            return [...resultMap.values()];
-     
-
+            return [...resultMap.values()]; //객체를 풀어주고 {}를 다시 배열에 집어 넣는다
         }catch(err) {
-            console.log('getMyInfo ERROR : ', err);
+            console.log('마이페이지 정보를 불러오지 못했습니다.: ', err);
             throw err;
         }
     },
-
 }
-
 module.exports = myInfo;
