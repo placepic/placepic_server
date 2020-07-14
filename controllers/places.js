@@ -246,14 +246,7 @@ const placeController = {
     getOnePlace : async (req,res)=>{
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
-        console.log(req);
-        console.log('-------------');
-        console.log(req.body);
         try{
-            /**
-             * place 존재유무
-             * 해당 그룹에 
-             */
             const result = await placeDB.getOnePlace({userIdx, placeIdx});
             return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.READ_PLACES, result));
         }catch(err){
@@ -261,6 +254,12 @@ const placeController = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
     }
+    // deletePlace : async (req,res) =>{
+    //     const userIdx = req.userIdx;
+    //     try{
+
+    //     }
+    // }
 
 };
 
