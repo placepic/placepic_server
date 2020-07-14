@@ -25,7 +25,7 @@ const subway = {
         try{
             const query = `SELECT * FROM ${subwayTable} WHERE  subwayIdx = "${subwayIdx}"`;
             const subwayDto = await pool.queryParam(query);
-            return subwayDto;
+            return subwayDto[0];
         }catch(err){
             console.log('isMatchedStation error : ', err);
             throw err;
@@ -52,7 +52,6 @@ const subway = {
                     console.log('it:', it)
                     await pool.queryParamArr(addSubwayLine,[it,sortedDto[i].subwayIdx])
                 }
-                console.log('--------');
             }
             return sortedDto;
         }catch(err){

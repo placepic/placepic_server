@@ -269,26 +269,19 @@ const place = {
                 let placeIdx = addPlaceResult.insertId;
                 
                 for(let i = 0; i<imageUrl.length; i++){
-                    addPlaceImageResult.push(await conn.query(addPlaceImageQuery,[placeIdx, imageUrl[i]]));
+                    await conn.query(addPlaceImageQuery,[placeIdx, imageUrl[i]]);
                 }
             
                 for(let i = 0; i<tagIdxData.length; i++){
                     let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
-                    addPlaceTagRelationResult.push(tagData);
                 }
-                
-                console.log(subwayIdx);
-                if(Array.isArray(subwayIdx)){
-                    for(let i = 0; i<subwayIdx.length; i++){
+
+                if(subwayIdx !== undefined){
+                    for(let i in subwayIdx){
                         let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
-                        addPlaceSubwayRelationResult.push(subwayData);
-                    }
-                }else{
-                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx),parseInt(placeIdx)]);
-                    addPlaceSubwayRelationResult.push(subwayData);
+                    }                
                 }
-                
-                console.log('장소 추가 완료.');
+
             }).catch((err)=>{
                 console.log('장소 추가 오류! :',err)
                 throw err;
@@ -442,9 +435,7 @@ const place = {
                 }else{
                     retObj.placeInfo.push(tag[it].tagName)
                 }
-                console.log(tag[it].tagIsBasic);
             }
-            console.log(likeInteraction);
             writer[0].postCount = postCount[0].postCount; 
             retObj.uploader = writer[0];
             retObj.likeList = [];

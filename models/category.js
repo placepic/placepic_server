@@ -36,7 +36,6 @@ const category = {
     getOneCategory : (categoryIdx) =>{
         try{
             const oneCategoryDto = table.getOneCategory(categoryIdx);
-            console.log(oneCategoryDto);
             return oneCategoryDto;
         }catch(err){
             console.log('read one category data ERROR : '+err);
