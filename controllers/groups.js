@@ -89,9 +89,12 @@ exports.getMyGroupRanking = async (req, res) => {
     try {
         const userIdx = req.userIdx;
         const groupIdx = req.params.groupIdx;
+       
+        const page = req.query.page;
+
         const result = await Group.getMyGroupRanking(groupIdx);
-        console.log("승인대기 인원 리스트를 불러오는데 성공하였습니다.");
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, result));
+        const userCnt = await Group.getGroupUserCnt(groupIdx);
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYGROUPRANKING_SUCCESS, {userCnt : userCnt, userList : result}));
     } catch(e) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
     }

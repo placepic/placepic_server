@@ -85,5 +85,9 @@ module.exports = {
     EDIT_MYWAITUSERSTATE_SUCCESS: "내 그룹 대기유저 승인 성공",
     EDIT_MYWAITUSERSTATE_FAIL: "내 그룹 대기유저 승인 실패",
     DELETE_MYWAITUSER_SUCCESS: "내 그룹 대기유저 거절 성공",
-    DELETE_MYWAITUSER_FAIL: "내 그룹 대기유저 거절 실패"
+    DELETE_MYWAITUSER_FAIL: "내 그룹 대기유저 거절 실패",
+
+    //RANKING USER SUCCESS
+    CALL_MYGROUPRANKING_SUCCESS:"내 그룹 랭킹 불러오기 성공",
+
 };
