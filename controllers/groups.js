@@ -92,7 +92,7 @@ exports.getMyGroupRanking = async (req, res) => {
        
         const page = req.query.page;
 
-        const result = await Group.getMyGroupRanking(page,groupIdx);
+        const result = await Group.getMyGroupRanking(groupIdx);
         const userCnt = await Group.getGroupUserCnt(groupIdx);
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYGROUPRANKING_SUCCESS, {userCnt : userCnt, userList : result}));
     } catch(e) {
