@@ -12,7 +12,7 @@ const admin = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getMywaitUserList ERROR : ', err);
             throw err;
         }
     },
@@ -25,7 +25,7 @@ const admin = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('editStatusApplyUser ERROR : ', err);
             throw err;
         }
     },
@@ -38,7 +38,7 @@ const admin = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('deleteStatusApplyUser ERROR : ', err);
             throw err;
         }
     },
@@ -53,7 +53,7 @@ const admin = {
             return result;
     
         }catch(err) {
-            console.log('signup ERROR : ', err);
+            console.log('getMyInfo ERROR : ', err);
             throw err;
         }
     },
