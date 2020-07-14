@@ -276,14 +276,11 @@ const place = {
                     let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
                 }
 
-                if(subwayIdx !== undefined){
-                    for(let i in subwayIdx){
-                        let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
-                    }                
-                }
-
+                for(let i in subwayIdx){
+                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                }                
             }).catch((err)=>{
-                console.log('장소 추가 오류! :',err)
+                console.log('장소 추가 트랜잭션 오류! :',err)
                 throw err;
             })
         }catch(e){
