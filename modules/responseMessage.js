@@ -36,6 +36,7 @@ module.exports = {
     ALREADY_BOOKMARK : "이미 등록된 북마크",
     NO_BOOKMARK:"북마크가 없습니다.",
     DELETE_BOOKMARK:"북마크 삭제 성공",
+    READ_PLACES:"플레이스 조회 성공",
 
     // api
     SEARCH_NAVER_MAP: "네이버 맵 장소 조회 성공",

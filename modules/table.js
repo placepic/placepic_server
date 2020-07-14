@@ -16,6 +16,7 @@ const queryResult = {};
     queryResult.subwayLine = await pool.queryParam(`SELECT * FROM ${table.subwayLine}`);
     // queryResult.subwayAndLine = await pool.queryParam(`SELECT ${table.subway}.subwayIdx, ${table.subway}.subwayName, ${table.subwayLine}.subwayLineNumber FROM ${table.subway} LEFT JOIN ${table.subwayLine} ON ${table.subway}.subwayIdx = ${table.subwayLine}.subwayIdx`);
     queryResult.subwayAndLine = await pool.queryParam(`SELECT * FROM ${table.subway} NATURAL LEFT JOIN ${table.subwayLine};`);
+    queryResult.tagName = await pool.queryParam(`SELECT tagIdx, tagName FROM ${table.tag}`);
 })();
 
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
     getSubway: () => queryResult.subway,
     getOneCategory : (categoryIdx) => queryResult.category[parseInt(categoryIdx)-1],
     getSubwayJoinLine : () => queryResult.subwayAndLine,
+    getTagName : () => queryResult.tagName,
     getSubwayGroup: () => {
         return _(queryResult.subwayAndLine)
             .groupBy('subwayIdx')

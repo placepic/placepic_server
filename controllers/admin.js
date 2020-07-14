@@ -19,6 +19,7 @@ exports.getMyWaitUserList = async (req, res) => { // 내 그룹(관리자일때)
 
         //성공
         console.log("승인대기 인원 리스트를 불러오는데 성공하였습니다.");
+        console.log(waitUserList);
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, 
             waitUserList
         ));
