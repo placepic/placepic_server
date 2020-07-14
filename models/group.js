@@ -265,13 +265,15 @@ const group = {
 
 
     getMyGroupRanking: async (groupIdx) => {
-            const query = `SELECT * FROM (SELECT * FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join placepic.USER_TB;`
+
+        
+        const query = `SELECT * FROM (SELECT * FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join placepic.USER_TB ;`
             try {
                 const groupResult = await pool.queryParam(query);
                 if(_.isNil(groupResult)){
                     return groupResult; //groupResult 가 [] 일때.
                 }
-                const userIdxs = groupResult.map(group => group.userIdx);
+                const userIdxs = groupResult.map(group => group.userIdx); // => 뒤에 있는게 조건
                 const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx IN (${userIdxs.join(', ')}) GROUP BY userIdx`);
                 const resultMap = new Map();
                 groupResult.forEach((group) => {
@@ -293,8 +295,7 @@ const group = {
                     else  return a.userName < b.userName? -1 : a.userName > b.userName ? 1 : 0;
                 })
                 
-              
-              
+    
             } catch(e) {
                 console.log('get my apply group list error :',e);
                 throw e;
@@ -302,6 +303,46 @@ const group = {
         },
 
         
+    // getMyGroupRanking: async (groupIdx) => {
+
+        
+    //     const query = `SELECT userIdx,part,userName,profileImageUrl, count(*) postCount FROM(SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state not in (2)) AS MYGROUPWAITUSER natural join USER_TB) AS POSTCOUNT natural left join PLACE_TB group by userIdx ;`
+    //         try {
+    //             const groupResult = await pool.queryParam(query);
+    //             if(_.isNil(groupResult)){
+    //                 return groupResult; //groupResult 가 [] 일때.
+    //             }
+    //             const userIdxs = groupResult.map(group => group.userIdx); // => 뒤에 있는게 조건
+    //             //const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx IN (${userIdxs.join(', ')}) GROUP BY userIdx`);
+    //             const resultMap = new Map();
+    //             groupResult.forEach((group) => {
+    //                 resultMap.set(group.userIdx, { //key = group.userIdx, value = 객체
+    //                     groupIdx: group.groupIdx,
+    //                     userIdx: group.userIdx,
+    //                     userName: group.userName,
+    //                     profileImageUrl : group.profileImageUrl,
+    //                     state: group.state, 
+    //                     part: group.part,
+    //                     postCount: 0
+    //                 });
+    //             });
+            
+    //             groupResult.forEach(place => {
+    //                 console.log(place.postCount)
+    //                 resultMap.get(place.userIdx).postCount = place.postCount
+    //             });
+            
+    //             return [...resultMap.values()].sort((a, b) => {
+    //                 if(b.postCount !== a.postCount)  return  b.postCount - a.postCount;
+    //                 else  return a.userName < b.userName? -1 : a.userName > b.userName ? 1 : 0;
+    //             })
+                
+    
+    //         } catch(e) {
+    //             console.log('get my apply group list error :',e);
+    //             throw e;
+    //         }
+    //     },
         }
         
 
