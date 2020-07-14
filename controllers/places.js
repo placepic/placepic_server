@@ -58,15 +58,19 @@ const placeController = {
     },
     createPlace : async (req, res) =>{
         const userIdx = req.userIdx;
-        const {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
+        let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
         const imageFiles = req.files;
-
+        // 코드정리
+        subwayIdx = JSON.parse(subwayIdx);
+        tags = JSON.parse(tags);
+        infoTags = JSON.parse(infoTags);
+        
         console.log(req.body);
-
         if (imageFiles === undefined || imageFiles.length === 0) {
+            console.log('이미지 입력해주세요.');
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
         }
-
+        
         const imageUrl = imageFiles.map(img => img.location);
         try{
             if(!title || !address || !roadAddress || !mapx || !mapy || !placeReview || !categoryIdx || !groupIdx || !tags || !infoTags ||!imageUrl){
@@ -117,12 +121,16 @@ const placeController = {
             }
         
             //4. subway 유효성 검사
-            let isMatchedSubway = subwayIdx ? await subwayDB.isMatchedStation(subwayIdx) : null;
-            console.log(isMatchedSubway);
-            if(isMatchedSubway === undefined){
-                console.log("올바르지 않는 지하철 정보입니다.");
-                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
+            for(let it in subwayIdx){
+                console.log(subwayIdx[it]);
+                let isMatchedSubway = subwayIdx[it] ? await subwayDB.isMatchedStation(subwayIdx[it]) : null; 
+                console.log(isMatchedSubway);
+                if(isMatchedSubway === undefined){
+                    console.log("올바르지 않는 지하철 정보입니다.");
+                    return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
+                }   
             }
+            
 
             const placesResult = await placeDB.addPlace({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
             return await res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
