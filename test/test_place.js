@@ -35,14 +35,14 @@ describe("게시물 테스트 ->", function () {
                 done();
             });
     });
-
-    describe("게시물 업로드 테스트", function () {
-        it("게시물 업로드 성공", function (done) {
+    let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
+    describe("플레이스 게시물 업로드 테스트", function () {
+        it("플레이스  업로드 성공", function (done) {
             request(svr)
                 .post("/post")
                 .set('Authorization', token)
-                .field('url', 'http://techneedle.com/archives/37982')
-                .field('category', 'marketing')
+                .field('image', 'https://sopt26.s3.ap-northeast-2.amazonaws.com/1594543227287.png')
+                .field('address', '테스트address')
                 .field('postContent', '오늘은 영훈3세가 요리사')
                 .expect(200)
                 .end(function (err, res) {

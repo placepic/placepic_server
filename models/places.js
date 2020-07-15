@@ -454,14 +454,16 @@ const place = {
         const deleteTagQuery = `DELETE FROM PLACE_TAG_RELATION_TB WHERE placeIdx = ?`;
         const deleteSubwayQuery = `DELETE FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx = ?`;
         const deletePlaceQuery = `DELETE FROM PLACE_TB WHERE placeIdx = ? `;
+        const deleteLikeQuery = `DELETE FROM LIKE_TB WHERE placeIdx = ?`;
+        const deleteBookmarkQuery = `DELETE FROM BOOKMARK_TB WHERE placeIdx = ?`
         try{
             await pool.Transaction( async (conn)=>{
                 await conn.query(deleteImageQuery, placeIdx);
                 await conn.query(deleteTagQuery, placeIdx);
                 await conn.query(deleteSubwayQuery, placeIdx);
-                await conn.query(deletePlaceQuery, placeIdx)
-                //like
-                //bookmark
+                await conn.query(deletePlaceQuery, placeIdx);
+                await conn.query(deleteLikeQuery, placeIdx);
+                await conn.query(deleteBookmarkQuery, placeIdx);
             }).catch((err)=>{
                 console.log('장소 삭제 트랜잭션 오류');
                 throw err;
