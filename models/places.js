@@ -374,7 +374,7 @@ const place = {
         }
     },
     getOnePlace : async ({userIdx, placeIdx}) =>{
-        const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt FROM ${table} WHERE placeIdx =${placeIdx}`;
+        const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt, placeRoadAddress FROM ${table} WHERE placeIdx =${placeIdx}`;
         const subwayNameQuery = `SELECT * FROM ${subwayTB} WHERE subwayIdx IN (SELECT subwayIdx FROM ${table} as p LEFT JOIN ${subwayPlaceTB} as r on p.placeIdx=r.placeIdx WHERE p.placeIdx = ${placeIdx})`;
         const placeImageQuery = `SELECT * FROM ${placeImageTB} WHERE placeIdx = ${placeIdx}`;
         const tagQuery = `SELECT tagName, tagIsBasic FROM PLACE_TAG_RELATION_TB as p LEFT JOIN TAG_TB as t on p.tagIdx = t.tagIdx WHERE placeIdx = ${placeIdx}`;
