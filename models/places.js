@@ -276,14 +276,11 @@ const place = {
                     let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
                 }
 
-                if(subwayIdx !== undefined){
-                    for(let i in subwayIdx){
-                        let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
-                    }                
-                }
-
+                for(let i in subwayIdx){
+                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                }                
             }).catch((err)=>{
-                console.log('장소 추가 오류! :',err)
+                console.log('장소 추가 트랜잭션 오류! :',err)
                 throw err;
             })
         }catch(e){
@@ -376,11 +373,6 @@ const place = {
         }
     },
     getOnePlace : async ({userIdx, placeIdx}) =>{
-        /*
-            subway place RE tb
-            image place RE  place join
-            category join tag   join place
-        */
         const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt FROM ${table} WHERE placeIdx =${placeIdx}`;
         const subwayNameQuery = `SELECT * FROM ${subwayTB} WHERE subwayIdx IN (SELECT subwayIdx FROM ${table} as p LEFT JOIN ${subwayPlaceTB} as r on p.placeIdx=r.placeIdx WHERE p.placeIdx = ${placeIdx})`;
         const placeImageQuery = `SELECT * FROM ${placeImageTB} WHERE placeIdx = ${placeIdx}`;
@@ -429,6 +421,7 @@ const place = {
 
             retObj.keyword = [];
             retObj.placeInfo = [];
+
             for(let it in tag){
                 if(tag[it].tagIsBasic === 0){
                     retObj.keyword.push(tag[it].tagName);
@@ -448,6 +441,15 @@ const place = {
             throw err;
         }
     }
+    // deletePlace : async(placeIdx) =>{
+    //     /**
+    //      * image 삭제
+    //      * tag 삭제
+    //      * subway 삭제 
+    //      * place 삭제
+    //      */
+    //     const deleteImageQuery =
+    // }
     
 }
 
