@@ -390,7 +390,7 @@ const place = {
                                     FROM LIKE_TB as l
                                     LEFT JOIN (SELECT u.userIdx, u.userName, u.profileImageUrl, g.part FROM USER_TB as u 
                                     LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
-                                    WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = 60)) as u on l.userIdx = u.userIdx 
+                                    WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
                                     where placeIdx = ${placeIdx};`;
         try{
             let retObj = {};
