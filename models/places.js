@@ -392,6 +392,7 @@ const place = {
                                     LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
                                     WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
                                     where placeIdx = ${placeIdx};`;
+        const isMyPlaceQuery = `SELECT u.userIdx, p.placeIdx FROM USER_TB as u LEFT JOIN PLACE_TB as p on u.userIdx = p.userIdx WHERE u.userIdx = ${userIdx} and p.placeIdx = ${placeIdx}`;
         try{
             let retObj = {};
             const placeResult = await pool.queryParam(placeQuery);
@@ -405,6 +406,8 @@ const place = {
             const writer = await pool.queryParam(userQuery);
             const postCount = await pool.queryParam(postQuery);
             const likeInteraction = await pool.queryParam(getLikeListQuery);
+            const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
+            console.log(!_.isNil(isMyPlaceResult[0]))
 
             retObj = {...placeResult[0]};
             retObj.isLiked = isLikedResult.length ? "true" : "false";
@@ -433,6 +436,7 @@ const place = {
                 }
             }
             writer[0].postCount = postCount[0].postCount; 
+            writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]);
             retObj.uploader = writer[0];
             retObj.likeList = [];
             for(let it in likeInteraction){
