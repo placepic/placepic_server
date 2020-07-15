@@ -36,7 +36,7 @@ exports.signup = async (req, res) => {
         const idx = await User.signup(email,hashedPassword,salt,userName,userBirth,gender);
         
         if (idx === -1)
-            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, responseMessage.DB_ERROR));
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
 
         //성공
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATED_USER));
