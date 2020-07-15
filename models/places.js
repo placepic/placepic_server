@@ -410,8 +410,8 @@ const place = {
             console.log(!_.isNil(isMyPlaceResult[0]))
 
             retObj = {...placeResult[0]};
-            retObj.isLiked = isLikedResult.length ? "true" : "false";
-            retObj.isBookmarked = isBookmarkedResult.length ? "true" : "false";
+            retObj.isLiked = !_.isNil(isLikedResult[0]);
+            retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
             retObj.likeCount = likeCount[0].likeCnt;
             retObj.bookmarkCount = bookmarkCount[0].bookmarkCnt;
 
