@@ -20,7 +20,7 @@ describe("사용자 및 그룹 계정 테스트 ->", async function () {
         randomEmail = await randomCode.randCode();
     });
 
-    describe("회원가입 테스트", function () {
+    describe("회원가입 테스트", function () { //회원가입 테스트시작
 
         it("회원가입 성공", function (done) {
             //새로운 회원가입 사용자 정보
