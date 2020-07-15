@@ -88,8 +88,8 @@ exports.getMyGroupRanking = async (req, res) => {
     try {
         const userIdx = req.userIdx;
         const groupIdx = req.params.groupIdx;
-       
         const page = req.query.page;
+        
 
         const result = await Group.getMyGroupRanking(groupIdx);
         const userCnt = await Group.getGroupUserCnt(groupIdx);
