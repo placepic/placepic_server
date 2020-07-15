@@ -407,13 +407,13 @@ const place = {
             const postCount = await pool.queryParam(postQuery);
             const likeInteraction = await pool.queryParam(getLikeListQuery);
             const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
-            console.log(!_.isNil(isMyPlaceResult[0]))
 
             retObj = {...placeResult[0]};
             retObj.isLiked = !_.isNil(isLikedResult[0]);
             retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
             retObj.likeCount = likeCount[0].likeCnt;
             retObj.bookmarkCount = bookmarkCount[0].bookmarkCnt;
+            console.log(placeResult[0]);
 
             retObj.subway = [];
             for(let it in subwayName){
@@ -438,6 +438,7 @@ const place = {
             writer[0].postCount = postCount[0].postCount; 
             writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]);
             retObj.uploader = writer[0];
+            retObj.mobileNaverMapLink = 'https://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1'
             retObj.likeList = [];
             for(let it in likeInteraction){
                 retObj.likeList.push(likeInteraction[it])
