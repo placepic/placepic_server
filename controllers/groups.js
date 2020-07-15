@@ -62,7 +62,6 @@ exports.getMyGroupList = async (req, res) => {
             myGroupList[i].postCount = myGroupPostCnt;
         }
 
-        console.log("그룹을 성공적으로 불러왔습니다.")
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST, 
             myGroupList
         //    myGroupList: myGroupList.filter(group => group.groupIdx !== null)
