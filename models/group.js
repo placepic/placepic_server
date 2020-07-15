@@ -347,18 +347,22 @@ const group = {
                 let rank = 0;
                 for(let i =0; i < groupResult.length; i++) {
                     if(groupResult[i].postCount === 0){
-                    rank = '-';
-                    [...resultMap.values()][i].rank = rank;
-                }
+                        rank = '-';
+                        [...resultMap.values()][i].rank = rank;
+                    }
                     //console.log(groupResult[i].postCount)
                     else if(i === groupResult.length - 1){
-                    [...resultMap.values()][i].rank = rank;
+                        [...resultMap.values()][i].rank = rank;
                         break;
                     } 
-                    else if(groupResult[i].postCount === groupResult[i+1].postCount){
+                    else if(groupResult[i].postCount >= groupResult[i+1].postCount){
+                    if(i == 0){
+                        rank = rank + 1;   // 2 와 3이 같다 1>2
+                        [...resultMap.values()][i].rank = rank;
+                    }
                     // 전인덱스가 3 다음인덱스가 2  그리고 전인덱스가 2 다음인덱스가 2
-                    if(groupResult[i-1].postCount > groupResult[i].postCount){
-                        rank = rank + 1;
+                    else if(groupResult[i-1].postCount > groupResult[i].postCount){
+                        rank = rank + 1;   // 2 와 3이 같다 1>2
                         [...resultMap.values()][i].rank = rank;
                     }
                     else
@@ -373,7 +377,7 @@ const group = {
                 }
                 }
                     
-            //   console.log([...resultMap.values()][0]);
+            //   console.log([...resultMap.values() ][0]);
 
             return [...resultMap.values()];
             
