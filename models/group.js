@@ -319,14 +319,14 @@ const group = {
 
         const query = `SELECT userIdx, userName,part,profileImageUrl,count(placeName) as postCount FROM
         (SELECT * FROM 
-        (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = 1 and state not in (2))
+        (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state not in (2))
         AS MYGROUPWAITUSER natural join USER_TB)
         AS POSTCOUNT natural left join PLACE_TB group by userIdx order by postCount DESC,userName`;
             try {
                 const groupResult = await pool.queryParam(query);
                 if(_.isNil(groupResult)){
                     return groupResult; //groupResult 가 [] 일때.
-                }
+                }   
                 const resultMap = new Map();
                 groupResult.forEach((group) => {
                     resultMap.set(group.userIdx, {
