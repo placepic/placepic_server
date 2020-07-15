@@ -383,6 +383,79 @@ const group = {
                 throw e;
             }
         },
+
+
+
+
+        // getMyGroupRanking: async (page,groupIdx) => {
+        //     const limit = 3;
+        //     const offset = (page -1) * limit
+        //     const query = `SELECT userIdx, userName,part,profileImageUrl,count(placeName) as postCount FROM
+        //     (SELECT * FROM 
+        //     (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state not in (2))
+        //     AS MYGROUPWAITUSER natural join USER_TB)
+        //     AS POSTCOUNT natural left join PLACE_TB group by userIdx order by postCount DESC,userName limit ${limit} offset ${offset}`;
+        //         try {
+        //             const groupResult = await pool.queryParam(query);
+        //             if(_.isNil(groupResult)){
+        //                 return groupResult; //groupResult 가 [] 일때.
+        //             }   
+        //             const resultMap = new Map();
+        //             groupResult.forEach((group) => {
+        //                 resultMap.set(group.userIdx, {
+        //                     userName: group.userName,
+        //                     profileImageUrl : group.profileImageUrl,
+        //                     part: group.part,
+        //                     postCount: group.postCount,
+        //                     rank: 0
+        //                 });
+        //                 });
+                    
+                        
+        //             // groupResult.forEach(group => { 
+        //             //     let rank = 0;    
+        //             //     if(groupResult.postCount === )
+        //             //     resultMap.get(group.userIdx).postCount = group.postCount}); 
+        //             console.log(groupResult);
+        //             let rank = 0;
+        //             for(let i =0; i < groupResult.length; i++) {
+        //                 if(groupResult[i].postCount === 0){
+        //                 rank = '-';
+        //                 [...resultMap.values()][i].rank = rank;
+        //                 }
+        //                 //console.log(groupResult[i].postCount)
+        //                 else if(i === groupResult.length - 1){
+        //                 [...resultMap.values()][i].rank = rank;
+        //                     break;
+        //                 } 
+        //                 else if(groupResult[i].postCount === groupResult[i+1].postCount){
+        //                 // 전인덱스가 3 다음인덱스가 2  그리고 전인덱스가 2 다음인덱스가 2
+        //                 if(groupResult[i-1].postCount > groupResult[i].postCount){
+        //                     rank = rank + 1;
+        //                     [...resultMap.values()][i].rank = rank;
+        //                 }
+        //                 else
+        //                     [...resultMap.values()][i].rank = rank;
+    
+        //                 }
+        //                    //placeResult.forEach(place => resultMap.get(place.userIdx).postCount = place.postCount);
+        //                 else{
+        //                 rank = rank + 1;
+        //                 [...resultMap.values()][i].rank = rank;
+                        
+        //             }
+        //             }
+                        
+        //         //   console.log([...resultMap.values()][0]);
+    
+        //         return [...resultMap.values()];
+                
+        
+        //         } catch(e) {
+        //             console.log('get my apply group list error :',e);
+        //             throw e;
+        //         }
+        //     },
         }
     
 module.exports = group;
