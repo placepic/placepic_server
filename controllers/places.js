@@ -60,12 +60,12 @@ const placeController = {
         const userIdx = req.userIdx;
         let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
         const imageFiles = req.files;
-        // 코드정리
-        subwayIdx = JSON.parse(subwayIdx);
-        tags = JSON.parse(tags);
-        infoTags = JSON.parse(infoTags);
-        
         console.log(req.body);
+        // 코드정리
+        subwayIdx = typeof(subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
+        tags = typeof(tags) === "object" ? tags : JSON.parse(tags);
+        infoTags = typeof(infoTags) === "object" ? infoTags : JSON.parse(infoTags);
+        
         if (imageFiles === undefined || imageFiles.length === 0) {
             console.log('이미지 입력해주세요.');
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
@@ -131,7 +131,6 @@ const placeController = {
                 }   
             }
             
-
             const placesResult = await placeDB.addPlace({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl});
             return await res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
         }catch(e){
@@ -261,13 +260,25 @@ const placeController = {
             console.log('place 생성 에러 ',err);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
+    },
+    deletePlace : async (req,res) =>{
+        const userIdx = req.userIdx;
+        const placeIdx = req.params.placeIdx;
+        try{
+            /*
+            const placeIdCheck = await placeDB.isMyPlacePost(userIdx,placeIdx);
+            if(_.isNil){
+                console.log('삭제 권한이 없는 아이디.');
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_ACCESS_PLACE));
+            }
+            */
+            const result = await placeDB.deletePlace(placeIdx);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.DELETE_PLACE));
+        }catch(err){
+            console.log('place 삭제 에러', err);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }
     }
-    // deletePlace : async (req,res) =>{
-    //     const userIdx = req.userIdx;
-    //     try{
-
-    //     }
-    // }
 
 };
 

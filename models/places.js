@@ -262,6 +262,7 @@ const place = {
         let addPlaceTagRelationResult = [];
         let addPlaceSubwayRelationResult = [];
         let tagIdxData = [...tags, ...infoTags];
+        console.log(tagIdxData)
         try{
             await pool.Transaction( async (conn) =>{
                 let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
@@ -381,7 +382,9 @@ const place = {
         const isLikedQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         const likeCountQuery = `SELECT COUNT(*) as likeCnt FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         const bookmarkCountQuery = `SELECT COUNT(*) as bookmarkCnt FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
-        const userQuery = `SELECT u.userName, u.profileImageUrl, g.part FROM USER_TB as u LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx});`
+        const userQuery = `SELECT u.userName, u.profileImageUrl, g.part 
+                        FROM USER_TB as u LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
+                        WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and u.userIdx = (SELECT userIdx FROM PLACE_TB WHERE placeIdx =${placeIdx});;`
         const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`
         const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
                                     FROM LIKE_TB as l
@@ -440,17 +443,39 @@ const place = {
             console.log('get one place err', err);
             throw err;
         }
+    },
+    deletePlace : async(placeIdx) =>{
+        const deleteImageQuery = `DELETE FROM PLACEIMAGE_TB WHERE placeIdx = ?`;
+        const deleteTagQuery = `DELETE FROM PLACE_TAG_RELATION_TB WHERE placeIdx = ?`;
+        const deleteSubwayQuery = `DELETE FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx = ?`;
+        const deletePlaceQuery = `DELETE FROM PLACE_TB WHERE placeIdx = ? `;
+        try{
+            await pool.Transaction( async (conn)=>{
+                await conn.query(deleteImageQuery, placeIdx);
+                await conn.query(deleteTagQuery, placeIdx);
+                await conn.query(deleteSubwayQuery, placeIdx);
+                await conn.query(deletePlaceQuery, placeIdx)
+                //like
+                //bookmark
+            }).catch((err)=>{
+                console.log('장소 삭제 트랜잭션 오류');
+                throw err;
+            })
+        }catch(err){
+            console.log('delete Place error',err);
+            throw(err);
+        }
+    },
+    isMyPlacePost : async(userIdx, placeIdx) =>{
+        const query = `SELECT * FROM PLACE_TB WHERE placeIdx = ${placeIdx} and userIdx = ${userIdx}`;
+        try{
+            const result = await pool.queryParam(query);
+            return result[0];
+        }catch(err){
+            console.log('isMyPlacePost err', err);
+            throw err;
+        }
     }
-    // deletePlace : async(placeIdx) =>{
-    //     /**
-    //      * image 삭제
-    //      * tag 삭제
-    //      * subway 삭제 
-    //      * place 삭제
-    //      */
-    //     const deleteImageQuery =
-    // }
-    
 }
 
 module.exports = place;
