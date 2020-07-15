@@ -346,9 +346,12 @@ const group = {
 
                 let rank = 0;
                 for(let i =0; i < groupResult.length; i++) {
-                    
+                    if(groupResult[i].postCount === 0){
+                    rank = '-';
+                    [...resultMap.values()][i].rank = rank;
+                }
                     //console.log(groupResult[i].postCount)
-                    if(i === groupResult.length - 1){
+                    else if(i === groupResult.length - 1){
                     [...resultMap.values()][i].rank = rank;
                         break;
                     } 
@@ -366,10 +369,11 @@ const group = {
                     else{
                     rank = rank + 1;
                     [...resultMap.values()][i].rank = rank;
+                    
                 }
                 }
                     
-            console.log([...resultMap.values()][0]);
+            //   console.log([...resultMap.values()][0]);
 
             return [...resultMap.values()];
             
