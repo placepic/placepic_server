@@ -15,4 +15,5 @@ router.get('/:placeIdx', authUtils.checkToken, controller.getOnePlace);
 router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);
 router.get('/search/group/:groupIdx', authUtils.checkToken, controller.getPlacesByQuery);
 router.post('/', authUtils.checkToken, uploads.array('image'), controller.createPlace);
+router.delete('/:placeIdx',authUtils.checkToken, controller.deletePlace);
 module.exports = router;
