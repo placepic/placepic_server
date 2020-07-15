@@ -315,7 +315,7 @@ const group = {
     //     }
 
 
-    getMyGroupRanking: async (page,groupIdx) => {
+    getMyGroupRanking: async (groupIdx) => {
 
         const query = `SELECT userIdx, userName,part,profileImageUrl,count(placeName) as postCount FROM
         (SELECT * FROM 
