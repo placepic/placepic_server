@@ -248,40 +248,40 @@ const group = {
         },
 
 
-    getMyGroupRanking: async (groupIdx) => {
-        const query = `SELECT * FROM (SELECT * FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join placepic.USER_TB ;`
-            try {
-                const groupResult = await pool.queryParam(query);
-                if(_.isNil(groupResult)){
-                    return groupResult; //groupResult 가 [] 일때.
-                }
-                const userIdxs = groupResult.map(group => group.userIdx); // => 뒤에 있는게 조건
-                const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx IN (${userIdxs.join(', ')}) GROUP BY userIdx`);
-                const resultMap = new Map();
-                groupResult.forEach((group) => {
-                    resultMap.set(group.userIdx, { //key = group.userIdx, value = 객체
-                        groupIdx: group.groupIdx,
-                        userIdx: group.userIdx,
-                        userName: group.userName,
-                        profileImageUrl : group.profileImageUrl,
-                        state: group.state, 
-                        part: group.part,
-                        postCount: 0,
-                    });
-                });
-                
-                placeResult.forEach(place => resultMap.get(place.userIdx).postCount = place.postCount);
-                return [...resultMap.values()].sort((a, b) => {
-                    if(b.postCount !== a.postCount)  return  b.postCount - a.postCount;
-                    else  return a.userName < b.userName? -1 : a.userName > b.userName ? 1 : 0;
-                })
+    // getMyGroupRanking: async (groupIdx) => {
+    //     const query = `SELECT * FROM (SELECT * FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join placepic.USER_TB ;`
+    //         try {
+    //             const groupResult = await pool.queryParam(query);
+    //             if(_.isNil(groupResult)){
+    //                 return groupResult; //groupResult 가 [] 일때.
+    //             }
+    //             const userIdxs = groupResult.map(group => group.userIdx); // => 뒤에 있는게 조건
+    //             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx IN (${userIdxs.join(', ')}) GROUP BY userIdx`);
+    //             const resultMap = new Map();
+    //             groupResult.forEach((group) => {
+    //                 resultMap.set(group.userIdx, { //key = group.userIdx, value = 객체
+    //                     groupIdx: group.groupIdx,
+    //                     userIdx: group.userIdx,
+    //                     userName: group.userName,
+    //                     profileImageUrl : group.profileImageUrl,
+    //                     state: group.state, 
+    //                     part: group.part,
+    //                     postCount: 0,
+    //                 });
+    //             });
+
+    //             placeResult.forEach(place => resultMap.get(place.userIdx).postCount = place.postCount);
+    //             return [...resultMap.values()].sort((a, b) => {
+    //                 if(b.postCount !== a.postCount)  return  b.postCount - a.postCount;
+    //                 else  return a.userName < b.userName? -1 : a.userName > b.userName ? 1 : 0;
+    //             })
                 
     
-            } catch(e) {
-                console.log('getMyGroupRanking error :',e);
-                throw e;
-            }
-        },
+    //         } catch(e) {
+    //             console.log('getMyGroupRanking error :',e);
+    //             throw e;
+    //         }
+    //     },
 
     // 페이지네이션 
     // getMyGroupRanking: async (page,groupIdx) => {
@@ -313,7 +313,74 @@ const group = {
     //         }
     //     },
     //     }
-    }
+
+
+    getMyGroupRanking: async (page,groupIdx) => {
+
+        const query = `SELECT userIdx, userName,part,profileImageUrl,count(placeName) as postCount FROM
+        (SELECT * FROM 
+        (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = 1 and state not in (2))
+        AS MYGROUPWAITUSER natural join USER_TB)
+        AS POSTCOUNT natural left join PLACE_TB group by userIdx order by postCount DESC,userName`;
+            try {
+                const groupResult = await pool.queryParam(query);
+                if(_.isNil(groupResult)){
+                    return groupResult; //groupResult 가 [] 일때.
+                }
+                const resultMap = new Map();
+                groupResult.forEach((group) => {
+                    resultMap.set(group.userIdx, {
+                        userName: group.userName,
+                        profileImageUrl : group.profileImageUrl,
+                        part: group.part,
+                        postCount: group.postCount,
+                        rank: 0
+                    });
+                    });
+                
+
+                // groupResult.forEach(group => { 
+                //     let rank = 0;    
+                //     if(groupResult.postCount === )
+                //     resultMap.get(group.userIdx).postCount = group.postCount}); 
+
+                let rank = 0;
+                for(let i =0; i < groupResult.length; i++) {
+                    
+                    //console.log(groupResult[i].postCount)
+                    if(i === groupResult.length - 1){
+                    [...resultMap.values()][i].rank = rank;
+                        break;
+                    } 
+                    else if(groupResult[i].postCount === groupResult[i+1].postCount){
+                    // 전인덱스가 3 다음인덱스가 2  그리고 전인덱스가 2 다음인덱스가 2
+                    if(groupResult[i-1].postCount > groupResult[i].postCount){
+                        rank = rank + 1;
+                        [...resultMap.values()][i].rank = rank;
+                    }
+                    else
+                        [...resultMap.values()][i].rank = rank;
+
+                    }
+                       //placeResult.forEach(place => resultMap.get(place.userIdx).postCount = place.postCount);
+                    else{
+                    rank = rank + 1;
+                    [...resultMap.values()][i].rank = rank;
+                }
+                }
+                    
+            console.log([...resultMap.values()][0]);
+
+            return [...resultMap.values()];
+            
+    
+            } catch(e) {
+                console.log('get my apply group list error :',e);
+                throw e;
+            }
+        },
+        }
+    
 module.exports = group;
 
 
