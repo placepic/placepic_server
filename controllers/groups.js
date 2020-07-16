@@ -2,8 +2,6 @@ let responseMessage = require('../modules/responseMessage');
 let statusCode = require('../modules/statusCode');
 let util = require('../modules/util');
 let Group = require('../models/group');
-const crypto = require('crypto');
-const jwt = require('../modules/jwt');
 
 exports.apply = async (req, res) => {
     const groupIdx = req.params.groupIdx;
@@ -27,7 +25,6 @@ exports.apply = async (req, res) => {
         }
         
         //2. 이미 신청한 그룹인지
-      
         if(!(await Group.checkAlreadyGroup(userIdx,groupIdx))) {
             console.log("이미 가입된 그룹입니다.");
             return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_GROUP_USER));
@@ -43,7 +40,6 @@ exports.apply = async (req, res) => {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
     }
 };
-
 
 exports.getMyGroupList = async (req, res) => {
 
@@ -70,7 +66,6 @@ exports.getMyGroupList = async (req, res) => {
     } catch (err) {
         console.log("그룹을 불러오지 못했습니다.")
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
-        throw err;
     }
 };
 
@@ -83,14 +78,12 @@ exports.getMyApplyGroupList = async (req, res) => {
     }
 };
 
-
 exports.getMyGroupRanking = async (req, res) => {
     try {
         const userIdx = req.userIdx;
         const groupIdx = req.params.groupIdx;
         const page = req.query.page;
-        
-
+    
         const result = await Group.getMyGroupRanking(groupIdx);
         const userCnt = await Group.getGroupUserCnt(groupIdx);
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYGROUPRANKING_SUCCESS, {userCnt : userCnt, userList : result}));

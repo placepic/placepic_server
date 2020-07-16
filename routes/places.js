@@ -10,10 +10,9 @@ router.post('/bookmark', authUtils.checkToken, controller.addBookmark);
 router.delete('/bookmark/:placeIdx', authUtils.checkToken, controller.deleteBookmark)
 router.delete('/like/:placeIdx', authUtils.checkToken, controller.deleteLike);
 router.get('/like/:placeIdx', authUtils.checkToken, controller.getLikeList);
-//router.get('/:placeIdx', authUtils.checkToken, controller.getPlace);
 router.get('/:placeIdx', authUtils.checkToken, controller.getOnePlace);
 router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);
 router.get('/search/group/:groupIdx', authUtils.checkToken, controller.getPlacesByQuery);
-router.post('/', authUtils.checkToken, uploads.array('image'), controller.createPlace);
+router.post('/', authUtils.checkToken, uploads.array('image'), controller.addPlace);
 router.delete('/:placeIdx',authUtils.checkToken, controller.deletePlace);
 module.exports = router;

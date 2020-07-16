@@ -20,14 +20,11 @@ const place = {
         const addPlaceTagQuery = `INSERT INTO ${placeTagTB} (placeIdx, tagIdx) VALUES (?,?)`;
         const addPlaceSubwayQuery = `INSERT INTO ${subwayPlaceTB} (subwayIdx, placeIdx) VALUES (?,?)`;
         const getPlaceIdxQuery = `SELECT placeIdx FROM ${table} where groupIdx =${groupIdx} and placeMapX = ${mapx} and placeMapY = ${mapy}`;
-        let addPlaceImageResult = [];
-        let addPlaceTagRelationResult = [];
-        let addPlaceSubwayRelationResult = [];
         let tagIdxData = [...tags, ...infoTags];
         try{
             await pool.Transaction( async (conn) =>{
                 let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
-                let getPlaceIdsResult = await conn.query(getPlaceIdxQuery,[groupIdx,mapx,mapy]);
+                await conn.query(getPlaceIdxQuery,[groupIdx,mapx,mapy]);
                 let placeIdx = addPlaceResult.insertId;
                 
                 for(let i = 0; i<imageUrl.length; i++){
@@ -35,11 +32,11 @@ const place = {
                 }
             
                 for(let i = 0; i<tagIdxData.length; i++){
-                    let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
+                    await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
                 }
 
                 for(let i in subwayIdx){
-                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                    await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
                 }                
             }).catch((err)=>{
                 console.log('장소 추가 트랜잭션 오류! :',err)
