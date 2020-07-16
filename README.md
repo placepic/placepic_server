@@ -93,9 +93,9 @@ master
 
 ## 🤝Team Role
   
-> Or Contributors/People
+> 💻 place pig's server developer 
 
-| <a href="https://github.com/dk-master" target="_blank">**김동관**</a> | <a href="https://github.com/dudgns3tp" target="_blank">**최영훈**</a> | <a href="https://github.com/junyup0319" target="_blank">**홍준엽**</a> |
+| **🙋 [김동관](https://github.com/dk-master)** | **🙋‍ [최영훈](https://github.com/dudgns3tp)** | **🙋‍ [홍준엽](https://github.com/junyup0319)** |
 | :---: |:---:| :---:|
 | [![FVCproductions](https://avatars3.githubusercontent.com/u/61861809?s=460&u=f834deb744174671e44ea2b579f8bfe22e280de2&v=4)]()    | [![FVCproductions](https://avatars1.githubusercontent.com/u/40652160?s=460&u=9cd767fc9ae0adc0948fec0fb7c4fe126a64ffae&v=4)]() | [![FVCproductions](https://avatars2.githubusercontent.com/u/39546874?s=460&u=049590b1c31828d01c5555b4c34d1c414a0711ba&v=4)]()  |
 | 서버 개발자 | 서버 리드 개발자| 서버 개발자|
@@ -130,11 +130,3 @@ master
 ![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
 
 <br />
-
-## 💻 place pig's server developer 
-
-### **🙋 [김동관](https://github.com/dk-master)**
-
-### **🙋‍ [최영훈](https://github.com/dudgns3tp)**
-
-### **🙋‍ [홍준엽](https://github.com/junyup0319)**
