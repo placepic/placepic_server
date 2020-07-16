@@ -356,10 +356,11 @@ const group = {
                         break;
                     } 
                     else if(groupResult[i].postCount >= groupResult[i+1].postCount){
-                            if(i == 0){
-                                rank = rank + 1;   // 2 와 3이 같다 1>2
-                                [...resultMap.values()][i].rank = rank;
-                        }
+                    if(i === 0){
+                        rank = rank + 1;   // 2 와 3이 같다 1>2
+                        [...resultMap.values()][i].rank = rank;
+                    }
+                        
                     // 전인덱스가 3 다음인덱스가 2  그리고 전인덱스가 2 다음인덱스가 2
                             else if((groupResult[i-1].postCount > groupResult[i].postCount)){
                                 if(i === 1){
