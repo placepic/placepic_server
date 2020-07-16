@@ -91,7 +91,7 @@ const placeController = {
     },
     addLike : async (req, res)=>{
         const userIdx = req.userIdx;
-        
+        const placeIdx =req.body.placeIdx
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
