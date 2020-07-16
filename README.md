@@ -2,9 +2,9 @@
 # 🐷 placepic :Cutty Kitty Server
 <img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
----
+<br />
 
-**![piccrevv_bedge](https://img.shields.io/badge/placepic-piccrevv-ff7adc)**
+**![piccrevv_bedge](https://img.shields.io/badge/placepic-piccrevv-F65C6C)**
 ![npm_bedge](https://img.shields.io/badge/npm-6.13.7-blue)
 ![node_bedge](https://img.shields.io/badge/node-13.11.0-brightgreen)
 
@@ -32,7 +32,7 @@
 
   * Interaction - 상호작용, 소통할 수 있는 공간
 
----
+<br />
 
 ## ✍ Core value
 
@@ -45,7 +45,7 @@
 * 린 스타트업 정신
 * PRIDE✨
 
----
+<br />
 
 ## 🖥 Code convention
  
@@ -74,7 +74,7 @@ master
 [Docs] 문서
 ```
 
----
+<br />
 
 ## 👪 Communication
 
@@ -89,7 +89,8 @@ master
 ### SLACK
 
 
----
+<br />
+
 ## 🤝Team Role
   
 > Or Contributors/People
@@ -98,65 +99,44 @@ master
 | :---: |:---:| :---:|
 | [![FVCproductions](https://avatars3.githubusercontent.com/u/61861809?s=460&u=f834deb744174671e44ea2b579f8bfe22e280de2&v=4)]()    | [![FVCproductions](https://avatars1.githubusercontent.com/u/40652160?s=460&u=9cd767fc9ae0adc0948fec0fb7c4fe126a64ffae&v=4)]() | [![FVCproductions](https://avatars2.githubusercontent.com/u/39546874?s=460&u=049590b1c31828d01c5555b4c34d1c414a0711ba&v=4)]()  |
 | 서버 개발자 | 서버 리드 개발자| 서버 개발자|
+|  **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** | **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** | **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** |
+|rdb설계|rdb설계|rdb설계|
+|배포 환경 구축|배포 환경 구축|배포 환경 구축|
+|  회원가입, 로그인 |place 업로드 | 장소검색 필터링 |
+|  그룹 인증 관리   |지하철 API 가공  | 장소 검색 API |
+| 그룹 리스트 조회  |네이버 지도 API|  장소 검색 Sorting|
+| **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-363636)**| **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-363636)**| **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-363636)**|
+|마이페이지 & 랭킹|좋아요 & 북마크 Interaction|마이페이지 & 랭킹|
 
- ### 공통 
-  - RDB 설계
-  - 배포환경 구축
-  
- ### 김동관 
- 
- **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-ff7adc)**
 
- - 회원가입, 로그인 
- - 그룹 인증 관리   
- - 그룹신청 승인 관리 
- - 그룹 리스트 조회 
  
   
- ### 최영훈
- 
- **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-ff7adc)**
- 
- - place 업로드 
- - 지하철 API 가공 
- - 네이버 지도 API 
- 
- **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-ff7adc)**
- 
- - 좋아요 API
- - 북마크 API 
- - Interaction API
- 
- ### 홍준엽
- 
- **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-ff7adc)**
- 
- - 장소검색 필터링 
- - 장소 검색 API 
-
-
-
----
+<br />
 
 ## ✔ Main Function
-- Upload
-    - 네이버 지도 API를 이용하여 사용자가 등록해놓은 좌표들을 기반으로 장소 정보 제공.
+- Map
+    - 네이버 지도 API를 이용하여 사용자에게 신뢰성 있는 정보를 제공.
     
 - Search
-    - 명확한 카테고리, keyWord, 장소 정보를 통해 사용자가 원하는 데이터를 **filltering**, **sorting** 
+    - 카테고리, keyword, 장소 정보, 지하철역명을 통해 사용자가 원하는 데이터를 **filltering**, **sorting** 
+    
+- Interaction
+   - 좋아요, 북마크, 랭킹 기능을 통해 그룹간 Interaction
 
----
+## 
+
+<br />
 
 ## 📖 Dependencies 
 
 ![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
 
----
+<br />
 
 ## 🔥 ERD
-![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_final.png?raw=true)
+![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
 
----
+<br />
 
 ## 💻 place pig's server developer 
 
