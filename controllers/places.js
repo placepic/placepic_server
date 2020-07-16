@@ -138,9 +138,7 @@ const placeController = {
     },
     addLike : async (req, res)=>{
         const userIdx = req.userIdx;
-        const {placeIdx} = req.body;
         
-        //placeIdx, 유효성 검사 userIdx, placeIdx 받아서 검색
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
@@ -163,7 +161,6 @@ const placeController = {
     deleteLike : async (req,res) =>{
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
-
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
