@@ -347,7 +347,7 @@ const group = {
                 let rank = 0;
                 for(let i =0; i < groupResult.length; i++) {
                     if(groupResult[i].postCount === 0){
-                        rank = '-';
+                        rank = -1;
                         [...resultMap.values()][i].rank = rank;
                     }
                     //console.log(groupResult[i].postCount)

@@ -101,7 +101,7 @@ master
  **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-ff7adc)**
 
  - 회원가입, 로그인 
- - 그룹 인증 관리  
+ - 그룹 인증 관리   
  - 그룹신청 승인 관리 
  - 그룹 리스트 조회 
  
