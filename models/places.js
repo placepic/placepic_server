@@ -12,6 +12,157 @@ const subwayTB = 'SUBWAY_TB';
 const tableModule = require('../modules/table');
 
 const place = {
+    addPlace : async ({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl}) => {
+        const nowUnixTime= parseInt(moment().format('X'));
+        const addPlaceQuery = `INSERT INTO ${table} (placeName, placeAddress, placeRoadAddress, placeMapX, placeMapY, placeCreatedAt, placeUpdatedAt, userIdx, placeReview, categoryIdx, groupIdx) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+        const addPlaceValues =[title, address, roadAddress, mapx, mapy, nowUnixTime, nowUnixTime, userIdx, placeReview, categoryIdx,groupIdx];
+        const addPlaceImageQuery = `INSERT INTO ${placeImageTB} (placeIdx, placeImageUrl) VALUES(?,?)`;
+        const addPlaceTagQuery = `INSERT INTO ${placeTagTB} (placeIdx, tagIdx) VALUES (?,?)`;
+        const addPlaceSubwayQuery = `INSERT INTO ${subwayPlaceTB} (subwayIdx, placeIdx) VALUES (?,?)`;
+        const getPlaceIdxQuery = `SELECT placeIdx FROM ${table} where groupIdx =${groupIdx} and placeMapX = ${mapx} and placeMapY = ${mapy}`;
+        let addPlaceImageResult = [];
+        let addPlaceTagRelationResult = [];
+        let addPlaceSubwayRelationResult = [];
+        let tagIdxData = [...tags, ...infoTags];
+        try{
+            await pool.Transaction( async (conn) =>{
+                let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
+                let getPlaceIdsResult = await conn.query(getPlaceIdxQuery,[groupIdx,mapx,mapy]);
+                let placeIdx = addPlaceResult.insertId;
+                
+                for(let i = 0; i<imageUrl.length; i++){
+                    await conn.query(addPlaceImageQuery,[placeIdx, imageUrl[i]]);
+                }
+            
+                for(let i = 0; i<tagIdxData.length; i++){
+                    let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
+                }
+
+                for(let i in subwayIdx){
+                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
+                }                
+            }).catch((err)=>{
+                console.log('장소 추가 트랜잭션 오류! :',err)
+                throw err;
+            })
+        }catch(e){
+            console.log("장소 추가 에러 :", e);
+            throw(e);
+        }
+    },
+    addLike : async ({userIdx,placeIdx}) =>{
+        const nowUnixTime= parseInt(moment().format('X'));
+        const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx,likeCreatedAt) VALUES (?,?,?)`
+        try{
+            const addLikeResult = await pool.queryParamArr(addLikeQuery,[userIdx, placeIdx,nowUnixTime]);
+            return addLikeResult.insertId;
+        }catch(err){
+            console.log('addLike 에러',err);
+            throw err;
+        }
+    },
+    addBookmark : async ({userIdx,placeIdx}) =>{
+        const addBookmarkQuery = `INSERT INTO ${bookmarkTB} (userIdx,placeIdx) VALUES (?,?)`
+        try{
+            const addBookmarkResult = await pool.queryParamArr(addBookmarkQuery,[userIdx, placeIdx]);
+            return addBookmarkResult.insertId;
+        }catch(err){
+            console.log('add bookmark 에러',err);
+            throw err;
+        }
+    },
+    getLikeIdx : async({userIdx,placeIdx}) =>{
+        const getLikeQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(getLikeQuery);
+            return result;
+        }catch(err){
+            console.log('get Like err', err);
+            throw err;
+        }
+    },
+    getLikeList : async(placeIdx) =>{
+        const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
+                                FROM LIKE_TB as l
+                                LEFT JOIN (SELECT u.userIdx, u.userName, u.profileImageUrl, g.part FROM USER_TB as u 
+                                LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
+                                WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
+                                where placeIdx = ${placeIdx};`;
+        try{
+            const result =await pool.queryParam(getLikeListQuery);
+            return result;
+        }catch(err){
+            console.log('get like list err', err);
+            throw err;
+        }
+    },
+    getBookmarkIdx : async({userIdx,placeIdx}) =>{
+        const getBookmarkQuery = `SELECT * FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(getBookmarkQuery);
+            return result;
+        }catch(err){
+            console.log('get bookmarkIdx err', err);
+            throw err;
+        }
+    },
+    getPlacesByQuery: async (groupIdx, query) => {
+        try {
+            const subwayTable = tableModule.getSubwayGroup();
+            const tagTable = tableModule.getTag();
+            const categoryTable = tableModule.getCategory();
+
+            const placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx} AND (placeName LIKE "%${query}%")`;
+            const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
+            const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
+            const queryResult = new Map();
+
+            (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
+                .forEach(ele => {
+                    if(queryResult.has(ele.placeIdx)) {
+                        if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
+                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
+                    } else {
+                        queryResult.set(ele.placeIdx, {
+                            placeIdx: ele.placeIdx,
+                            placeName: ele.placeName,
+                            placeAddress: ele.placeAddress,
+                            placeRoadAddress: ele.placeRoadAddress,
+                            placeMapX: ele.placeMapX,
+                            placeMapY: ele.placeMapY,
+                            placeCreatedAt: ele.placeCreatedAt,
+                            placeUpdatedAt: ele.placeUpdatedAt,
+                            
+                            placeReview: ele.placeReview,
+                            category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
+                            groupIdx: ele.groupIdx,
+                            placeViews: ele.placeViews,
+                            tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx)],
+                            user: {
+                                userIdx: ele.userIdx,
+                                userName: ele.userName ? ele.userName : '',
+                                email: ele.email ? ele.email : '',
+                                profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
+                            },
+                            imageUrl: []
+                        });
+                    }
+                });
+
+            if (queryResult.size === 0) return [];
+            const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
+            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
+
+            images.forEach(img => {
+                if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
+            });
+            
+            return [...queryResult.values()];
+        } catch(e) {
+            throw e;
+        }
+    },
     getAllPlaces: async () => {
         try {
             return await pool.queryParam(`SELECT * FROM ${table}`);
@@ -103,7 +254,6 @@ const place = {
             throw e;
         }
     },
-
     getPlacesByGroup: async (groupIdx, queryObject) => {
         try {
             const tagTable = tableModule.getTag();
@@ -164,7 +314,6 @@ const place = {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
 
-            // tag, subway로 필터링
             let result = [...queryResult.values()];
 
             if(_.isNil(queryObject.categoryIdx)) return result;
@@ -189,189 +338,6 @@ const place = {
             return result;
         } catch(e) {
             throw e;
-        }
-    },
-
-    getPlacesByQuery: async (groupIdx, query) => {
-        try {
-            const subwayTable = tableModule.getSubwayGroup();
-            const tagTable = tableModule.getTag();
-            const categoryTable = tableModule.getCategory();
-
-            const placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx} AND (placeName LIKE "%${query}%")`;
-            const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
-            const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
-            const queryResult = new Map();
-
-            (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery))
-                .forEach(ele => {
-                    if(queryResult.has(ele.placeIdx)) {
-                        if (!_.isNil(ele.tagIdx)) queryResult.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
-                        if (!_.isNil(ele.subwayIdx)) queryResult.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
-                    } else {
-                        queryResult.set(ele.placeIdx, {
-                            placeIdx: ele.placeIdx,
-                            placeName: ele.placeName,
-                            placeAddress: ele.placeAddress,
-                            placeRoadAddress: ele.placeRoadAddress,
-                            placeMapX: ele.placeMapX,
-                            placeMapY: ele.placeMapY,
-                            placeCreatedAt: ele.placeCreatedAt,
-                            placeUpdatedAt: ele.placeUpdatedAt,
-                            
-                            placeReview: ele.placeReview,
-                            category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
-                            groupIdx: ele.groupIdx,
-                            placeViews: ele.placeViews,
-                            tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find(tag => tag.tagIdx === ele.tagIdx)],
-                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx)],
-                            user: {
-                                userIdx: ele.userIdx,
-                                userName: ele.userName ? ele.userName : '',
-                                email: ele.email ? ele.email : '',
-                                profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
-                            },
-                            imageUrl: []
-                        });
-                    }
-                });
-
-            if (queryResult.size === 0) return [];
-            const placeIdxSet = new Set([...queryResult.values()].map(q => q.placeIdx));
-            const images = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)})`);
-
-            images.forEach(img => {
-                if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
-            });
-            
-            return [...queryResult.values()];
-        } catch(e) {
-            throw e;
-        }
-        
-    },
-    addPlace : async ({title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx, userIdx, imageUrl}) => {
-        const nowUnixTime= parseInt(moment().format('X'));
-        const addPlaceQuery = `INSERT INTO ${table} (placeName, placeAddress, placeRoadAddress, placeMapX, placeMapY, placeCreatedAt, placeUpdatedAt, userIdx, placeReview, categoryIdx, groupIdx) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
-        const addPlaceValues =[title, address, roadAddress, mapx, mapy, nowUnixTime, nowUnixTime, userIdx, placeReview, categoryIdx,groupIdx];
-        const addPlaceImageQuery = `INSERT INTO ${placeImageTB} (placeIdx, placeImageUrl) VALUES(?,?)`;
-        const addPlaceTagQuery = `INSERT INTO ${placeTagTB} (placeIdx, tagIdx) VALUES (?,?)`;
-        const addPlaceSubwayQuery = `INSERT INTO ${subwayPlaceTB} (subwayIdx, placeIdx) VALUES (?,?)`;
-        const getPlaceIdxQuery = `SELECT placeIdx FROM ${table} where groupIdx =${groupIdx} and placeMapX = ${mapx} and placeMapY = ${mapy}`;
-        let addPlaceImageResult = [];
-        let addPlaceTagRelationResult = [];
-        let addPlaceSubwayRelationResult = [];
-        let tagIdxData = [...tags, ...infoTags];
-        try{
-            await pool.Transaction( async (conn) =>{
-                let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
-                let getPlaceIdsResult = await conn.query(getPlaceIdxQuery,[groupIdx,mapx,mapy]);
-                let placeIdx = addPlaceResult.insertId;
-                
-                for(let i = 0; i<imageUrl.length; i++){
-                    await conn.query(addPlaceImageQuery,[placeIdx, imageUrl[i]]);
-                }
-            
-                for(let i = 0; i<tagIdxData.length; i++){
-                    let tagData = await conn.query(addPlaceTagQuery,[parseInt(placeIdx),parseInt(tagIdxData[i])]);
-                }
-
-                for(let i in subwayIdx){
-                    let subwayData = await conn.query(addPlaceSubwayQuery,[parseInt(subwayIdx[i]),parseInt(placeIdx)]);
-                }                
-            }).catch((err)=>{
-                console.log('장소 추가 트랜잭션 오류! :',err)
-                throw err;
-            })
-        }catch(e){
-            console.log("장소 추가 에러 :", e);
-            throw(e);
-        }
-    },
-    addLike : async ({userIdx,placeIdx}) =>{
-        const nowUnixTime= parseInt(moment().format('X'));
-        const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx,likeCreatedAt) VALUES (?,?,?)`
-        try{
-            const addLikeResult = await pool.queryParamArr(addLikeQuery,[userIdx, placeIdx,nowUnixTime]);
-            return addLikeResult.insertId;
-        }catch(err){
-            console.log('addLike 에러',err);
-            throw err;
-        }
-    },
-    isCheckPlace : async (placeIdx) =>{
-        const isCheckPlace = `SELECT * FROM ${table} WHERE placeIdx = ${placeIdx}`;
-        try{
-            const result = await pool.queryParam(isCheckPlace);
-            return result;
-        }catch(err){
-            console.log('place 체크 오류', err);
-            throw err;
-        }
-    },
-    deleteLike : async ({userIdx,placeIdx}) =>{
-        const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
-        try{
-            const result = await pool.queryParam(deleteLikeQuery);
-            return result;
-        }catch(err){
-            console.log('deleteLike 에러', err);
-            throw err;
-        }
-    },
-    getLikeIdx : async({userIdx,placeIdx}) =>{
-        const getLikeQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
-        try{
-            const result = await pool.queryParam(getLikeQuery);
-            return result;
-        }catch(err){
-            console.log('get Like err', err);
-            throw err;
-        }
-    },
-    getLikeList : async(placeIdx) =>{
-        const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
-                                FROM LIKE_TB as l
-                                LEFT JOIN (SELECT u.userIdx, u.userName, u.profileImageUrl, g.part FROM USER_TB as u 
-                                LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
-                                WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
-                                where placeIdx = ${placeIdx};`;
-        try{
-            const result =await pool.queryParam(getLikeListQuery);
-            return result;
-        }catch(err){
-            console.log('get like list err', err);
-            throw err;
-        }
-    },
-    getBookmarkIdx : async({userIdx,placeIdx}) =>{
-        const getBookmarkQuery = `SELECT * FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
-        try{
-            const result = await pool.queryParam(getBookmarkQuery);
-            return result;
-        }catch(err){
-            console.log('get bookmarkIdx err', err);
-            throw err;
-        }
-    },
-    addBookmark : async ({userIdx,placeIdx}) =>{
-        const addBookmarkQuery = `INSERT INTO ${bookmarkTB} (userIdx,placeIdx) VALUES (?,?)`
-        try{
-            const addBookmarkResult = await pool.queryParamArr(addBookmarkQuery,[userIdx, placeIdx]);
-            return addBookmarkResult.insertId;
-        }catch(err){
-            console.log('add bookmark 에러',err);
-            throw err;
-        }
-    },
-    deleteBookmark : async ({userIdx,placeIdx}) =>{
-        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
-        try{
-            const result = await pool.queryParam(deleteBookmarkQuery);
-            return result;
-        }catch(err){
-            console.log('delete bookmark 에러', err);
-            throw err;
         }
     },
     getOnePlace : async ({userIdx, placeIdx}) =>{
@@ -438,6 +404,26 @@ const place = {
             throw err;
         }
     },
+    deleteLike : async ({userIdx,placeIdx}) =>{
+        const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(deleteLikeQuery);
+            return result;
+        }catch(err){
+            console.log('deleteLike 에러', err);
+            throw err;
+        }
+    },   
+    deleteBookmark : async ({userIdx,placeIdx}) =>{
+        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(deleteBookmarkQuery);
+            return result;
+        }catch(err){
+            console.log('delete bookmark 에러', err);
+            throw err;
+        }
+    },
     deletePlace : async(placeIdx) =>{
         const deleteImageQuery = `DELETE FROM PLACEIMAGE_TB WHERE placeIdx = ?`;
         const deleteTagQuery = `DELETE FROM PLACE_TAG_RELATION_TB WHERE placeIdx = ?`;
@@ -460,6 +446,16 @@ const place = {
         }catch(err){
             console.log('delete Place error',err);
             throw(err);
+        }
+    },
+    isCheckPlace : async (placeIdx) =>{
+        const isCheckPlace = `SELECT * FROM ${table} WHERE placeIdx = ${placeIdx}`;
+        try{
+            const result = await pool.queryParam(isCheckPlace);
+            return result;
+        }catch(err){
+            console.log('place 체크 오류', err);
+            throw err;
         }
     },
     isMyPlacePost : async(userIdx, placeIdx) =>{
