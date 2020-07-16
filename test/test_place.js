@@ -14,9 +14,22 @@ describe("게시물 테스트 ->", function () {
     var token, idx, category;
     //기존 사용자 아이디 비밀번호
     var user_data = {
-        email: "placepic@google.com",
+        email: "placepic6@google.com",
         password: "1111"
     };
+
+    const placeData ={
+        title:'테스트 게시글',
+        address : '테스트 주소',
+        mapx : 123456,
+        mapy : 654322,
+        placeReview : '테스트합니다.',
+        categoryIdx : 1,
+        groupIdx : 1,
+        tags : [1,2,3],
+        infoTags :[7,8],
+        subwayIdx : [223,123,664]
+    }
     
     //서버 연결
     before(async function () {
@@ -25,6 +38,10 @@ describe("게시물 테스트 ->", function () {
 
     //기존 사용자 토큰 삽입
     beforeEach(function (done) {
+        let user_data = {
+        email: "placepic6@google.com",
+        password: "1111"
+    };
         request(svr)
             .post("/auth/signin")
             .send(user_data)
@@ -35,29 +52,44 @@ describe("게시물 테스트 ->", function () {
                 done();
             });
     });
-
-    describe("게시물 업로드 테스트", function () {
-        it("게시물 업로드 성공", function (done) {
+    
+    describe("플레이스 게시물 업로드 테스트", function () {
+        it("플레이스  업로드 성공", function (done) {
             request(svr)
-                .post("/post")
+                .post("/places")
                 .set('Authorization', token)
-                .field('url', 'http://techneedle.com/archives/37982')
-                .field('category', 'marketing')
-                .field('postContent', '오늘은 영훈3세가 요리사')
+                .send({image:'https://sopt26.s3.ap-northeast-2.amazonaws.com/1594543227287.png',placeData})
                 .expect(200)
                 .end(function (err, res) {
                     if (err) return done(err);
                     done();
                 });
         });
+
+        it("플레이스 업로드 이미지 파라미터 부족에러", function(){
+            request(svr)
+                .post("/places")
+                .set('Authorization', token)
+                .send(placeData)
+                .expect(400)
+                .end(function(err, res){
+                    if(err) return done(err);
+                    done();
+                });
+        });
+       
     });
-
-
+    //서버 연결 해제
+    after(function () {
+        result.close();
+    });
+});
+/*
     describe("게시물 조회 테스트", function () {
         //게시물 조회시 idx, category 저장
         beforeEach(function (done) {
             request(svr)
-                .get("/post")
+                .get("/places")
                 .set('Authorization', token)
                 .end(async function (err, res) {
                     if (err) return done(err);
@@ -112,10 +144,4 @@ describe("게시물 테스트 ->", function () {
                 });
         });
     });
-
-    //서버 연결 해제
-    after(function (done) {
-        result.close();
-        done();
-    });
-});
+*/

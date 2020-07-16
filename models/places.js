@@ -380,7 +380,7 @@ const place = {
         const tagQuery = `SELECT tagName, tagIsBasic FROM PLACE_TAG_RELATION_TB as p LEFT JOIN TAG_TB as t on p.tagIdx = t.tagIdx WHERE placeIdx = ${placeIdx}`;
         const isBookmarkedQuery = `SELECT * FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         const isLikedQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
-        const likeCountQuery = `SELECT COUNT(*) as likeCnt FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
+        const likeCountQuery = `SELECT COUNT(*) as likeCnt FROM ${likeTB} WHERE placeIdx = ${placeIdx}`;
         const bookmarkCountQuery = `SELECT COUNT(*) as bookmarkCnt FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         const userQuery = `SELECT u.userName, u.profileImageUrl, g.part 
                         FROM USER_TB as u LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
@@ -392,6 +392,7 @@ const place = {
                                     LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
                                     WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
                                     where placeIdx = ${placeIdx};`;
+        const isMyPlaceQuery = `SELECT u.userIdx, p.placeIdx FROM USER_TB as u LEFT JOIN PLACE_TB as p on u.userIdx = p.userIdx WHERE u.userIdx = ${userIdx} and p.placeIdx = ${placeIdx}`;
         try{
             let retObj = {};
             const placeResult = await pool.queryParam(placeQuery);
@@ -405,12 +406,14 @@ const place = {
             const writer = await pool.queryParam(userQuery);
             const postCount = await pool.queryParam(postQuery);
             const likeInteraction = await pool.queryParam(getLikeListQuery);
+            const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
 
             retObj = {...placeResult[0]};
-            retObj.isLiked = isLikedResult.length ? "true" : "false";
-            retObj.isBookmarked = isBookmarkedResult.length ? "true" : "false";
+            retObj.isLiked = !_.isNil(isLikedResult[0]);
+            retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
             retObj.likeCount = likeCount[0].likeCnt;
             retObj.bookmarkCount = bookmarkCount[0].bookmarkCnt;
+            console.log(placeResult[0]);
 
             retObj.subway = [];
             for(let it in subwayName){
@@ -433,7 +436,9 @@ const place = {
                 }
             }
             writer[0].postCount = postCount[0].postCount; 
+            writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]);
             retObj.uploader = writer[0];
+            retObj.mobileNaverMapLink = 'https://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1'
             retObj.likeList = [];
             for(let it in likeInteraction){
                 retObj.likeList.push(likeInteraction[it])
@@ -449,14 +454,16 @@ const place = {
         const deleteTagQuery = `DELETE FROM PLACE_TAG_RELATION_TB WHERE placeIdx = ?`;
         const deleteSubwayQuery = `DELETE FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx = ?`;
         const deletePlaceQuery = `DELETE FROM PLACE_TB WHERE placeIdx = ? `;
+        const deleteLikeQuery = `DELETE FROM LIKE_TB WHERE placeIdx = ?`;
+        const deleteBookmarkQuery = `DELETE FROM BOOKMARK_TB WHERE placeIdx = ?`
         try{
             await pool.Transaction( async (conn)=>{
                 await conn.query(deleteImageQuery, placeIdx);
                 await conn.query(deleteTagQuery, placeIdx);
                 await conn.query(deleteSubwayQuery, placeIdx);
-                await conn.query(deletePlaceQuery, placeIdx)
-                //like
-                //bookmark
+                await conn.query(deletePlaceQuery, placeIdx);
+                await conn.query(deleteLikeQuery, placeIdx);
+                await conn.query(deleteBookmarkQuery, placeIdx);
             }).catch((err)=>{
                 console.log('장소 삭제 트랜잭션 오류');
                 throw err;
