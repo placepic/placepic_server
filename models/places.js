@@ -262,7 +262,6 @@ const place = {
         let addPlaceTagRelationResult = [];
         let addPlaceSubwayRelationResult = [];
         let tagIdxData = [...tags, ...infoTags];
-        console.log(tagIdxData)
         try{
             await pool.Transaction( async (conn) =>{
                 let addPlaceResult = await conn.query(addPlaceQuery,addPlaceValues);
@@ -408,7 +407,6 @@ const place = {
             retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
             retObj.likeCount = likeCount[0].likeCnt;
             retObj.bookmarkCount = bookmarkCount[0].bookmarkCnt;
-            console.log(placeResult[0]);
 
             retObj.subway = [];
             for(let it in subwayName){

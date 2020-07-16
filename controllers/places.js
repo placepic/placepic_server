@@ -60,7 +60,7 @@ const placeController = {
         const userIdx = req.userIdx;
         let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
         const imageFiles = req.files;
-        console.log(req.body);
+
         // 코드정리
         subwayIdx = typeof(subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
         tags = typeof(tags) === "object" ? tags : JSON.parse(tags);
@@ -122,9 +122,7 @@ const placeController = {
         
             //4. subway 유효성 검사
             for(let it in subwayIdx){
-                console.log(subwayIdx[it]);
                 let isMatchedSubway = subwayIdx[it] ? await subwayDB.isMatchedStation(subwayIdx[it]) : null; 
-                console.log(isMatchedSubway);
                 if(isMatchedSubway === undefined){
                     console.log("올바르지 않는 지하철 정보입니다.");
                     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
@@ -140,9 +138,7 @@ const placeController = {
     },
     addLike : async (req, res)=>{
         const userIdx = req.userIdx;
-        const {placeIdx} = req.body;
         
-        //placeIdx, 유효성 검사 userIdx, placeIdx 받아서 검색
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
@@ -165,7 +161,6 @@ const placeController = {
     deleteLike : async (req,res) =>{
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
-
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
