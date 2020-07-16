@@ -4,15 +4,18 @@ let util = require('../modules/util');
 let Group = require('../models/group');
 
 exports.apply = async (req, res) => {
-    const groupIdx = req.params.groupIdx;
+    console.log('parma :', req.params);
+    console.log('body', req.body);
     const userIdx = req.userIdx;
-    const groupInfo = await Group.callMygroupInfo(groupIdx);
-    //const status = 2; // 디폴트가 2가 아니면 2를 넣어준다.
     const {
+        groupIdx,
         part,
         phoneNumber
     } = req.body;
+    const groupInfo = await Group.callMygroupInfo(groupIdx);
+    //const status = 2; // 디폴트가 2가 아니면 2를 넣어준다.
     try {
+
         //null 값 확인
         if (!groupIdx || !userIdx || !part || !phoneNumber){
             console.log("필요한 값이 없습니다.");
