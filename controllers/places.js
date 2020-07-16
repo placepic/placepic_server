@@ -259,11 +259,14 @@ const placeController = {
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
         try{
-            const placeIdCheck = await placeDB.isMyPlacePost(userIdx,placeIdx);
-            if(_.isNil(placeIdCheck)){
+            
+            const isWriter = await placeDB.isMyPlacePost(userIdx,placeIdx);
+            const isAdmin = await placeDB.isAdmin(userIdx,placeIdx);
+            if(!(!_.isNil(isWriter) || (isAdmin===0))){ 
                 console.log('삭제 권한이 없는 아이디.');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NOT_DELETE_PLACE));
             }
+
             const result = await placeDB.deletePlace(placeIdx);
             return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.DELETE_PLACE));
         }catch(err){
