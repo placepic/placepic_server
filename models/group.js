@@ -356,25 +356,37 @@ const group = {
                         break;
                     } 
                     else if(groupResult[i].postCount >= groupResult[i+1].postCount){
-                    if(i == 0){
-                        rank = rank + 1;   // 2 와 3이 같다 1>2
-                        [...resultMap.values()][i].rank = rank;
-                    }
+                            if(i == 0){
+                                rank = rank + 1;   // 2 와 3이 같다 1>2
+                                [...resultMap.values()][i].rank = rank;
+                        }
                     // 전인덱스가 3 다음인덱스가 2  그리고 전인덱스가 2 다음인덱스가 2
-                    else if(groupResult[i-1].postCount > groupResult[i].postCount){
-                        rank = rank + 1;   // 2 와 3이 같다 1>2
-                        [...resultMap.values()][i].rank = rank;
-                    }
-                    else
-                        [...resultMap.values()][i].rank = rank;
+                            else if((groupResult[i-1].postCount > groupResult[i].postCount)){
+                                if(i === 1){
+                                    rank = rank + 1;   // 2 와 3이 같다 1>2
+                                    [...resultMap.values()][i].rank = rank;
+                            }
+                                else if(groupResult[i-1].postCount === groupResult[i-2].postCount ){
+                                    rank = rank + 2;   // 2 와 3이 같다 1>2
+                                    [...resultMap.values()][i].rank = rank;
+                            }
+
+                                else {
+
+                                    rank = rank + 1;   // 2 와 3이 같다 1>2
+                                    [...resultMap.values()][i].rank = rank;
+                            }
+                        }
+                            else
+                                [...resultMap.values()][i].rank = rank;
 
                     }
                        //placeResult.forEach(place => resultMap.get(place.userIdx).postCount = place.postCount);
                     else{
-                    rank = rank + 1;
-                    [...resultMap.values()][i].rank = rank;
+                        rank = rank + 1;
+                        [...resultMap.values()][i].rank = rank;
                     
-                }
+                    }
                 }
                     
             //   console.log([...resultMap.values() ][0]);
