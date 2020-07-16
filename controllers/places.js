@@ -182,8 +182,8 @@ const placeController = {
         }
     },
     getLikeList : async (req, res) =>{
-        const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
+        console.log(req.params);
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
@@ -259,7 +259,6 @@ const placeController = {
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
         try{
-            
             const isWriter = await placeDB.isMyPlacePost(userIdx,placeIdx);
             const isAdmin = await placeDB.isAdmin(userIdx,placeIdx);
             if(!(!_.isNil(isWriter) || (isAdmin===0))){ 
