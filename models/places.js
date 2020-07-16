@@ -331,10 +331,12 @@ const place = {
         }
     },
     getLikeList : async(placeIdx) =>{
-        const getLikeListQuery = `select l.userIdx, u.userName, u.profileImageUrl, l.likeCreatedAt,
-                                from ${likeTB} as l 
-                                LEFT JOIN ${userTB} as u on l.userIdx = u.userIdx 
-                                where placeIdx = ${placeIdx}`;
+        const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
+                                FROM LIKE_TB as l
+                                LEFT JOIN (SELECT u.userIdx, u.userName, u.profileImageUrl, g.part FROM USER_TB as u 
+                                LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
+                                WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
+                                where placeIdx = ${placeIdx};`;
         try{
             const result =await pool.queryParam(getLikeListQuery);
             return result;
