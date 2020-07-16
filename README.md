@@ -2,7 +2,7 @@
 # 🐷 placepic :Cutty Kitty Server
 <img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
 
-<br/>
+---
 
 **![piccrevv_bedge](https://img.shields.io/badge/placepic-piccrevv-ff7adc)**
 ![npm_bedge](https://img.shields.io/badge/npm-6.13.7-blue)
@@ -32,7 +32,7 @@
 
   * Interaction - 상호작용, 소통할 수 있는 공간
 
-<br/>
+---
 
 ## ✍ Core value
 
@@ -45,7 +45,7 @@
 * 린 스타트업 정신
 * PRIDE✨
 
-<br/>
+---
 
 ## 🖥 Code convention
  
@@ -74,7 +74,7 @@ master
 [Docs] 문서
 ```
 
-<br/>
+---
 
 ## 👪 Communication
 
@@ -88,10 +88,17 @@ master
 
 ### SLACK
 
-<br/>
 
-## 🤝 Role
+---
+## 🤝Team Role
   
+> Or Contributors/People
+
+| <a href="https://github.com/dk-master" target="_blank">**김동관**</a> | <a href="https://github.com/dudgns3tp" target="_blank">**최영훈**</a> | <a href="https://github.com/junyup0319" target="_blank">**홍준엽**</a> |
+| :---: |:---:| :---:|
+| [![FVCproductions](https://avatars3.githubusercontent.com/u/61861809?s=460&u=f834deb744174671e44ea2b579f8bfe22e280de2&v=4)]()    | [![FVCproductions](https://avatars1.githubusercontent.com/u/40652160?s=460&u=9cd767fc9ae0adc0948fec0fb7c4fe126a64ffae&v=4)]() | [![FVCproductions](https://avatars2.githubusercontent.com/u/39546874?s=460&u=049590b1c31828d01c5555b4c34d1c414a0711ba&v=4)]()  |
+| 서버 개발자 | 서버 리드 개발자| 서버 개발자|
+
  ### 공통 
   - RDB 설계
   - 배포환경 구축
@@ -127,8 +134,9 @@ master
  - 장소검색 필터링 
  - 장소 검색 API 
 
-<br/>
 
+
+---
 
 ## ✔ Main Function
 - Upload
@@ -137,18 +145,18 @@ master
 - Search
     - 명확한 카테고리, keyWord, 장소 정보를 통해 사용자가 원하는 데이터를 **filltering**, **sorting** 
 
-<br />
+---
 
 ## 📖 Dependencies 
 
 ![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
 
-<br/>
+---
 
 ## 🔥 ERD
 ![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_final.png?raw=true)
 
-<br/>
+---
 
 ## 💻 place pig's server developer 
 
