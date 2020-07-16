@@ -388,12 +388,6 @@ const place = {
                         FROM USER_TB as u LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
                         WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and u.userIdx = (SELECT userIdx FROM PLACE_TB WHERE placeIdx =${placeIdx});;`
         const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`
-        const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
-                                    FROM LIKE_TB as l
-                                    LEFT JOIN (SELECT u.userIdx, u.userName, u.profileImageUrl, g.part FROM USER_TB as u 
-                                    LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
-                                    WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
-                                    where placeIdx = ${placeIdx};`;
         const isMyPlaceQuery = `SELECT u.userIdx, p.placeIdx FROM USER_TB as u LEFT JOIN PLACE_TB as p on u.userIdx = p.userIdx WHERE u.userIdx = ${userIdx} and p.placeIdx = ${placeIdx}`;
         try{
             let retObj = {};
@@ -407,7 +401,6 @@ const place = {
             const bookmarkCount = await pool.queryParam(bookmarkCountQuery);
             const writer = await pool.queryParam(userQuery);
             const postCount = await pool.queryParam(postQuery);
-            const likeInteraction = await pool.queryParam(getLikeListQuery);
             const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
 
             retObj = {...placeResult[0]};
@@ -440,11 +433,7 @@ const place = {
             writer[0].postCount = postCount[0].postCount; 
             writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]);
             retObj.uploader = writer[0];
-            retObj.mobileNaverMapLink = 'https://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1'
-            retObj.likeList = [];
-            for(let it in likeInteraction){
-                retObj.likeList.push(likeInteraction[it])
-            }
+            retObj.mobileNaverMapLink = 'https://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1';
             return retObj;
         }catch(err){
             console.log('get one place err', err);
