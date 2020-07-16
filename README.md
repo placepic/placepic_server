@@ -100,16 +100,9 @@ master
 | [![FVCproductions](https://avatars3.githubusercontent.com/u/61861809?s=460&u=f834deb744174671e44ea2b579f8bfe22e280de2&v=4)]()    | [![FVCproductions](https://avatars1.githubusercontent.com/u/40652160?s=460&u=9cd767fc9ae0adc0948fec0fb7c4fe126a64ffae&v=4)]() | [![FVCproductions](https://avatars2.githubusercontent.com/u/39546874?s=460&u=049590b1c31828d01c5555b4c34d1c414a0711ba&v=4)]()  |
 | 서버 개발자 | 서버 리드 개발자| 서버 개발자|
 |  **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** | **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** | **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** |
-|rdb설계|rdb설계|rdb설계|
-|배포 환경 구축|배포 환경 구축|배포 환경 구축|
-|  회원가입, 로그인 |place 업로드 | 장소검색 필터링 |
-|  그룹 인증 관리   |지하철 API 가공  | 장소 검색 API |
-| 그룹 리스트 조회  |네이버 지도 API|  장소 검색 Sorting|
+|rdb설계  <br /> 배포 환경 구축 <br /> 회원가입, 로그인 <br /> 그룹 인증 관리 <br /> 그룹 리스트 조회  <br />|rdb설계 <br /> 배포 환경 구축 <br /> place 업로드 <br /> 지하철 API <br /> 네이버 지도 API |rdb설계 <br /> 배포 환경 구축 <br /> 장소 검색 필터링 <br /> 장소 검색 API <br /> 장소 검색 sorting|
 | **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-363636)**| **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-363636)**| **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-363636)**|
-|마이페이지 & 랭킹|좋아요 & 북마크 Interaction|마이페이지 & 랭킹|
-
-
- 
+|마이페이지 & 랭킹|좋아요 & 북마크 Interaction|마이페이지 & 랭킹| 
   
 <br />
 
