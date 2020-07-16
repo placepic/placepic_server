@@ -372,7 +372,6 @@ const group = {
                             }
 
                                 else {
-
                                     rank = rank + 1;   // 2 와 3이 같다 1>2
                                     [...resultMap.values()][i].rank = rank;
                             }
