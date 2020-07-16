@@ -63,7 +63,20 @@ const user = {
             console.log('getUserById ERROR : ', err);
             throw err;
         }
-    }
+    },
+
+    getUserImage : async (userIdx,img) => {
+        const editStatusApplyUser = `UPDATE USER_TB SET ${img} WHERE userIdx = ${userIdx}`;
+
+        try{
+            const result = await pool.queryParam(editStatusApplyUser);
+            return result;
+    
+        }catch(err) {
+            console.log('editStatusApplyUser ERROR : ', err);
+            throw err;
+        }
+    },
 }
 
 module.exports = user;

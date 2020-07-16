@@ -4,9 +4,9 @@
 
 <br/>
 
-**![placepic_bedge](https://img.shields.io/badge/placepic-Sprint1-%23ff7adc)**
-![npm_bedge](https://img.shields.io/badge/npm-6.13.7-%23ff7adc)
-![node_bedge](https://img.shields.io/badge/node-13.11.0-%23ff7adc)
+**![piccrevv_bedge](https://img.shields.io/badge/placepic-piccrevv-ff7adc)**
+![npm_bedge](https://img.shields.io/badge/npm-6.13.7-blue)
+![node_bedge](https://img.shields.io/badge/node-13.11.0-brightgreen)
 
 
 
@@ -97,17 +97,35 @@ master
   - 배포환경 구축
   
  ### 김동관 
- - 회원가입, 로그인  **SPRINT#1**
- - 그룹 인증 관리  **SPRINT#1**
- - 그룹신청 승인 관리 **SPRINT#1**
- - 그룹 리스트 조회 **SPRINT#1**
+ 
+ **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-ff7adc)**
+
+ - 회원가입, 로그인 
+ - 그룹 인증 관리   
+ - 그룹신청 승인 관리 
+ - 그룹 리스트 조회 
+ 
+  
  ### 최영훈
- - place 업로드 **SPRINT#1**
- - 지하철 API 가공 **SPRINT#1**
- - 네이버 지도 API **SPRINT#1**
+ 
+ **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-ff7adc)**
+ 
+ - place 업로드 
+ - 지하철 API 가공 
+ - 네이버 지도 API 
+ 
+ **![placepic_bedge](https://img.shields.io/badge/placepic-sprint2-ff7adc)**
+ 
+ - 좋아요 API
+ - 북마크 API 
+ - Interaction API
+ 
  ### 홍준엽
- - 장소검색 필터링 **SPRINT#1**
- - 장소 검색 API **SPRINT#1**
+ 
+ **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-ff7adc)**
+ 
+ - 장소검색 필터링 
+ - 장소 검색 API 
 
 <br/>
 
@@ -128,7 +146,7 @@ master
 <br/>
 
 ## 🔥 ERD
-![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD.png?raw=true)
+![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_final.png?raw=true)
 
 <br/>
 

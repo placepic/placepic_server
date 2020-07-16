@@ -77,7 +77,7 @@ exports.getMyGroupList = async (req, res) => {
 exports.getMyApplyGroupList = async (req, res) => {
     try {
         const result = await Group.getMyApplyGroupList(req.userIdx);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, result));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_APPLY_GROUP, result));
     } catch(e) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
     }
