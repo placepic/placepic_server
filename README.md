@@ -1,6 +1,6 @@
 
 # 🐷 placepic :Cutty Kitty Server
-<img style="border: 1px solid black !important; border-radius:20px;" src="https://avatars2.githubusercontent.com/u/67547341?s=200&v=4" width="200px" />
+<img style="border: 1px solid black !important; border-radius:20px;" src="https://github.com/placepic/placepic_server/blob/master/public/images/logo.png?raw=true" width="200px" />
 
 <br />
 
@@ -18,6 +18,12 @@
 
 <br>
 
+
+## 🎞 Work flow
+
+![workflow](https://github.com/placepic/placepic_server/blob/master/public/images/workFlow.png?raw=true)
+
+<br />
 
 ## 📍 placepic service
 
@@ -91,7 +97,7 @@ master
 
 <br />
 
-## 🤝Team Role
+## 🤝Team role
   
 > 💻 place pig's server developer 
 
@@ -106,7 +112,7 @@ master
   
 <br />
 
-## ✔ Main Function
+## ✔ Main function
 - Map
     - 네이버 지도 API를 이용하여 사용자에게 신뢰성 있는 정보를 제공.
     
