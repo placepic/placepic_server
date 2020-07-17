@@ -221,7 +221,18 @@ const group = {
         } catch (e) {
             throw e;
         }
-    },/*
+    },
+    isGroup : async (groupIdx)=>{
+        const query = `SELECT  * FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
+        try{
+            const result = await pool.queryParam(query);
+            return result[0];
+        }catch(e){
+            console.log('그룹 존재여부 체크 :', e);
+            throw e;
+        }
+    },
+    /*
     getMyGroupRanking: async (groupIdx) => {
         const query = `SELECT * FROM (SELECT * FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join placepic.USER_TB ;`
             try {

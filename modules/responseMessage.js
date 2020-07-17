@@ -82,6 +82,7 @@ module.exports = {
     INVALID_GROUP_USER:"일치하지 않는 유저 그룹.",
     ALREADY_GROUP_USER:"이미 가입된 그룹",
     CALL_APPLY_GROUP : "지원 가능한 그룹조회 불러오기 성공",
+    NO_GROUP:"존재하지 않는 그룹",
 
     //ADMIN
     CALL_MYWAITUSERLIST_SUCCESS: "내 그룹 대기유저 불러오기 성공",
