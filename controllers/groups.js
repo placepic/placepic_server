@@ -5,15 +5,13 @@ let Group = require('../models/group');
 
 module.exports = {
     apply: async (req, res) => {
-        const groupIdx = req.params.groupIdx;
-        const userIdx = req.userIdx;
-        const groupInfo = await Group.callMygroupInfo(groupIdx);
-
         const {
             part,
-            phoneNumber
+            phoneNumber,
+            groupIdx
         } = req.body;
-
+        const userIdx = req.userIdx;
+        const groupInfo = await Group.callMygroupInfo(groupIdx);
         try {
             //null 값 확인
             if (!groupIdx || !userIdx || !part || !phoneNumber) {
