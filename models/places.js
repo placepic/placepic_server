@@ -463,7 +463,7 @@ console.log(likeResult);
             writer[0].postCount = postCount[0].postCount; 
             writer[0].deleteBtn = (!_.isNil(isMyPlaceResult[0]) || (isAdminResult[0].state === 0));
             retObj.uploader = writer[0];
-            retObj.mobileNaverMapLink = 'https://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1';
+            retObj.mobileNaverMapLink = 'http://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1';
             return retObj;
         }catch(err){
             console.log('get one place err', err);
