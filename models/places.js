@@ -404,7 +404,7 @@ console.log(likeResult);
         }
     },
     getOnePlace : async ({userIdx, placeIdx}) =>{
-        const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt, placeRoadAddress FROM ${table} WHERE placeIdx =${placeIdx}`;
+        const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt, placeRoadAddress, placeMapX, placeMapY FROM ${table} WHERE placeIdx =${placeIdx}`;
         const subwayNameQuery = `SELECT * FROM ${subwayTB} WHERE subwayIdx IN (SELECT subwayIdx FROM ${table} as p LEFT JOIN ${subwayPlaceTB} as r on p.placeIdx=r.placeIdx WHERE p.placeIdx = ${placeIdx})`;
         const placeImageQuery = `SELECT * FROM ${placeImageTB} WHERE placeIdx = ${placeIdx}`;
         const tagQuery = `SELECT tagName, tagIsBasic FROM PLACE_TAG_RELATION_TB as p LEFT JOIN TAG_TB as t on p.tagIdx = t.tagIdx WHERE placeIdx = ${placeIdx}`;
@@ -432,7 +432,7 @@ console.log(likeResult);
             const postCount = await pool.queryParam(postQuery);
             const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
             const isAdminResult = await pool.queryParam(isAdminQuery);
-            
+
             retObj = {...placeResult[0]};
             retObj.isLiked = !_.isNil(isLikedResult[0]);
             retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
