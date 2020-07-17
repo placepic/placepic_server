@@ -113,6 +113,9 @@ const place = {
 
             if(placeResult.length === 0) return [];
             const placeIdxs = new Set(placeResult.map(p => p.placeIdx));
+            
+            const likeResult = await pool.queryParam(`SELECT placeIdx, count(*) as likeCount FROM LIKE_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')}) GROUP BY placeIdx`);
+console.log(likeResult);
             const result = new Map();
             placeResult.forEach(ele => result.set(ele.placeIdx, {
                 placeIdx: ele.placeIdx,
@@ -136,8 +139,11 @@ const place = {
                     email: ele.email ? ele.email : '',
                     profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
                 },
-                imageUrl: []
+                imageUrl: [],
+                likeCount: _.findIndex(likeResult, like => like.placeIdx === ele.placeIdx) !== -1 ? _.find(likeResult, like => like.placeIdx === ele.placeIdx).likeCount : 0
             }));
+
+
             const imageResult = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')})`);
 
             imageResult.forEach(ele => {
