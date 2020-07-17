@@ -116,8 +116,6 @@ master
 - Interaction
    - 좋아요, 북마크, 랭킹 기능을 통해 그룹간 **Interaction**
 
-## 
-
 <br />
 
 ## 📖 Dependencies 
@@ -128,6 +126,7 @@ master
 
 
 ## 📚 Library
+
 - [Node.js](https://nodejs.org/ko/) : 런타임 환경
 - [Express](https://expressjs.com/ko/) : NodeJs Framework
 - [NPM](https://www.npmjs.com/) : NodeJS package manager
@@ -136,10 +135,12 @@ master
 - [Lodash](https://lodash.com/) : 자바스크립트 유틸리티 라이브러리
 
 ## 🔥 ERD
-![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
+
+![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies_final.png?raw=true)
 
 <br />
 
 
 ## 🏗 Architecture
-![Architecture](https://github.com/placepic/placepic_server/blob/master/public/images/placepic_architecture.PNG?raw=true)
+
+![Architecture](https://github.com/placepic/placepic_server/blob/master/public/images/placepic%20architecture.PNG?raw=true)
