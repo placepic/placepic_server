@@ -269,6 +269,17 @@ const placeController = {
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
         try{
+            if(!userIdx || !placeIdx){
+                console.log('파라미터 오류입니다.')
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
+            }
+
+            const isPlace = await placeDB.isCheckPlace(placeIdx);
+            if(isPlace.length === 0){
+                console.log('유효하지 않는 placeIdx 입니다.');
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
+            }
+
             const isWriter = await placeDB.isMyPlacePost(userIdx,placeIdx);
             const isAdmin = await placeDB.isAdmin(userIdx,placeIdx);
             if(!(!_.isNil(isWriter) || (isAdmin===0))){ 

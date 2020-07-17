@@ -532,7 +532,6 @@ const place = {
         const query = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and userIdx = ${userIdx}`;
         try{
             const result = await pool.queryParam(query);
-            console.log(result[0].state);
             return result[0].state;
         }catch(err){
             console.log('isAdmin err', err);
