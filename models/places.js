@@ -311,18 +311,20 @@ const place = {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
 
+            // filtering
             let result = [...queryResult.values()];
-
-            if(_.isNil(queryObject.categoryIdx)) return result;
-
-            if (!_.isNil(queryObject.tagIdx)) {
-                result = result.filter(ele => {
-                    for (let tagIdx of queryObject.tagIdx.split(',')) {
-                        if (ele.tag.findIndex(tag => tag.tagIdx === tagIdx * 1) === -1) return false;
-                    }
-                    return true;
-                });
+            
+            if(!_.isNil(queryObject.categoryIdx)) {
+                if (!_.isNil(queryObject.tagIdx)) {
+                    result = result.filter(ele => {
+                        for (let tagIdx of queryObject.tagIdx.split(',')) {
+                            if (ele.tag.findIndex(tag => tag.tagIdx === tagIdx * 1) === -1) return false;
+                        }
+                        return true;
+                    });
+                };
             }
+
             if (!_.isNil(queryObject.subwayIdx)) {
                 result = result.filter(ele => {
                     for (let subwayIdx of queryObject.subwayIdx.split(',')) {
@@ -331,6 +333,9 @@ const place = {
                     return false;
                 });
             }
+
+            
+            
             console.log('GET places in group');
             return result;
         } catch(e) {
