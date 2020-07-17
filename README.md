@@ -14,7 +14,7 @@
     
 * <b> 프로젝트 기간: 2020.06.28 ~ 2020.07.18 </b>
 
-* <b> [Notion - 기능 명세서](https://www.notion.so/Server-Part-d88e5572975b4d4d89128f1bfc10b780) </b>
+* <b> [Notion - 기능 명세서, API 진척도](https://www.notion.so/Server-Part-d88e5572975b4d4d89128f1bfc10b780) </b>
 
 <br>
 
@@ -114,19 +114,39 @@ master
     - 카테고리, keyword, 장소 정보, 지하철역명을 통해 사용자가 원하는 데이터를 **filltering**, **sorting** 
     
 - Interaction
-   - 좋아요, 북마크, 랭킹 기능을 통해 그룹간 Interaction
+   - 좋아요, 북마크, 랭킹 기능을 통해 그룹간 **Interaction**
 
-## 
+<br />
+
+## 🔥 ERD
+
+![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
+
+<br />
+
+## 🏗 Architecture
+
+![Architecture](https://github.com/placepic/placepic_server/blob/master/public/images/placepic%20architecture.PNG?raw=true)
 
 <br />
 
 ## 📖 Dependencies 
 
-![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
+![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies_final.png?raw=true)
 
 <br />
 
-## 🔥 ERD
-![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
+
+## 📚 Library
+
+- [Node.js](https://nodejs.org/ko/) : 런타임 환경
+- [Express](https://expressjs.com/ko/) : NodeJs Framework
+- [NPM](https://www.npmjs.com/) : NodeJS package manager
+- [PM2](https://pm2.io/) : NodeJS process manager
+- [Mocha](https://mochajs.org/)  : 테스트 러너 프레임워크
+- [Lodash](https://lodash.com/) : 자바스크립트 유틸리티 라이브러리
 
 <br />
+
+
+
