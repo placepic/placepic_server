@@ -103,7 +103,7 @@ const group = {
         const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
         try {
             const groupResult = await pool.queryParam(query);
-            if (_.isNil(groupResult)) {
+            if (groupResult.length === 0) {
                 console.log("불러올 지원가능한 그룹이 없습니다.");
                 return groupResult; //groupResult 가 [] 일때.
             }
