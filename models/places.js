@@ -496,9 +496,9 @@ const place = {
                 await conn.query(deleteImageQuery, placeIdx);
                 await conn.query(deleteTagQuery, placeIdx);
                 await conn.query(deleteSubwayQuery, placeIdx);
-                await conn.query(deletePlaceQuery, placeIdx);
                 await conn.query(deleteLikeQuery, placeIdx);
                 await conn.query(deleteBookmarkQuery, placeIdx);
+                await conn.query(deletePlaceQuery, placeIdx);
             }).catch((err)=>{
                 console.log('장소 삭제 트랜잭션 오류');
                 throw err;

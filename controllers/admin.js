@@ -20,7 +20,6 @@ module.exports = {
             if(await Group.checkGroupIdx(groupIdx)===0){
                 console.log("해당 그룹이 존재하지 않습니다.");  
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.CALL_GROUP_FAIL));
-
             }
 
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYWAITUSERLIST_SUCCESS, 
