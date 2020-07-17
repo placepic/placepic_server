@@ -3,15 +3,17 @@ let statusCode = require('../modules/statusCode');
 let util = require('../modules/util');
 let Group = require('../models/group');
 
-exports.apply = async (req, res) => {
-    const groupIdx = req.params.groupIdx;
-    const userIdx = req.userIdx;
-    const groupInfo = await Group.callMygroupInfo(groupIdx);
-    //const status = 2; // 디폴트가 2가 아니면 2를 넣어준다.
-    const {
-        part,
-        phoneNumber
-    } = req.body;
+module.exports = {
+    apply : async (req, res) => {
+        const groupIdx = req.params.groupIdx;
+        const userIdx = req.userIdx;
+        const groupInfo = await Group.callMygroupInfo(groupIdx);
+    
+        const {
+            part,
+            phoneNumber
+        } = req.body;
+
     try {
         //null 값 확인
         if (!groupIdx || !userIdx || !part || !phoneNumber){
@@ -38,19 +40,17 @@ exports.apply = async (req, res) => {
     } catch (err) {
         console.log('apply error', err)
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
-    }
-};
+        }
+    },
 
-exports.getMyGroupList = async (req, res) => {
-
-    const userIdx = req.userIdx;
-    const QueryObject = req.query;
-    try {
-        //const groupInfo = await Group.callMygroupInfo(userIdx); //그룹에 대한 이름, 이미지
-        const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
-        const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
-        const myGroupList = await Group.getMyGroupList(userIdx, QueryObject);
-        console.log('11');
+    getMyGroupList : async (req, res) => {
+        const userIdx = req.userIdx;
+        const QueryObject = req.query;
+        try {
+            const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
+            const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
+            const myGroupList = await Group.getMyGroupList(userIdx, QueryObject);
+            console.log('11');
         for (let i = 0; i < myGroupList.length; i++) {
             const myGroupUserCnt = await Group.getGroupUserCnt(myGroupList[i].groupIdx);
             const myGroupPostCnt = await Group.getGroupPostCnt(myGroupList[i].groupIdx);
@@ -60,36 +60,37 @@ exports.getMyGroupList = async (req, res) => {
 
         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST, 
             myGroupList
-        //    myGroupList: myGroupList.filter(group => group.groupIdx !== null)
-          // model부분에 GroupBy 처리 해준것
         ));
-    } catch (err) {
-        console.log("그룹을 불러오지 못했습니다.")
-        return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
+    } 
+        catch (err) {
+            console.log("그룹을 불러오지 못했습니다.")
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
     }
-};
+    },
 
-exports.getMyApplyGroupList = async (req, res) => {
-    try {
-        const result = await Group.getMyApplyGroupList(req.userIdx);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_APPLY_GROUP, result));
-    } catch(e) {
-        return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
-    }
-};
+    getMyApplyGroupList : async (req, res) => {
+        try {
+            const result = await Group.getMyApplyGroupList(req.userIdx);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_APPLY_GROUP, result));
+        } catch(e) {
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
+        }
+    },
 
-exports.getMyGroupRanking = async (req, res) => {
-    try {
-        const userIdx = req.userIdx;
-        const groupIdx = req.params.groupIdx;
-        const page = req.query.page;
+    getMyGroupRanking : async (req, res) => {
+        try {
+            const userIdx = req.userIdx;
+            const groupIdx = req.params.groupIdx;
+            const page = req.query.page;
     
-        const result = await Group.getMyGroupRanking(groupIdx);
-        const userCnt = await Group.getGroupUserCnt(groupIdx);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYGROUPRANKING_SUCCESS, {userCnt : userCnt, userList : result}));
+            const result = await Group.getMyGroupRanking(groupIdx);
+            const userCnt = await Group.getGroupUserCnt(groupIdx);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_MYGROUPRANKING_SUCCESS, {userCnt : userCnt, userList : result}));
     } catch(e) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
-    }
-};
+        }
+    },
+
+}
 
 
