@@ -410,7 +410,7 @@ const place = {
         }
     },
     deleteLike : async ({userIdx,placeIdx}) =>{
-        const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(deleteLikeQuery);
             return result;
@@ -420,7 +420,7 @@ const place = {
         }
     },   
     deleteBookmark : async ({userIdx,placeIdx}) =>{
-        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(deleteBookmarkQuery);
             return result;
