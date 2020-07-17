@@ -319,40 +319,27 @@ const group = {
                     rank: 0
                 });
             });
-
-            let rank = 0;
-            for (let i = 0; i < groupResult.length; i++) {
-                if (groupResult[i].postCount === 0) {
-                    rank = -1;
-                    [...resultMap.values()][i].rank = rank;
-                }
-                //console.log(groupResult[i].postCount)
-                else if (i === groupResult.length - 1) {
-                    [...resultMap.values()][i].rank = rank;
-                    break;
-                } else if (groupResult[i].postCount >= groupResult[i + 1].postCount) {
-                    if (i === 0) {
-                        rank = rank + 1; // 2 와 3이 같다 1>2
-                        [...resultMap.values()][i].rank = rank;
+            let rank = 1;
+            let stack = [];
+            let cnt = 0;
+            groupResult[0].rank = 1;
+            [...resultMap.values()][0].rank = 1
+            stack.push(groupResult[0].postCount);
+            for(let i = 1; i< groupResult.length; i++){
+                if((groupResult[i].postCount < stack[stack.length -1]) && groupResult[i].postCount !==0 ){
+                    while((stack.length) > 0){
+                        stack.pop()
+                        cnt++;
                     }
-                    // 전인덱스가 3 다음인덱스가 2  그리고 전인덱스가 2 다음인덱스가 2
-                    else if ((groupResult[i - 1].postCount > groupResult[i].postCount)) {
-                        if (i === 1) {
-                            rank = rank + 1; // 2 와 3이 같다 1>2
-                            [...resultMap.values()][i].rank = rank;
-                        } else if (groupResult[i - 1].postCount === groupResult[i - 2].postCount) {
-                            rank = rank + 2; // 2 와 3이 같다 1>2
-                            [...resultMap.values()][i].rank = rank;
-                        } else {
-                            rank = rank + 1; // 2 와 3이 같다 1>2
-                            [...resultMap.values()][i].rank = rank;
-                        }
-                    } else
-                        [...resultMap.values()][i].rank = rank;
-                }
-                else {
-                    rank = rank + 1;
+                    rank = rank + cnt;
                     [...resultMap.values()][i].rank = rank;
+                    cnt = 0;
+                    stack.push(groupResult[i].postCount);
+                }else if(groupResult[i].postCount === 0){
+                    [...resultMap.values()][i].rank = -1;
+                }else{
+                    stack.push(groupResult[i].postCount);
+                    [...resultMap.values()][i].rank =rank;
                 }
             }
             return [...resultMap.values()];
