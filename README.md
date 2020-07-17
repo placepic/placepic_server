@@ -120,7 +120,7 @@ master
 
 ## 📖 Dependencies 
 
-![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
+![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies_final.png?raw=true)
 
 <br />
 
