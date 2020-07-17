@@ -103,6 +103,61 @@ const place = {
             throw err;
         }
     },
+    getPlacesWithBookmark: async (userIdx, groupIdx) => {
+        const tagTable = tableModule.getTag();
+        const categoryTable = tableModule.getCategory();
+        const subwayTable = tableModule.getSubwayGroup();
+        try {
+            const bookmarkQuery = `SELECT * FROM (SELECT * FROM ${table} WHERE placeIdx IN (SELECT placeIdx FROM ${bookmarkTB} WHERE userIdx=${userIdx}) AND groupIdx=${groupIdx}) as PLACE natural join USER_TB`;
+            const placeResult = await pool.queryParam(bookmarkQuery);
+
+            if(placeResult.length === 0) return [];
+            const placeIdxs = new Set(placeResult.map(p => p.placeIdx));
+            const result = new Map();
+            placeResult.forEach(ele => result.set(ele.placeIdx, {
+                placeIdx: ele.placeIdx,
+                placeName: ele.placeName,
+                placeAddress: ele.placeAddress,
+                placeRoadAddress: ele.placeRoadAddress,
+                placeMapX: ele.placeMapX,
+                placeMapY: ele.placeMapY,
+                placeCreatedAt: ele.placeCreatedAt,
+                placeUpdatedAt: ele.placeUpdatedAt,
+                
+                placeReview: ele.placeReview,
+                category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
+                groupIdx: ele.groupIdx,
+                placeViews: ele.placeViews,
+                tag: [],
+                subway: [],
+                user: {
+                    userIdx: ele.userIdx,
+                    userName: ele.userName ? ele.userName : '',
+                    email: ele.email ? ele.email : '',
+                    profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : ''
+                },
+                imageUrl: []
+            }));
+            const imageResult = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')})`);
+
+            imageResult.forEach(ele => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).imageUrl.push(ele.placeImageUrl);
+            });
+            const subwayResult = await pool.queryParam(`SELECT subwayIdx, placeIdx FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')})`);
+            subwayResult.forEach(ele => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(subwayTable.find(sub => sub.subwayIdx === ele.subwayIdx));
+            });
+
+            const tagResult = await pool.queryParam(`SELECT tagIdx, placeIdx FROM PLACE_TAG_RELATION_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')})`);
+            tagResult.forEach(ele => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).tag.push(tagTable.find(tag => tag.tagIdx === ele.tagIdx));
+            });
+            return [...result.values()];
+        } catch(e) {
+            throw e;
+        }
+        
+    },
     getPlacesByQuery: async (groupIdx, query) => {
         try {
             const subwayTable = tableModule.getSubwayGroup();
@@ -311,18 +366,20 @@ const place = {
                 if(queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
 
+            // filtering
             let result = [...queryResult.values()];
-
-            if(_.isNil(queryObject.categoryIdx)) return result;
-
-            if (!_.isNil(queryObject.tagIdx)) {
-                result = result.filter(ele => {
-                    for (let tagIdx of queryObject.tagIdx.split(',')) {
-                        if (ele.tag.findIndex(tag => tag.tagIdx === tagIdx * 1) === -1) return false;
-                    }
-                    return true;
-                });
+            
+            if(!_.isNil(queryObject.categoryIdx)) {
+                if (!_.isNil(queryObject.tagIdx)) {
+                    result = result.filter(ele => {
+                        for (let tagIdx of queryObject.tagIdx.split(',')) {
+                            if (ele.tag.findIndex(tag => tag.tagIdx === tagIdx * 1) === -1) return false;
+                        }
+                        return true;
+                    });
+                };
             }
+
             if (!_.isNil(queryObject.subwayIdx)) {
                 result = result.filter(ele => {
                     for (let subwayIdx of queryObject.subwayIdx.split(',')) {
@@ -331,6 +388,9 @@ const place = {
                     return false;
                 });
             }
+
+            
+            
             console.log('GET places in group');
             return result;
         } catch(e) {
@@ -351,6 +411,7 @@ const place = {
                         WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and u.userIdx = (SELECT userIdx FROM PLACE_TB WHERE placeIdx =${placeIdx});;`
         const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`
         const isMyPlaceQuery = `SELECT u.userIdx, p.placeIdx FROM USER_TB as u LEFT JOIN PLACE_TB as p on u.userIdx = p.userIdx WHERE u.userIdx = ${userIdx} and p.placeIdx = ${placeIdx}`;
+        const isAdminQuery = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and userIdx = ${userIdx}`;
         try{
             let retObj = {};
             const placeResult = await pool.queryParam(placeQuery);
@@ -364,7 +425,8 @@ const place = {
             const writer = await pool.queryParam(userQuery);
             const postCount = await pool.queryParam(postQuery);
             const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
-
+            const isAdminResult = await pool.queryParam(isAdminQuery);
+            
             retObj = {...placeResult[0]};
             retObj.isLiked = !_.isNil(isLikedResult[0]);
             retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
@@ -391,8 +453,9 @@ const place = {
                     retObj.placeInfo.push(tag[it].tagName)
                 }
             }
+
             writer[0].postCount = postCount[0].postCount; 
-            writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]);
+            writer[0].deleteBtn = (!_.isNil(isMyPlaceResult[0]) || (isAdminResult[0].state === 0));
             retObj.uploader = writer[0];
             retObj.mobileNaverMapLink = 'https://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1';
             return retObj;
@@ -402,7 +465,7 @@ const place = {
         }
     },
     deleteLike : async ({userIdx,placeIdx}) =>{
-        const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        const deleteLikeQuery = `DELETE FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(deleteLikeQuery);
             return result;
@@ -412,7 +475,7 @@ const place = {
         }
     },   
     deleteBookmark : async ({userIdx,placeIdx}) =>{
-        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and ${placeIdx}`;
+        const deleteBookmarkQuery = `DELETE FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         try{
             const result = await pool.queryParam(deleteBookmarkQuery);
             return result;
@@ -462,6 +525,17 @@ const place = {
             return result[0];
         }catch(err){
             console.log('isMyPlacePost err', err);
+            throw err;
+        }
+    },
+    isAdmin : async(userIdx, placeIdx) =>{
+        const query = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and userIdx = ${userIdx}`;
+        try{
+            const result = await pool.queryParam(query);
+            console.log(result[0].state);
+            return result[0].state;
+        }catch(err){
+            console.log('isAdmin err', err);
             throw err;
         }
     }

@@ -15,6 +15,7 @@ module.exports = {
         } = req.body;
 
     try {
+
         //null 값 확인
         if (!groupIdx || !userIdx || !part || !phoneNumber){
             console.log("필요한 값이 없습니다.");

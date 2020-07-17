@@ -91,7 +91,7 @@ const placeController = {
     },
     addLike : async (req, res)=>{
         const userIdx = req.userIdx;
-        
+        const placeIdx =req.body.placeIdx
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
@@ -181,9 +181,19 @@ const placeController = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
     },
+    getPlacesWithBookmark: async (req, res) => {
+        try {
+            const result = await placeDB.getPlacesWithBookmark(req.userIdx, req.params.groupIdx);
+            result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {result, count: result.length}));
+        } catch(e) {
+            console.log('get places With Bookmarked error :', e);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+        }
+    },
     getLikeList : async (req, res) =>{
-        const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
+        console.log(req.params);
         try{
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if(isPlace.length === 0){
@@ -245,7 +255,7 @@ const placeController = {
 
             const isLiked = await placeDB.getBookmarkIdx({userIdx,placeIdx}); 
             if(isLiked.length === 0){
-                console.log('좋아요가 없습니다.');
+                console.log('북마크가 없습니다.');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_BOOKMARK));
             }
             const result = await placeDB.deleteBookmark({userIdx,placeIdx});
@@ -259,11 +269,13 @@ const placeController = {
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
         try{
-            const placeIdCheck = await placeDB.isMyPlacePost(userIdx,placeIdx);
-            if(_.isNil(placeIdCheck)){
+            const isWriter = await placeDB.isMyPlacePost(userIdx,placeIdx);
+            const isAdmin = await placeDB.isAdmin(userIdx,placeIdx);
+            if(!(!_.isNil(isWriter) || (isAdmin===0))){ 
                 console.log('삭제 권한이 없는 아이디.');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NOT_DELETE_PLACE));
             }
+
             const result = await placeDB.deletePlace(placeIdx);
             return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.DELETE_PLACE));
         }catch(err){
