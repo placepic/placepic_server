@@ -404,7 +404,7 @@ console.log(likeResult);
         }
     },
     getOnePlace : async ({userIdx, placeIdx}) =>{
-        const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt, placeRoadAddress FROM ${table} WHERE placeIdx =${placeIdx}`;
+        const placeQuery = `SELECT categoryIdx, placeName, placeReview, placeCreatedAt, placeRoadAddress, placeMapX, placeMapY FROM ${table} WHERE placeIdx =${placeIdx}`;
         const subwayNameQuery = `SELECT * FROM ${subwayTB} WHERE subwayIdx IN (SELECT subwayIdx FROM ${table} as p LEFT JOIN ${subwayPlaceTB} as r on p.placeIdx=r.placeIdx WHERE p.placeIdx = ${placeIdx})`;
         const placeImageQuery = `SELECT * FROM ${placeImageTB} WHERE placeIdx = ${placeIdx}`;
         const tagQuery = `SELECT tagName, tagIsBasic FROM PLACE_TAG_RELATION_TB as p LEFT JOIN TAG_TB as t on p.tagIdx = t.tagIdx WHERE placeIdx = ${placeIdx}`;
@@ -432,7 +432,7 @@ console.log(likeResult);
             const postCount = await pool.queryParam(postQuery);
             const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
             const isAdminResult = await pool.queryParam(isAdminQuery);
-            
+
             retObj = {...placeResult[0]};
             retObj.isLiked = !_.isNil(isLikedResult[0]);
             retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
@@ -463,7 +463,7 @@ console.log(likeResult);
             writer[0].postCount = postCount[0].postCount; 
             writer[0].deleteBtn = (!_.isNil(isMyPlaceResult[0]) || (isAdminResult[0].state === 0));
             retObj.uploader = writer[0];
-            retObj.mobileNaverMapLink = 'https://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1';
+            retObj.mobileNaverMapLink = 'http://m.map.naver.com/search2/search.nhn?query='+placeResult[0].placeName+'&sm=hty&style=v5#/map/1';
             return retObj;
         }catch(err){
             console.log('get one place err', err);

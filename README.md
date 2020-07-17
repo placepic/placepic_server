@@ -116,18 +116,29 @@ master
 - Interaction
    - 좋아요, 북마크, 랭킹 기능을 통해 그룹간 **Interaction**
 
-## 
+<br />
+
+## 🔥 ERD
+
+![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
+
+<br />
+
+## 🏗 Architecture
+
+![Architecture](https://github.com/placepic/placepic_server/blob/master/public/images/placepic%20architecture.PNG?raw=true)
 
 <br />
 
 ## 📖 Dependencies 
 
-![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies.png?raw=true)
+![dependencies](https://github.com/placepic/placepic_server/blob/master/public/images/dependencies_final.png?raw=true)
 
 <br />
 
 
 ## 📚 Library
+
 - [Node.js](https://nodejs.org/ko/) : 런타임 환경
 - [Express](https://expressjs.com/ko/) : NodeJs Framework
 - [NPM](https://www.npmjs.com/) : NodeJS package manager
@@ -135,11 +146,7 @@ master
 - [Mocha](https://mochajs.org/)  : 테스트 러너 프레임워크
 - [Lodash](https://lodash.com/) : 자바스크립트 유틸리티 라이브러리
 
-## 🔥 ERD
-![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
-
 <br />
 
 
-## 🏗 Architecture
-![Architecture](https://github.com/placepic/placepic_server/blob/master/public/images/placepic_architecture.PNG?raw=true)
+
