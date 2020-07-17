@@ -5,14 +5,9 @@ let Group = require('../models/group');
 
 module.exports = {
     apply: async (req, res) => {
-        const groupIdx = req.params.groupIdx;
         const userIdx = req.userIdx;
+        const { groupIdx, part, phoneNumber} = req.body;
         const groupInfo = await Group.callMygroupInfo(groupIdx);
-
-        const {
-            part,
-            phoneNumber
-        } = req.body;
 
         try {
             //null 값 확인
