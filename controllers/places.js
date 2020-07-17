@@ -181,6 +181,16 @@ const placeController = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
     },
+    getPlacesWithBookmark: async (req, res) => {
+        try {
+            const result = await placeDB.getPlacesWithBookmark(req.userIdx, req.params.groupIdx);
+            result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {result, count: result.length}));
+        } catch(e) {
+            console.log('get places With Bookmarked error :', e);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+        }
+    },
     getLikeList : async (req, res) =>{
         const placeIdx = req.params.placeIdx;
         console.log(req.params);
@@ -245,7 +255,7 @@ const placeController = {
 
             const isLiked = await placeDB.getBookmarkIdx({userIdx,placeIdx}); 
             if(isLiked.length === 0){
-                console.log('좋아요가 없습니다.');
+                console.log('북마크가 없습니다.');
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_BOOKMARK));
             }
             const result = await placeDB.deleteBookmark({userIdx,placeIdx});
