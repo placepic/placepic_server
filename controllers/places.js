@@ -13,7 +13,7 @@ const placeController = {
     addPlace : async (req, res) =>{
         const userIdx = req.userIdx;
         let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
-        const imageFiles = req.files;
+        const imageFiles = req.files; // 
 
         subwayIdx = typeof(subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
         tags = typeof(tags) === "object" ? tags : JSON.parse(tags);
@@ -208,6 +208,18 @@ const placeController = {
             console.log('getLike err',err);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
+    },
+    getPlacesWithUser : async (req,res) => {
+        const userIdx = req.userIdx;
+        const groupIdx = req.params.groupIdx;
+        try {
+            const result = await placeDB.getPlacesWithUser(userIdx,groupIdx);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.READ_PLACES, result));
+        }catch(err){
+            console.log('getLike err',err);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }
+
     },
     getOnePlace : async (req,res)=>{
         const userIdx = req.userIdx;

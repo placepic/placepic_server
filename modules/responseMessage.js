@@ -96,6 +96,7 @@ module.exports = {
     CALL_MYGROUPRANKING_SUCCESS:"내 그룹 랭킹 불러오기 성공",
 
     //MY INFO
-    NOT_IN_GROUP_USER: "그룹에 유저가 속해있지 않습니다."
+    NOT_IN_GROUP_USER: "그룹에 유저가 속해있지 않습니다.",
+    EDIT_MYINFO : "프로필사진, 소속 변경 완료",
 
 };
