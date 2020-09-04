@@ -143,7 +143,6 @@ console.log(likeResult);
                 likeCount: _.findIndex(likeResult, like => like.placeIdx === ele.placeIdx) !== -1 ? _.find(likeResult, like => like.placeIdx === ele.placeIdx).likeCount : 0
             }));
 
-
             const imageResult = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')})`);
 
             imageResult.forEach(ele => {
