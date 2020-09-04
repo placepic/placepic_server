@@ -190,7 +190,6 @@ console.log(likeResult);
                             placeMapY: ele.placeMapY,
                             placeCreatedAt: ele.placeCreatedAt,
                             placeUpdatedAt: ele.placeUpdatedAt,
-                            
                             placeReview: ele.placeReview,
                             category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
                             groupIdx: ele.groupIdx,
