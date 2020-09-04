@@ -494,7 +494,8 @@ console.log(likeResult);
         const deleteSubwayQuery = `DELETE FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx = ?`;
         const deletePlaceQuery = `DELETE FROM PLACE_TB WHERE placeIdx = ? `;
         const deleteLikeQuery = `DELETE FROM LIKE_TB WHERE placeIdx = ?`;
-        const deleteBookmarkQuery = `DELETE FROM BOOKMARK_TB WHERE placeIdx = ?`
+        const deleteBookmarkQuery = `DELETE FROM BOOKMARK_TB WHERE placeIdx = ?`;
+        
         try{
             await pool.Transaction( async (conn)=>{
                 await conn.query(deleteImageQuery, placeIdx);
