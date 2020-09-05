@@ -143,7 +143,6 @@ console.log(likeResult);
                 likeCount: _.findIndex(likeResult, like => like.placeIdx === ele.placeIdx) !== -1 ? _.find(likeResult, like => like.placeIdx === ele.placeIdx).likeCount : 0
             }));
 
-
             const imageResult = await pool.queryParam(`SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')})`);
 
             imageResult.forEach(ele => {
@@ -190,7 +189,6 @@ console.log(likeResult);
                             placeMapY: ele.placeMapY,
                             placeCreatedAt: ele.placeCreatedAt,
                             placeUpdatedAt: ele.placeUpdatedAt,
-                            
                             placeReview: ele.placeReview,
                             category: categoryTable.find(category => category.categoryIdx === ele.categoryIdx),
                             groupIdx: ele.groupIdx,
@@ -496,7 +494,8 @@ console.log(likeResult);
         const deleteSubwayQuery = `DELETE FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx = ?`;
         const deletePlaceQuery = `DELETE FROM PLACE_TB WHERE placeIdx = ? `;
         const deleteLikeQuery = `DELETE FROM LIKE_TB WHERE placeIdx = ?`;
-        const deleteBookmarkQuery = `DELETE FROM BOOKMARK_TB WHERE placeIdx = ?`
+        const deleteBookmarkQuery = `DELETE FROM BOOKMARK_TB WHERE placeIdx = ?`;
+        
         try{
             await pool.Transaction( async (conn)=>{
                 await conn.query(deleteImageQuery, placeIdx);
