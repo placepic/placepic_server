@@ -39,35 +39,35 @@ module.exports = {
         }
     },
 
-    getMyGroupList: async (req, res) => {
-        const userIdx = req.userIdx;
-        const QueryObject = req.query;
-        try {
-            const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
-            const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
-            const myGroupList = await Group.getMyGroupList(userIdx, QueryObject);
+    // getMyGroupList: async (req, res) => {
+    //     const userIdx = req.userIdx;
+    //     const QueryObject = req.query;
+    //     try {
+    //         const groupUserCnt = await Group.callMygroupUserCnt(userIdx); // 그룹에 대한 유저 수
+    //         const groupPostCnt = await Group.callMygroupPostCnt(userIdx); // 그룹에 대한 게시물 수
+    //         const myGroupList = await Group.getMyGroupList(userIdx, QueryObject);
             
-            for (let i = 0; i < myGroupList.length; i++) {
-                const myGroupUserCnt = await Group.getGroupUserCnt(myGroupList[i].groupIdx);
-                const myGroupPostCnt = await Group.getGroupPostCnt(myGroupList[i].groupIdx);
-                myGroupList[i].userCount = myGroupUserCnt;
-                myGroupList[i].postCount = myGroupPostCnt;
-            }
+    //         for (let i = 0; i < myGroupList.length; i++) {
+    //             const myGroupUserCnt = await Group.getGroupUserCnt(myGroupList[i].groupIdx);
+    //             const myGroupPostCnt = await Group.getGroupPostCnt(myGroupList[i].groupIdx);
+    //             myGroupList[i].userCount = myGroupUserCnt;
+    //             myGroupList[i].postCount = myGroupPostCnt;
+    //         }
 
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST,
-                myGroupList
-            ));
-        } catch (err) {
-            console.log("그룹을 불러오지 못했습니다.")
-            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
-        }
-    },
-    getMyApplyGroupList: async (req, res) => {
+    //         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST,
+    //             myGroupList
+    //         ));
+    //     } catch (err) {
+    //         console.log("그룹을 불러오지 못했습니다.")
+    //         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, err.message));
+    //     }
+    // },
+    getMyGroupList: async (req, res) => {
         try {
-            const result = await Group.getMyApplyGroupList(req.userIdx);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_APPLY_GROUP, result));
+            const result = await Group.getMyGroupList(req.userIdx);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_GROUP_LIST, result));
         } catch (e) {
-            console.log('getMyApply List error :', e)
+            console.log('getMyGroupList error :', e)
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
         }
     },
