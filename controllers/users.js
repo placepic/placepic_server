@@ -142,10 +142,10 @@ module.exports = {
             }
             const user = await User.signInSP3(phoneNumber, certificationNumber);
             if (!user) {
-                console.log('비밀번호가 일치하지 않습니다.');
+                console.log('인증번호가 일치하지 않습니다.');
                 return res
                     .status(statusCode.BAD_REQUEST)
-                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.MISS_MATCH_PW));
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.MISS_MATCH_CN));
             }
 
             // jwt
