@@ -5,7 +5,7 @@ const STATE_PENDING = 2;
 const _ = require('lodash');
 
 const group = {
-    // 그룹 신청하기
+    // 그룹 신청하기 (안씀)
     apply: async (groupIdx, userIdx, part, phoneNumber) => {
         const fields = 'groupIdx,userIdx,part,phoneNumber';
         const questions = `?, ?, ?, ?`;
@@ -20,7 +20,7 @@ const group = {
             throw err;
         }
     },
-    //유저 그룹 상태 가져오기
+    //유저 그룹 상태 가져오기( 왜씀?)
     callMyGroupStatus: async (userIdx) => {
         const getMygroupStatus = `SELECT state FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}`;
         try {
@@ -85,49 +85,91 @@ const group = {
             throw err;
         }
     },
-    getMyGroupList: async (userIdx, queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
-        let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
-        if (queryObject.filter === 'wait')
-            getMygroup += `WHERE MYRELATIONGROUP.state = 2`;
-        else
-            getMygroup += `WHERE MYRELATIONGROUP.state NOT IN(2)`;
+    // getMyGroupList: async (userIdx, queryObject) => { // 쿼리로 비슷한 기능들을 한 기능에 모을 수 있다.
+    //     let getMygroup = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE userIdx = ${userIdx}) AS MYRELATIONGROUP natural left outer join GROUP_TB `;
+    //     if (queryObject.filter === 'wait')
+    //         getMygroup += `WHERE MYRELATIONGROUP.state = 2`;
+    //     else
+    //         getMygroup += `WHERE MYRELATIONGROUP.state NOT IN(2)`;
+    //     try {
+    //         const result = await pool.queryParam(getMygroup);
+    //         return result;
+    //     } catch (err) {
+    //         console.log('그룹들을 불러오지 못했습니다 getMyGroupList err. : ', err);
+    //         throw err;
+    //     }
+    // },
+    // getMyApplyGroupList: async (userIdx) => {
+    //     const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
+    //     try {
+    //         const groupResult = await pool.queryParam(query);
+    //         if (groupResult.length === 0) {
+    //             console.log("불러올 지원가능한 그룹이 없습니다.");
+    //             return groupResult; //groupResult 가 [] 일때.
+    //         }
+    //         const groupIdxs = groupResult.map(group => group.groupIdx);
+    //         const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
+    //         const resultMap = new Map();
+    //         groupResult.forEach((group) => {
+    //             resultMap.set(group.groupIdx, {
+    //                 groupIdx: group.groupIdx,
+    //                 state: group.state,
+    //                 groupName: group.groupName,
+    //                 groupImage: group.groupImage,
+    //                 userCount: group.userCount,
+    //                 postCount: 0,
+    //             });
+    //         });
+    //         placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
+    //         return [...resultMap.values()];
+    //     } catch (e) {
+    //         console.log('getMyApplyGroupList error(지원가능한 그룹목록을 불러오지 못했습니다.) :', err);
+    //         throw e;
+    //     }
+    // },
+
+    getMyGroupList: async (userIdx) => {
+        const getGroupbyUser = `SELECT * , count(userIdx) as userCnt FROM GROUP_TB natural join GROUP_USER_RELATION_TB group by groupIdx`;
         try {
-            const result = await pool.queryParam(getMygroup);
-            return result;
-        } catch (err) {
-            console.log('그룹들을 불러오지 못했습니다 getMyGroupList err. : ', err);
-            throw err;
-        }
-    },
-    getMyApplyGroupList: async (userIdx) => {
-        const query = `SELECT * FROM (SELECT *, count(*) as userCount FROM placepic.GROUP_USER_RELATION_TB WHERE groupIdx NOT IN (SELECT groupIdx FROM placepic.GROUP_USER_RELATION_TB WHERE userIdx=${userIdx} ) Group by groupIdx) as T natural join GROUP_TB;`
-        try {
-            const groupResult = await pool.queryParam(query);
-            if (groupResult.length === 0) {
+            const getGroupResult = await pool.queryParam(getGroupbyUser);
+            console.log(getGroupResult);
+            if (getGroupResult.length === 0) {
                 console.log("불러올 지원가능한 그룹이 없습니다.");
                 return groupResult; //groupResult 가 [] 일때.
             }
-            const groupIdxs = groupResult.map(group => group.groupIdx);
+            const groupIdxs = getGroupResult.map(group => group.groupIdx);
+            console.log(groupIdxs)
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
+            console.log(placeResult);
+            const getState = await pool.queryParam(`SELECT * FROM placepic.GROUP_USER_RELATION_TB where userIdx = ${userIdx} group by groupIdx;`);
+
+            console.log(getState);
+
             const resultMap = new Map();
-            groupResult.forEach((group) => {
+            getGroupResult.forEach((group) => {
                 resultMap.set(group.groupIdx, {
                     groupIdx: group.groupIdx,
-                    groupUserIdx: group.groupUserIdx,
-                    userIdx: group.userIdx,
-                    state: group.state,
-                    part: group.part,
-                    phoneNumber: group.phoneNumber,
+                    state: -1,
                     groupName: group.groupName,
                     groupImage: group.groupImage,
-                    userCount: group.userCount,
+                    userCount: group.userCnt,
                     postCount: 0,
                 });
             });
-            placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
+            placeResult.forEach(place => {
+                resultMap.get(place.groupIdx).postCount = place.postCount
+            });
+            getState.forEach(ele => {
+                resultMap.get(ele.groupIdx).state = ele.state
+            })
+            console.log(resultMap)
+
+            resultMap.forEach(ele => {
+                
+            })
             return [...resultMap.values()];
         } catch (e) {
-            console.log('getMyApplyGroupList error(지원가능한 그룹목록을 불러오지 못했습니다.) :', err);
+            console.log('getMygroupList error(그룹목록을 불러오지 못했습니다.) :', err);
             throw e;
         }
     },
@@ -155,7 +197,7 @@ const group = {
         }
     },
     getGroupPostCnt: async (groupIdx) => {
-        const getGroupPostCnt = `SELECT count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx}`;
+        const getGroupPostCnt = `SELECT count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupId}`;
         try {
             const result = await pool.queryParam(getGroupPostCnt);
             return result[0].postCount;
@@ -309,7 +351,9 @@ const group = {
             if (_.isNil(groupResult)) {
                 return groupResult; //groupResult 가 [] 일때.
             }
+            console.log(groupResult);
             const resultMap = new Map();
+            console.log(resultMap);
             groupResult.forEach((group) => {
                 resultMap.set(group.userIdx, {
                     userName: group.userName,
@@ -319,6 +363,7 @@ const group = {
                     rank: 0
                 });
             });
+            console.log(resultMap);
             let rank = 1;
             let stack = [];
             let cnt = 0;
@@ -409,5 +454,6 @@ const group = {
             throw e;
         }
     }*/
+
 }
 module.exports = group;
