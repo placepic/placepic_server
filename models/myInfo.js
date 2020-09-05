@@ -28,13 +28,45 @@ const myInfo = {
         }
     },
 
+    // editMyInfo : async (userIdx,groupIdx,profileImageUrl,part) => {
+    //     const editProfileImageQuery = `UPDATE USER_TB as a natural left outer join GROUP_USER_RELATION_TB as b SET a.profileImageUrl = '${profileImageUrl}' WHERE a.userIdx = ${userIdx} and b.groupIdx = ${groupIdx};`;
+    //     const editProfilePartQuery = `UPDATE USER_TB as a natural left outer join GROUP_USER_RELATION_TB as b SET b.part = '${part}' WHERE a.userIdx = ${userIdx} and b.groupIdx = ${groupIdx};`;
+    //     try {
+    //         const result = await pool.queryParam(editProfileImageQuery);
+    //         const result1 =await pool.queryParam(editProfilePartQuery);
+
+    //     } catch (err) {
+    //         console.log('editStatusApplyUser ERROR : ', err);
+    //         throw err;
+    //     }
+    // },
     editMyInfo : async (userIdx,groupIdx,profileImageUrl,part) => {
-        const editProfileImageQuery = `UPDATE USER_TB as a natural left outer join GROUP_USER_RELATION_TB as b SET a.profileImageUrl = '${profileImageUrl}' WHERE a.userIdx = ${userIdx} and b.groupIdx = ${groupIdx};`;
-        const editProfilePartQuery = `UPDATE USER_TB as a natural left outer join GROUP_USER_RELATION_TB as b SET b.part = '${part}' WHERE a.userIdx = ${userIdx} and b.groupIdx = ${groupIdx};`;
+        const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl_ = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
+        const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         try {
             const result = await pool.queryParam(editProfileImageQuery);
             const result1 =await pool.queryParam(editProfilePartQuery);
 
+        } catch (err) {
+            console.log('editStatusApplyUser ERROR : ', err);
+            throw err;
+        }
+    },
+
+    editProfileImage : async (userIdx,groupIdx,profileImageUrl) => {
+        const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
+        try {
+            const result = await pool.queryParam(editProfileImageQuery);
+        } catch (err) {
+            console.log('editStatusApplyUser ERROR : ', err);
+            throw err;
+        }
+    },
+
+    editProfilePart : async (userIdx,groupIdx,part) => {
+        const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`
+        try {
+            const result = await pool.queryParam(editProfilePartQuery);
         } catch (err) {
             console.log('editStatusApplyUser ERROR : ', err);
             throw err;
