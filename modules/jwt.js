@@ -9,11 +9,22 @@ module.exports = {
     sign: async (user) => {
         const payload = {
             idx: user.userIdx,
-            name: user.userName
+            name: user.userName,
         };
         const result = {
             token: jwt.sign(payload, secretKey, options),
-            refreshToken: randToken.uid(256)
+            refreshToken: randToken.uid(256),
+        };
+        return result;
+    },
+    signSP3: async (user) => {
+        const payload = {
+            idx: user.userIdx,
+            phoneNumber: user.phoneNumber,
+        };
+        const result = {
+            token: jwt.sign(payload, secretKey, options),
+            refreshToken: randToken.uid(256),
         };
         return result;
     },
@@ -30,10 +41,10 @@ module.exports = {
                 console.log(TOKEN_INVALID);
                 return TOKEN_INVALID;
             } else {
-                console.log("invalid token");
+                console.log('invalid token');
                 return TOKEN_INVALID;
             }
         }
         return decoded;
-    }
-}
+    },
+};
