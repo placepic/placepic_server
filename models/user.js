@@ -95,8 +95,7 @@ const user = {
             // TODO 인증번호 발송 로직
             // 메시지 발송
             const result = await api.sendMessage(phoneNumber, certificationNumber);
-            console.log('메시지 발송 성공', phoneNumber, certificationNumber);
-            console.log('RESULT: ', result);
+            return result;
         } catch (e) {
             throw e;
         }
