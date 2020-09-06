@@ -8,6 +8,7 @@
   "dependencies": {
     "assert": "^2.0.0",
     "aws-sdk": "^2.738.0",
+    "axios": "^0.20.0",
     "chai": "^4.2.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
