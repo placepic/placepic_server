@@ -78,10 +78,15 @@ const place = {
             throw err;
         }
     },
+    /**
+     * getLikeList 수정
+     * 수정한 부분 : profileImageUrl
+     * 자세한 설명: 노션
+     */
     getLikeList : async(placeIdx) =>{
-        const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
+        const getLikeListQuery = `SELECT u.userName, u.profileImageUrl_, l.likeCreatedAt, u.part 
                                 FROM LIKE_TB as l
-                                LEFT JOIN (SELECT u.userIdx, u.userName, u.profileImageUrl, g.part FROM USER_TB as u 
+                                LEFT JOIN (SELECT u.userIdx, u.userName, g.profileImageUrl_, g.part FROM USER_TB as u 
                                 LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
                                 WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})) as u on l.userIdx = u.userIdx 
                                 where placeIdx = ${placeIdx};`;
