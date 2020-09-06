@@ -2,6 +2,7 @@ const pool = require('../modules/pool');
 const crypto = require('crypto');
 const table = 'USER_TB';
 const moment = require('moment');
+const api = require('../modules/api');
 
 const user = {
     signup: async (email, password, salt, userName, userBirth, gender) => {
@@ -93,7 +94,9 @@ const user = {
         try {
             // TODO 인증번호 발송 로직
             // 메시지 발송
-            console.log('메시지 발송', phoneNumber, certificationNumber);
+            const result = await api.sendMessage(phoneNumber, certificationNumber);
+            console.log('메시지 발송 성공', phoneNumber, certificationNumber);
+            console.log('RESULT: ', result);
         } catch (e) {
             throw e;
         }
