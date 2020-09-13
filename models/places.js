@@ -562,24 +562,15 @@ console.log(likeResult);
             const getTag = await pool.queryParam(tagResult);
             const getLikeCnt = await pool.queryParam(likeResult);
             let resultSubway = new Map();
-            let resultKeyword = new Map();
-            let resultPlaceInfo = new Map();
+            let resultTag = new Map();
             let resultLikeCnt = new Map();
 
             getTag.forEach(ele => {
-                if(ele.tagIsBasic === 0) {
-                    if(!resultKeyword.has(ele.placeIdx)) resultKeyword.set(ele.placeIdx,[])
-                    resultKeyword.get(ele.placeIdx).push(ele.tagName)
-                    
-                }
-                else{
-
-                if(!resultPlaceInfo.has(ele.placeIdx)) resultPlaceInfo.set(ele.placeIdx,[])
-                    resultPlaceInfo.get(ele.placeIdx).push(ele.tagName)
-                
-                } }
-                )
-
+            
+                    if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
+                    resultTag.get(ele.placeIdx).push(ele.tagName)
+            })
+            console.log(resultTag)
             getLikeCnt.forEach(ele => {
                 if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
                     resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
@@ -594,8 +585,7 @@ console.log(likeResult);
 
             getUserPlace.forEach(ele => {
                 ele.subway = resultSubway.get(ele.placeIdx)
-                ele.keyword = resultKeyword.get(ele.placeIdx)
-                ele.placeInfo = resultPlaceInfo.get(ele.placeIdx)
+                ele.tag = resultTag.get(ele.placeIdx)
                 ele.likeCnt = resultLikeCnt.get(ele.placeIdx)
             })
             
