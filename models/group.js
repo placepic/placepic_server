@@ -6,17 +6,46 @@ const _ = require('lodash');
 
 const group = {
     // 그룹 신청하기 (안씀)
-    apply: async (groupIdx, userIdx, part, phoneNumber) => {
-        const fields = 'groupIdx,userIdx,part,phoneNumber';
-        const questions = `?, ?, ?, ?`;
-        const values = [groupIdx, userIdx, part, phoneNumber];
-        const query = `INSERT INTO GROUP_USER_RELATION_TB (${fields}) VALUES(${questions})`;
-        try {
-            const result = await pool.queryParamArr(query, values);
-            const insertId = result.insertId;
-            return insertId;
-        } catch (err) {
-            console.log('apply ERROR : ', err);
+    // apply: async (groupIdx, userIdx) => { // 그룹신청할때 테이블 조인할때 userIdx값이 이미 회원가입할때 들어가니까 userIdx받아서 그 userIdx에 해당하는 테이블 group_user_테이블이랑 조인해서 이름,소속 넣어준다? state는 1로 넣어주고 
+    //     const fields = 'groupIdx,userIdx,userName,part,state';
+    //     const questions = `?, ?, ?, ?`;
+    //     const values = [groupIdx, userIdx, part, phoneNumber];
+    //     const query = `INSERT INTO USER_TB as a natural join GROUP_USER_RELATION_TB as b (${fields}) VALUES(${questions})`;
+    //     try {
+    //         const result = await pool.queryParamArr(query, values);
+    //         const insertId = result.insertId;
+    //         return insertId;
+    //     } catch (err) {
+    //         console.log('apply ERROR : ', err);
+    //         throw err;
+    //     }
+    // },
+    apply : async({userName,userIdx,groupIdx,part}) => {
+        const editName = `UPDATE USER_TB SET userName = '${userName}' WHERE userIdx = ?`;
+        const insertPart = `INSERT INTO GROUP_USER_RELATION_TB(groupIdx,userIdx,part,state) VALUES(?,?,?,?)`;
+        try{
+            await pool.Transaction( async (conn) =>{
+                let editNameResult = await conn.query(editName,userIdx)
+                let addPartResult = await conn.query(insertPart,[groupIdx,userIdx,part,1]);
+            
+            }).catch((err)=>{
+                console.log('그룹유저 추가 트랜잭션 오류! :',err)
+                throw err;
+            })
+        }catch(e){
+            console.log("그룹유저 추가 에러 :", e);
+            throw(e);
+        }
+
+    },
+    editStatusApplyUser : async(userIdx,groupIdx) => {
+        const editStatusApplyUser = `UPDATE ${table} SET state = 1 WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
+        try{
+            const result = await pool.queryParam(editStatusApplyUser);
+            return result;
+    
+        }catch(err) {
+            console.log('editStatusApplyUser ERROR : ', err);
             throw err;
         }
     },
@@ -153,6 +182,7 @@ const group = {
                     groupName: group.groupName,
                     groupImage: group.groupImage,
                     userCount: group.userCnt,
+                    groupCode: group.groupCode,
                     postCount: 0,
                 });
             });
@@ -160,7 +190,7 @@ const group = {
                 resultMap.get(place.groupIdx).postCount = place.postCount
             });
             getState.forEach(ele => {
-                resultMap.get(ele.groupIdx).state = ele.state
+                resultMap.get(ele.groupIdx).state = ele.state // 만약 getState가 없으면 이 로직을 실행하면 안댐
             })
             console.log(resultMap)
 
