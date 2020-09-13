@@ -80,75 +80,34 @@ module.exports = {
             console.log('SIGNATURE:', signature);
 
             const options = {
+                json: true,
                 uri: api_url,
                 headers: {
-                    'content-type': 'application/json; charset=utf-8',
+                    'Content-type': 'application/json; charset=utf-8',
                     'x-ncp-apigw-timestamp': timestamp,
                     'x-ncp-iam-access-key': ncp.accessKey,
                     'x-ncp-apigw-signature-v2': signature,
                 },
-                form: {
+                body: {
                     type: 'SMS',
                     contentType: 'COMM',
                     countryCode: '82',
                     from: ncp.callingNumber,
                     content: `placepic 인증번호 ${certificationNumber}`,
-                    messages: {
-                        to: phoneNumber,
-                    },
-                },
-                json: true,
-            };
-
-            // console.log('post start', options);
-            // let form = new FormData();
-            // form.append('type', 'SMS');
-            // form.append('contentType', 'COMM');
-            // form.append('countryCode', '82');
-            // form.append('from', ncp.callingNumber);
-            // form.append('content', `placepic 인증번호 ${certificationNumber}`);
-            // form.append('messages', {
-            //     to: phoneNumber,
-            // });
-
-            let form = {
-                type: 'SMS',
-                contentType: 'COMM',
-                countryCode: '82',
-                from: ncp.callingNumber,
-                content: `placepic 인증번호 ${certificationNumber}`,
-                messages: {
-                    to: phoneNumber,
+                    messages: [
+                        {
+                            to: phoneNumber,
+                        },
+                    ],
                 },
             };
-            console.log(JSON.stringify(form));
-            // axios
-            //     .post(`https://sens.apigw.ntruss.com/sms/v2/services/${ncp.serviceId}/messages`, {
-            //         headers: {
-            //             'content-type': 'application/json; charset=utf-8',
-            //             'x-ncp-apigw-timestamp': timestamp,
-            //             'x-ncp-iam-access-key': ncp.accessKey,
-            //             'x-ncp-apigw-signature-v2': signature,
-            //         },
-            //         data: form,
-            //     })
-            //     .then((result) => {
-            //         // console.log(result);
-            //         console.log('succe');
-            //         resolve('success');
-            //     })
-            //     .catch((e) => {
-            //         reject(e);
-            //     });
 
             request.post(options, (error, response, body) => {
-                console.log('post end');
                 if (error) {
                     console.log('NCP message API error : ' + error);
                     reject(error);
                 }
-                console.log(response.body, body);
-                resolve(/** 여기 리턴값이 */);
+                resolve(response);
             });
         });
     },
