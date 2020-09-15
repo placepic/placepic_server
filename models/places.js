@@ -548,7 +548,6 @@ console.log(likeResult);
             throw err;
         }
     },
-
     getPlacesAtHome : async(groupIdx) => {
         const getPlaceResult = `SELECT userIdx,placeIdx,groupIdx,userName,part,profileImageUrl,placeName,placeReview,placeImageUrl,placeCreatedAt FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc;`;
         // 유저정보, 장소정보 목록
@@ -592,7 +591,57 @@ console.log(likeResult);
             return getUserPlace;
 
         }catch(err){
-            console.log('get bookmarkIdx err', err);
+            console.log('getPlacesHome err', err);
+            throw err;
+        }
+    },
+    
+    getPlacesAtHomeByPage : async(page,groupIdx) => {
+        const limit = 5;
+        const offset = (page - 1) * limit
+        const getPlaceResult = `SELECT userIdx,placeIdx,groupIdx,userName,part,profileImageUrl,placeName,placeReview,placeImageUrl,placeCreatedAt FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc limit ${limit} offset ${offset};`;
+        // 유저정보, 장소정보 목록
+        const subwayResult = `SELECT * FROM SUBWAY_TB natural join SUBWAY_PLACE_RELATION_TB;`
+        // plaecIdx포함된 쿼리문 뽑아내면 댐
+        const tagResult = `SELECT placeIdx,tagName,tagIsBasic FROM TAG_TB natural join PLACE_TAG_RELATION_TB`;
+        const likeResult = `SELECT placeIdx, count(*) likeCnt FROM LIKE_TB group by placeIdx;`
+        try{
+            const getUserPlace = await pool.queryParam(getPlaceResult);
+            const getsubway = await pool.queryParam(subwayResult);
+            const getTag = await pool.queryParam(tagResult);
+            const getLikeCnt = await pool.queryParam(likeResult);
+            let resultSubway = new Map();
+            let resultTag = new Map();
+            let resultLikeCnt = new Map();
+
+            getTag.forEach(ele => {
+            
+                    if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
+                    resultTag.get(ele.placeIdx).push(ele.tagName)
+            })
+            console.log(resultTag)
+            getLikeCnt.forEach(ele => {
+                if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
+                    resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
+                    
+            })
+            console.log(resultLikeCnt)
+            getsubway.forEach(ele => {
+                if(!resultSubway.has(ele.placeIdx)) resultSubway.set(ele.placeIdx, [])
+
+                resultSubway.get(ele.placeIdx).push(ele.subwayName)
+            })
+
+            getUserPlace.forEach(ele => {
+                ele.subway = resultSubway.get(ele.placeIdx)
+                ele.tag = resultTag.get(ele.placeIdx)
+                ele.likeCnt = resultLikeCnt.get(ele.placeIdx)
+            })
+            
+            return getUserPlace;
+
+        }catch(err){
+            console.log('getPlacesAtHome err', err);
             throw err;
         }
     } 
