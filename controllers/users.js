@@ -99,8 +99,6 @@ module.exports = {
     /** SP3 회원가입 & 로그인 */
     getCertificationNumber: async (req, res) => {
         const { phoneNumber } = req.body;
-        // TODO - certificationNumber 생성 변경하기
-        // const certificationNumber = '1111';
         const certificationNumber = random.randCode();
 
         try {
