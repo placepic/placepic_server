@@ -158,13 +158,13 @@ const group = {
     // },
 
     getMyGroupList: async (userIdx) => {
-        const getGroupbyUser = `SELECT * , count(userIdx) as userCnt FROM GROUP_TB natural join GROUP_USER_RELATION_TB group by groupIdx`;
+        const getGroupbyUser = `SELECT groupIdx, groupName, groupImage, groupCode , count(userIdx) as userCnt FROM GROUP_TB natural left outer join GROUP_USER_RELATION_TB group by groupIdx;`;
         try {
             const getGroupResult = await pool.queryParam(getGroupbyUser);
             console.log(getGroupResult);
             if (getGroupResult.length === 0) {
                 console.log("불러올 지원가능한 그룹이 없습니다.");
-                return groupResult; //groupResult 가 [] 일때.
+                return getGroupResult; //groupResult 가 [] 일때.
             }
             const groupIdxs = getGroupResult.map(group => group.groupIdx);
             console.log(groupIdxs)
@@ -192,14 +192,10 @@ const group = {
             getState.forEach(ele => {
                 resultMap.get(ele.groupIdx).state = ele.state // 만약 getState가 없으면 이 로직을 실행하면 안댐
             })
-            console.log(resultMap)
-
-            resultMap.forEach(ele => {
-                
-            })
+            
             return [...resultMap.values()];
         } catch (e) {
-            console.log('getMygroupList error(그룹목록을 불러오지 못했습니다.) :', err);
+            console.log('getMygroupList error(그룹목록을 불러오지 못했습니다.) :', e);
             throw e;
         }
     },
@@ -373,7 +369,7 @@ const group = {
     getMyGroupRanking: async (groupIdx) => {
         const query = `SELECT userIdx, userName,part,profileImageUrl,count(placeName) as postCount FROM
         (SELECT * FROM 
-        (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state not in (2))
+        (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx})
         AS MYGROUPWAITUSER natural join USER_TB)
         AS POSTCOUNT natural left join PLACE_TB group by userIdx order by postCount DESC,userName`;
         try {
@@ -381,9 +377,7 @@ const group = {
             if (_.isNil(groupResult)) {
                 return groupResult; //groupResult 가 [] 일때.
             }
-            console.log(groupResult);
             const resultMap = new Map();
-            console.log(resultMap);
             groupResult.forEach((group) => {
                 resultMap.set(group.userIdx, {
                     userName: group.userName,
@@ -393,7 +387,7 @@ const group = {
                     rank: 0
                 });
             });
-            console.log(resultMap);
+
             let rank = 1;
             let stack = [];
             let cnt = 0;

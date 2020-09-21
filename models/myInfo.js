@@ -41,7 +41,7 @@ const myInfo = {
     //     }
     // },
     editMyInfo : async (userIdx,groupIdx,profileImageUrl,part) => {
-        const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl_ = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
+        const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         try {
             const result = await pool.queryParam(editProfileImageQuery);
