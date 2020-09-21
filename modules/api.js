@@ -80,7 +80,7 @@ module.exports = {
             console.log('SIGNATURE:', signature);
 
             const options = {
-                json:true, 
+                json: true,
                 uri: api_url,
                 headers: {
                     'Content-type': 'application/json; charset=utf-8',
@@ -96,12 +96,12 @@ module.exports = {
                     content: `placepic 인증번호 ${certificationNumber}`,
                     messages: [
                         {
-                           to: phoneNumber,
-                        }
+                            to: phoneNumber,
+                        },
                     ],
                 },
             };
-            
+
             request.post(options, (error, response, body) => {
                 if (error) {
                     console.log('NCP message API error : ' + error);
