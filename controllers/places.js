@@ -299,7 +299,26 @@ const placeController = {
     getPlacesAtHome : async(req,res) => {
         const groupIdx = req.params.groupIdx;
         const result = await placeDB.getPlacesAtHome(groupIdx);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.READ_PLACES,result))
+        try{
+            
+            return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.READ_PLACES,result))
+    
+        }catch(err){
+            console.log('친생픽 불러오기 에러', err);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }    
+    },
+
+    getPlacesAtHomeByPage : async(req,res) => {
+        const groupIdx = req.params.groupIdx;
+        const page = req.query.page;
+        const result = await placeDB.getPlacesAtHomeByPage(page,groupIdx);
+        try{
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES,result))
+        }catch(err){
+            console.log('친생픽 불러오기 에러', err);
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }
     }
 };
 

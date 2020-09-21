@@ -23,17 +23,17 @@ const admin = {
             throw err;
         }
     },
-    editStatusApplyUser : async(userIdx,groupIdx) => {
-        const editStatusApplyUser = `UPDATE ${table} SET state = 1 WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
-        try{
-            const result = await pool.queryParam(editStatusApplyUser);
-            return result;
+    // editStatusApplyUser : async(userIdx,groupIdx) => {
+    //     const editStatusApplyUser = `UPDATE ${table} SET state = 1 WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
+    //     try{
+    //         const result = await pool.queryParam(editStatusApplyUser);
+    //         return result;
     
-        }catch(err) {
-            console.log('editStatusApplyUser ERROR : ', err);
-            throw err;
-        }
-    },
+    //     }catch(err) {
+    //         console.log('editStatusApplyUser ERROR : ', err);
+    //         throw err;
+    //     }
+    // },
     deleteStatusApplyUser : async(userIdx,groupIdx) => {
         const deleteStatusApplyUser = `delete FROM ${table} WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
 
