@@ -77,8 +77,7 @@ const user = {
 
     /** SP3 회원가입 & 로그인 */
     checkUserPhoneNumber: async (phoneNumber) => {
-        // TODO phoneNumber_ 를 phoneNumber로 변경하기
-        const query = `SELECT * FROM ${table} WHERE phoneNumber_ = ${phoneNumber};`;
+        const query = `SELECT * FROM ${table} WHERE phoneNumber = ${phoneNumber};`;
         try {
             const result = await pool.queryParam(query);
             if (result.length > 0) return true;
@@ -91,8 +90,7 @@ const user = {
 
     sendMessage: async (phoneNumber, certificationNumber) => {
         try {
-            // TODO 인증번호 발송 로직
-            // 메시지 발송
+            // 인증번호 메시지 발송 로직
             const result = await api.sendMessage(phoneNumber, certificationNumber);
             return result.body;
         } catch (e) {
@@ -104,8 +102,7 @@ const user = {
         // DB 저장
         const nowUnixTime = parseInt(moment().format('X'));
 
-        // TODO phoneNumber_ 를 phoneNumber로 변경하기
-        const fields = 'phoneNumber_, salt, userCreatedAt, certificationNumber';
+        const fields = 'phoneNumber, salt, userCreatedAt, certificationNumber';
         const questions = `?, ?, ?, ?`;
         const values = [phoneNumber, salt, nowUnixTime, certificationNumber];
         const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
@@ -126,8 +123,7 @@ const user = {
     },
     updateCertificationNumber: async (phoneNumber, certificationNumber) => {
         // DB UPDATE
-        // TODO phoneNumber_ 를 phoneNumber로 변경하기
-        const query = `UPDATE ${table} SET certificationNumber = "${certificationNumber}" WHERE phoneNumber_ = "${phoneNumber}"`;
+        const query = `UPDATE ${table} SET certificationNumber = "${certificationNumber}" WHERE phoneNumber = "${phoneNumber}"`;
 
         try {
             const result = await pool.queryParam(query);
@@ -139,8 +135,7 @@ const user = {
         }
     },
     signInSP3: async (phoneNumber, certificationNumber) => {
-        // TODO phoneNumber_ 를 phoneNumber로 변경하기
-        const query = `SELECT * FROM ${table} WHERE phoneNumber_ = ${phoneNumber}`;
+        const query = `SELECT * FROM ${table} WHERE phoneNumber = ${phoneNumber}`;
         try {
             const result = await pool.queryParam(query);
             if (result[0].certificationNumber !== certificationNumber) return false;
