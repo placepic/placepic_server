@@ -44,6 +44,7 @@ const myInfo = {
         const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         try {
+            console.log(profileImageUrl)
             const result = await pool.queryParam(editProfileImageQuery);
             const result1 =await pool.queryParam(editProfilePartQuery);
 
