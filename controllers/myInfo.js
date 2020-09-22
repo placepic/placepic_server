@@ -24,9 +24,11 @@ const MyInfo = {
 
     editMyInfo : async(req,res) => {
         const userIdx = req.userIdx;
-        const profileImageUrl = req.file === undefined ? undefined : req.file.location;
+        const profileImageUrl = req.file? req.file.location : undefined;
         const groupIdx = req.params.groupIdx;
         const part = req.body.part;
+        console.log("파트 : ",part)
+        console.log(profileImageUrl);
 
         try {
             const editProfileResult = await myInfo.editMyInfo(userIdx,groupIdx,profileImageUrl,part);
