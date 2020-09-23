@@ -38,6 +38,7 @@ const group = {
         }
 
     },
+    
     editStatusApplyUser : async(userIdx,groupIdx) => {
         const editStatusApplyUser = `UPDATE ${table} SET state = 1 WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
         try{
@@ -171,7 +172,7 @@ const group = {
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
             console.log(placeResult);
             const getState = await pool.queryParam(`SELECT * FROM placepic.GROUP_USER_RELATION_TB where userIdx = ${userIdx} group by groupIdx;`);
-
+            
             console.log(getState);
 
             const resultMap = new Map();

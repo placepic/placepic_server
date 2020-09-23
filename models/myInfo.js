@@ -44,9 +44,13 @@ const myInfo = {
         const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         try {
-            const result = await pool.queryParam(editProfileImageQuery);
+            if(profileImageUrl === undefined){
             const result1 =await pool.queryParam(editProfilePartQuery);
-
+            }
+            else{ 
+                const result1 =await pool.queryParam(editProfilePartQuery);    
+                const result = await pool.queryParam(editProfileImageQuery);
+            }
         } catch (err) {
             console.log('editStatusApplyUser ERROR : ', err);
             throw err;
@@ -82,6 +86,7 @@ const myInfo = {
                 return getPlacesInfo; //groupResult 가 [] 일때.
             }
             const placeIdxs = getPlacesInfo.map(placeIdx => placeIdx.placeIdx);
+            console.log(plaecIdxs);
             const likeCountQuery = `SELECT COUNT(*) as likeCnt FROM LIKE_TB WHERE placeIdx IN (${placeIdxs.length === 1 ? placeIdxs.join('') : placeIdxs.join(', ')}) group by placeIdx`; 
             const getSubwayName = `SELECT subwayName FROM SUBWAY_PLACE_RELATION_TB as a natural left outer join SUBWAY_TB as b WHERE a.placeIdx IN (${placeIdxs.length === 1 ? placeIdxs.join('') : placeIdxs.join(', ')}) group by placeIdx ;`;
             const getLikeCnt = await pool.queryParam(likeCountQuery); // 작성한 글 좋아요 갯수 목록
@@ -89,8 +94,8 @@ const myInfo = {
             // getPlacesInfo.forEach(ele => {
 
             // })
-            console.log(...getPlacesInfo);
-            console.log(getLikeCnt);
+           // console.log(...getPlacesInfo);
+           // console.log(getLikeCnt);
             console.log(getSubwayNames)
             for(let i = 0; i< getPlacesInfo.length; i++) {
                 getPlacesInfo[i].likeCnt = getLikeCnt[i].likeCnt;
