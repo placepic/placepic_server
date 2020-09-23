@@ -644,6 +644,15 @@ console.log(likeResult);
             console.log('getPlacesAtHome err', err);
             throw err;
         }
+    },
+    getBanner : async (groupIdx) => {
+        const bannerQuery = `SELECT * FROM BANNER_TB WHERE groupIdx = ${groupIdx}`;
+        try {
+            const bannerList = await pool.queryParam(bannerQuery);
+            return bannerList;
+        } catch (err) {
+            throw err;
+        }
     } 
 }
 

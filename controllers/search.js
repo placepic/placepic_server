@@ -10,9 +10,8 @@ const searchController = {
     searchPlaceWithNaverAPI: async (req, res) => {
         try {
             let result = await api.mapFindAPI(req.query.query);
-            console.log(`[GET] naver API places: query=${req.query.query}`);
-            const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx, {})).map(place => '' + place.placeMapX + place.placeMapY);
 
+            const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx, {})).map(place => '' + place.placeMapX + place.placeMapY);
             result = result.map(r => {
                 return {
                     placeName: r.title.replace(/<b>|<\/b>/g, ''),

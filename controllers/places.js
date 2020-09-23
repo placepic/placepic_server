@@ -295,12 +295,11 @@ const placeController = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }
     },
-
     getPlacesAtHome : async(req,res) => {
         const groupIdx = req.params.groupIdx;
         const result = await placeDB.getPlacesAtHome(groupIdx);
         try{
-            
+
             return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.READ_PLACES,result))
     
         }catch(err){
@@ -308,7 +307,6 @@ const placeController = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
         }    
     },
-
     getPlacesAtHomeByPage : async(req,res) => {
         const groupIdx = req.params.groupIdx;
         const page = req.query.page;
@@ -318,6 +316,16 @@ const placeController = {
         }catch(err){
             console.log('친생픽 불러오기 에러', err);
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.INTERNAL_SERVER_ERROR));
+        }
+    },
+    getBannerList : async (req, res) => {
+        const groupIdx = req.params.groupIdx;
+        try{
+            const bannerList = await placeDB.getBanner(groupIdx);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, bannerList ));
+        } catch (err) {
+            console.log('배너 리스트 조회 실패.');
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.GET_BANNER_FAIL));
         }
     }
 };
