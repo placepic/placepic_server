@@ -143,7 +143,13 @@ module.exports = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }
             const user = await User.signInSP3(phoneNumber, certificationNumber);
-            if (!user) {
+            if (user.length === 0) {
+                console.log('해당 phoneNumber의 유저가 없습니다.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
+            }
+            if (user[0].certificationNumber !== certificationNumber) {
                 console.log('인증번호가 일치하지 않습니다.');
                 return res
                     .status(statusCode.BAD_REQUEST)
