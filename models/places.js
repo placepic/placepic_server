@@ -656,7 +656,7 @@ console.log(likeResult);
     },
     getBannerPlaces: async (bannerIdx) => {
         try {
-            const getOneBannerQuery = `SELECT * FROM BANNER_TB WHERE bannerIdx = ${bannerIdx}`;
+            const getOneBannerQuery = `SELECT bannerTitle, bannerBadgeName, bannerDescription, bannerBadgeColor, bannerCreatedAt, bannerImageUrl FROM BANNER_TB WHERE bannerIdx = ${bannerIdx}`;
             const getPlaceIndexQuery = `SELECT placeIdx FROM PLACE_BANNER_RELATION_TB WHERE bannerIdx = ${bannerIdx}`;
             const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
             let placeIdxs = getPlaceList.map(it => it.placeIdx);
@@ -676,7 +676,7 @@ console.log(likeResult);
             getPlace.forEach(ele => result.set(ele.placeIdx, {
                 placeIdx: ele.placeIdx,
                 placeName: ele.placeName,
-                likeCount: 0,
+                likeCnt: 0,
                 subwayName: [],
             }))
 
