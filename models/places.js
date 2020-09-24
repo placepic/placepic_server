@@ -653,7 +653,64 @@ console.log(likeResult);
         } catch (err) {
             throw err;
         }
-    } 
+    },
+    getBannerPlaces: async (bannerIdx) => {
+        try {
+            const getOneBannerQuery = `SELECT * FROM BANNER_TB WHERE bannerIdx = ${bannerIdx}`;
+            const getPlaceIndexQuery = `SELECT placeIdx FROM PLACE_BANNER_RELATION_TB WHERE bannerIdx = ${bannerIdx}`;
+            const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
+            let placeIdxs = getPlaceList.map(it => it.placeIdx);
+            const getLikeQuery = `SELECT l.placeIdx, count(*) as cnt FROM LIKE_TB as l left join PLACE_TB as p on l.placeIdx = p.placeIdx WHERE l.placeIdx in (${[...placeIdxs].join(', ')}) group by l.placeIdx;`;
+            const getPlaceQuery = `SELECT placeIdx, placeName FROM PLACE_TB WHERE placeIdx in (${[...placeIdxs].join(', ')})`;
+            const getPlaceImageQuery = `SELECT placeIdx, placeImageUrl FROM PLACEIMAGE_TB WHERE placeIdx in (${[...placeIdxs].join(', ')})`;
+            const getPlaceSubwayQuery = `SELECT sp.placeIdx, s.subwayName FROM SUBWAY_PLACE_RELATION_TB as sp 
+                LEFT JOIN SUBWAY_TB as s on sp.subwayIdx = s.subwayIdx 
+                WHERE sp.placeIdx in (${[...placeIdxs].join(', ')})`;
+
+            const getOneBanner = await pool.queryParam(getOneBannerQuery);
+            const getLike = await pool.queryParam(getLikeQuery)
+            const getPlace = await pool.queryParam(getPlaceQuery);
+            const getPlaceImage = await pool.queryParam(getPlaceImageQuery);
+            const getPlaceSubway = await pool.queryParam(getPlaceSubwayQuery);
+            const result = new Map();
+            getPlace.forEach(ele => result.set(ele.placeIdx, {
+                placeIdx: ele.placeIdx,
+                placeName: ele.placeName,
+                likeCount: 0,
+                subwayName: [],
+            }))
+
+            getLike.forEach(ele => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCount = ele.cnt;
+            })
+
+            getPlaceImage.forEach(ele => {
+                if (result.has(ele.placeIdx) && !result.has(ele.imageUrl)) result.get(ele.placeIdx).imageUrl = ele.placeImageUrl;
+            })
+
+            getPlaceSubway.forEach(ele => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subwayName.push(ele.subwayName);
+            })
+            return {
+                banner: getOneBanner[0],
+                places: [...result.values()],
+            }
+
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    },
+    isGroupBanner : async ({ groupIdx, bannerIdx }) => {
+        const bannerQuery = `SELECT COUNT(*) as cnt FROM BANNER_TB WHERE groupIdx = ${groupIdx} and bannerIdx = ${bannerIdx}`;
+        try {
+            const dto = await pool.queryParam(bannerQuery);
+            const isGroupBanner = dto[0].cnt === 1 ? true : false;
+            return isGroupBanner
+        } catch (err) {
+            throw err;
+        }
+    },
 }
 
 module.exports = place;

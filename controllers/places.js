@@ -322,7 +322,22 @@ const placeController = {
         const groupIdx = req.params.groupIdx;
         try{
             const bannerList = await placeDB.getBanner(groupIdx);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, bannerList ));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, bannerList));
+        } catch (err) {
+            console.log('배너 리스트 조회 실패.');
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.GET_BANNER_FAIL));
+        }
+    },
+    getBannerPlaces : async (req, res) => {
+        const { bannerIdx, groupIdx } = req.params;
+        try{
+            const isAccessBannerGroup = await placeDB.isGroupBanner({ groupIdx, bannerIdx });
+            if(!isAccessBannerGroup){
+                console.log('접근 권한 없음.');
+                return res.status(statusCode.BAD_REQUEST).send(util.success(statusCode.BAD_REQUEST, responseMessage.NOT_ACCESS_BANNER));
+            }
+            const bannerList = await placeDB.getBannerPlaces(bannerIdx)
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, bannerList));
         } catch (err) {
             console.log('배너 리스트 조회 실패.');
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR,responseMessage.GET_BANNER_FAIL));
