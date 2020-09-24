@@ -13,7 +13,7 @@ router.post('/signin', userController.signin); //2
 
 /** SP3 */
 router.post('/certificate', userController.getCertificationNumber); // 인증번호 받기 (문자)
-router.post('/test/signin', userController.signInSP3); // 인증번호 확인
+router.post('/sp3/signin', userController.signInSP3); // 인증번호 확인
 
 router.get('/groups', authUtil.checkToken, groups.getMyGroupList); // 그룹신청 페이지에서 보여줘야 할것들
 //router.get('/groups/apply', authUtil.checkToken, groups.getMyGroupList); //그룹 신청 가능 목록 //1

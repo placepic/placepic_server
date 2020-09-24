@@ -102,4 +102,9 @@ module.exports = {
     //MY INFO
     NOT_IN_GROUP_USER: '그룹에 유저가 속해있지 않습니다.',
     EDIT_MYINFO: '프로필사진, 소속 변경 완료',
+
+    //BANNER
+    GET_BANNER_SUCCESS: '배너 리스트 조회 성공.',
+    GET_BANNER_FAIL: '배너 가져오기 실패',
+    NOT_ACCESS_BANNER: '배너 접근 권한 없음. 그룹 불일치!',
 };
