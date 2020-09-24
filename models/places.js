@@ -555,6 +555,7 @@ console.log(likeResult);
         // plaecIdx포함된 쿼리문 뽑아내면 댐
         const tagResult = `SELECT placeIdx,tagName,tagIsBasic FROM TAG_TB natural join PLACE_TAG_RELATION_TB`;
         const likeResult = `SELECT placeIdx, count(*) likeCnt FROM LIKE_TB group by placeIdx;`
+        console.log(likeResult)
         try{
             const getUserPlace = await pool.queryParam(getPlaceResult);
             const getsubway = await pool.queryParam(subwayResult);
@@ -563,32 +564,58 @@ console.log(likeResult);
             let resultSubway = new Map();
             let resultTag = new Map();
             let resultLikeCnt = new Map();
+            let result = new Map();
+            getUserPlace.forEach(ele => result.set(ele.placeIdx, {
+                userIdx: ele.userIdx,
+                placeIdx: ele.placeIdx,
+                groupIdx: ele.groupIdx,
+                userName: ele.userName,
+                part: ele.part,
+                profileImageUrl: ele.profileImageUrl,
+                placeName: ele.placeName,
+                placeReview: ele.placeReview,
+                placeImageUrl:  ele.placeImageUrl,
+                placeCreatedAt: ele.placeCreatedAt,
+                subway: [
+                ],
+                tag: [
+            ],
+                likeCnt:0 
 
+            }))
             getTag.forEach(ele => {
-            
-                    if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
-                    resultTag.get(ele.placeIdx).push(ele.tagName)
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).tag.push(ele.tagName)
             })
+            // getTag.forEach(ele => {
+            
+            //         if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
+            //         resultTag.get(ele.placeIdx).push(ele.tagName)
+            // })
             console.log(resultTag)
             getLikeCnt.forEach(ele => {
-                if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
-                    resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
+            })
+            // getLikeCnt.forEach(ele => {
+            //     if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
+            //         resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
                     
-            })
-            console.log(resultLikeCnt)
+            // })
             getsubway.forEach(ele => {
-                if(!resultSubway.has(ele.placeIdx)) resultSubway.set(ele.placeIdx, [])
-
-                resultSubway.get(ele.placeIdx).push(ele.subwayName)
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName);
             })
+            // getsubway.forEach(ele => {
+            //     if(!resultSubway.has(ele.placeIdx)) resultSubway.set(ele.placeIdx, [])
 
-            getUserPlace.forEach(ele => {
-                ele.subway = resultSubway.get(ele.placeIdx)
-                ele.tag = resultTag.get(ele.placeIdx)
-                ele.likeCnt = resultLikeCnt.get(ele.placeIdx)
-            })
+            //     resultSubway.get(ele.placeIdx).push(ele.subwayName)
+            // })
+
+            // result.forEach(ele => {
+            //     ele.subway = resultSubway.get(ele.placeIdx)
+            //     ele.tag = resultTag.get(ele.placeIdx)
+            //     ele.likeCnt = resultLikeCnt.get(ele.placeIdx)
+            // })
             
-            return getUserPlace;
+            return [...result.values()];
 
         }catch(err){
             console.log('getPlacesHome err', err);

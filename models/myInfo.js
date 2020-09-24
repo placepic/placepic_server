@@ -1,5 +1,6 @@
 const pool = require('../modules/pool');
 const _ = require('lodash');
+const { getSubway } = require('../modules/table');
 const myInfo = {
     getMyInfo: async (userIdx, groupIdx) => { //이름,소속,이미지,상태,유저 총 글 수
         try {
@@ -86,29 +87,38 @@ const myInfo = {
                 return getPlacesInfo; //groupResult 가 [] 일때.
             }
             const placeIdxs = getPlacesInfo.map(placeIdx => placeIdx.placeIdx);
-            console.log(plaecIdxs);
-            const likeCountQuery = `SELECT COUNT(*) as likeCnt FROM LIKE_TB WHERE placeIdx IN (${placeIdxs.length === 1 ? placeIdxs.join('') : placeIdxs.join(', ')}) group by placeIdx`; 
-            const getSubwayName = `SELECT subwayName FROM SUBWAY_PLACE_RELATION_TB as a natural left outer join SUBWAY_TB as b WHERE a.placeIdx IN (${placeIdxs.length === 1 ? placeIdxs.join('') : placeIdxs.join(', ')}) group by placeIdx ;`;
+            console.log(placeIdxs);
+            const likeCountQuery = `SELECT COUNT(*) as likeCnt,placeIdx FROM LIKE_TB group by placeIdx`; 
+            const getSubwayName = `SELECT * FROM SUBWAY_PLACE_RELATION_TB as a natural left outer join SUBWAY_TB as b;`;
             const getLikeCnt = await pool.queryParam(likeCountQuery); // 작성한 글 좋아요 갯수 목록
             const getSubwayNames = await pool.queryParam(getSubwayName); // 작성한 글 지하철 목록
-            // getPlacesInfo.forEach(ele => {
+            let result = new Map();
+            getPlacesInfo.forEach((it) => {
+            
+                it.likeCnt = 0;
+                it.subway = [];
+            })
+        getPlacesInfo.forEach(ele => result.set(ele.placeIdx, {
+            
+                placeIdx: ele.placeIdx,
+                placeName: ele.placeName,
+                placeImageUrl:  ele.placeImageUrl,
+                likeCnt: ele.likeCnt,
+                subway: ele.subway
 
-            // })
-           // console.log(...getPlacesInfo);
-           // console.log(getLikeCnt);
-            console.log(getSubwayNames)
-            for(let i = 0; i< getPlacesInfo.length; i++) {
-                getPlacesInfo[i].likeCnt = getLikeCnt[i].likeCnt;
-                getPlacesInfo[i].subwayName = getSubwayNames[i].subwayName;
-            }
-            console.log(getPlacesInfo);
+            }))
+            getLikeCnt.forEach(ele => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt
+            })
 
-            console.log('----------------------------------------------------')
+            getSubwayNames.forEach(ele => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName)
+            })
+            console.log(result)
             const getCount = await pool.queryParam(getPlaceCount) // 작성한 글 총 갯수
             let retObj = {};
-            retObj.UserPlace  = getPlacesInfo;
+            retObj.UserPlace  = [...result.values()];
             retObj.placeCount = getCount[0].placeCount;
-            console.log(retObj);
             return retObj;
         }catch(err){
             console.log('getPlacesWithUser', err);
