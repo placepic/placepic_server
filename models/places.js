@@ -681,11 +681,11 @@ console.log(likeResult);
             }))
 
             getLike.forEach(ele => {
-                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCount = ele.cnt;
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.cnt;
             })
 
             getPlaceImage.forEach(ele => {
-                if (result.has(ele.placeIdx) && !result.has(ele.imageUrl)) result.get(ele.placeIdx).imageUrl = ele.placeImageUrl;
+                if (result.has(ele.placeIdx) && !result.has(ele.imageUrl)) result.get(ele.placeIdx).placeImageUrl = ele.placeImageUrl;
             })
 
             getPlaceSubway.forEach(ele => {
