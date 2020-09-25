@@ -11,15 +11,8 @@ const myInfo = {
            // const getPlaceCount = `SELECT count(*) as placeCnt FROM (SELECT * FROM (SELECT placeIdx,placeImageUrl,placeName,groupIdx,userIdx FROM PLACE_TB as p natural left outer join PLACEIMAGE_TB as i where p.placeIdx = i.placeIdx)as a WHERE a.groupIdx = ${groupIdx} and userIdx = ${userIdx} group by placeIdx) as p natural left outer join USER_TB as u`
             const resultMap = new Map();
             const bookMarkCnt = await pool.queryParam(bookMarkQuery);
-            if (_.isNil(placeResult)) {
-                return placeResult; //groupResult 가 [] 일때.
-            } // placeResult가 null or undefined
-
-            if(_.isNil(bookMarkCnt)) {
-                return bookMarkCnt;
-            }
-            console.log(bookMarkCnt);
-            console.log(placeResult);
+            //console.log(bookMarkCnt);
+            //console.log(placeResult);
             groupResult.forEach((group) => {
                 resultMap.set(group.groupIdx, {
                     userName: group.userName,
@@ -31,17 +24,13 @@ const myInfo = {
                 });
             });
             
-            //console.log(resultMap);
-            placeResult.forEach(place =>{
-                resultMap.get(place.groupIdx).postCount = place.postCount ? place.postCount : 0;
+            if(placeResult !== undefined) {
+                resultMap.get(placeResult[0].groupIdx).postCount = placeResult[0].postCount
+            }
 
-            });
-            
-            bookMarkCnt.forEach(place => {
-                resultMap.get(place.groupIdx).bookMarkCnt = place.bookMarkCnt ? place.bookMarkCnt : 0;
-            })
-            
-
+            if(bookMarkCnt !== undefined) {
+                resultMap.get(placeResult[0].groupIdx).bookMarkCnt = bookMarkCnt[0].bookMarkCnt
+            }
             
             console.log(...resultMap.values())
             return [...resultMap.values()]; //객체를 풀어주고 {}를 다시 배열에 집어 넣는다
