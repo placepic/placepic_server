@@ -99,7 +99,10 @@ module.exports = {
     /** SP3 회원가입 & 로그인 */
     getCertificationNumber: async (req, res) => {
         const { phoneNumber } = req.body;
-        const certificationNumber = random.randCode();
+
+        // TODO 인증번호 변경하기!
+        // const certificationNumber = random.randCode();
+        const certificationNumber = '1111';
 
         try {
             if (!phoneNumber) {
@@ -122,12 +125,10 @@ module.exports = {
 
             // 메시지 발송
             const result = await User.sendMessage(phoneNumber, certificationNumber);
-            // console.log(result);
             return res
                 .status(statusCode.OK)
                 .send(util.success(statusCode.OK, responseMessage.SEND_MESSAGE_SUCCESS, result));
         } catch (err) {
-            console.log('1111');
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
                 .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
