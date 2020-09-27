@@ -561,9 +561,6 @@ console.log(likeResult);
             const getsubway = await pool.queryParam(subwayResult);
             const getTag = await pool.queryParam(tagResult);
             const getLikeCnt = await pool.queryParam(likeResult);
-            let resultSubway = new Map();
-            let resultTag = new Map();
-            let resultLikeCnt = new Map();
             let result = new Map();
             getUserPlace.forEach(ele => result.set(ele.placeIdx, {
                 userIdx: ele.userIdx,
@@ -603,18 +600,6 @@ console.log(likeResult);
             getsubway.forEach(ele => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName);
             })
-            // getsubway.forEach(ele => {
-            //     if(!resultSubway.has(ele.placeIdx)) resultSubway.set(ele.placeIdx, [])
-
-            //     resultSubway.get(ele.placeIdx).push(ele.subwayName)
-            // })
-
-            // result.forEach(ele => {
-            //     ele.subway = resultSubway.get(ele.placeIdx)
-            //     ele.tag = resultTag.get(ele.placeIdx)
-            //     ele.likeCnt = resultLikeCnt.get(ele.placeIdx)
-            // })
-            
             return [...result.values()];
 
         }catch(err){
@@ -626,6 +611,7 @@ console.log(likeResult);
     getPlacesAtHomeByPage : async(page,groupIdx) => {
         const limit = 5;
         const offset = (page - 1) * limit
+        const totalCount =  `SELECT count(*) totalCount FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc;`;
         const getPlaceResult = `SELECT userIdx,placeIdx,groupIdx,userName,part,profileImageUrl,placeName,placeReview,placeImageUrl,placeCreatedAt FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc limit ${limit} offset ${offset};`;
         // 유저정보, 장소정보 목록
         const subwayResult = `SELECT * FROM SUBWAY_TB natural join SUBWAY_PLACE_RELATION_TB;`
@@ -637,41 +623,65 @@ console.log(likeResult);
             const getsubway = await pool.queryParam(subwayResult);
             const getTag = await pool.queryParam(tagResult);
             const getLikeCnt = await pool.queryParam(likeResult);
-            let resultSubway = new Map();
-            let resultTag = new Map();
-            let resultLikeCnt = new Map();
+            const getTotalCount = await pool.queryParam(totalCount);
+            let totalPage = parseInt((getTotalCount[0].totalCount / limit));
+            if((getTotalCount[0].totalCount % limit) > 0 ) totalPage = totalPage + 1;
 
+            if(totalPage < page) {
+                page = totalPage;
+            };
+            console.log(totalPage);
+            let result = new Map();
+            getUserPlace.forEach(ele => result.set(ele.placeIdx, {
+                userIdx: ele.userIdx,
+                placeIdx: ele.placeIdx,
+                groupIdx: ele.groupIdx,
+                userName: ele.userName,
+                part: ele.part,
+                profileImageUrl: ele.profileImageUrl,
+                placeName: ele.placeName,
+                placeReview: ele.placeReview,
+                placeImageUrl:  ele.placeImageUrl,
+                placeCreatedAt: ele.placeCreatedAt,
+                subway: [
+                ],
+                tag: [
+            ],
+                likeCnt:0 
+
+            }))
             getTag.forEach(ele => {
-            
-                    if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
-                    resultTag.get(ele.placeIdx).push(ele.tagName)
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).tag.push(ele.tagName)
             })
-            console.log(resultTag)
+            // getTag.forEach(ele => {
+            
+            //         if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
+            //         resultTag.get(ele.placeIdx).push(ele.tagName)
+            // })
             getLikeCnt.forEach(ele => {
-                if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
-                    resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
+            })
+            // getLikeCnt.forEach(ele => {
+            //     if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
+            //         resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
                     
-            })
-            console.log(resultLikeCnt)
+            // })
             getsubway.forEach(ele => {
-                if(!resultSubway.has(ele.placeIdx)) resultSubway.set(ele.placeIdx, [])
-
-                resultSubway.get(ele.placeIdx).push(ele.subwayName)
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName);
             })
 
-            getUserPlace.forEach(ele => {
-                ele.subway = resultSubway.get(ele.placeIdx)
-                ele.tag = resultTag.get(ele.placeIdx)
-                ele.likeCnt = resultLikeCnt.get(ele.placeIdx)
-            })
-            
-            return getUserPlace;
+            const resultValue =  [...result.values()];
+            resultValue.push({totalPage : totalPage});
+            return resultValue;
+
 
         }catch(err){
             console.log('getPlacesAtHome err', err);
             throw err;
         }
     },
+
+
     getBanner : async (groupIdx) => {
         const bannerQuery = `SELECT * FROM BANNER_TB WHERE groupIdx = ${groupIdx}`;
         try {
