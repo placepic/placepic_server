@@ -7,9 +7,12 @@ const myInfo = {
             const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join USER_TB `;
             const groupResult = await pool.queryParam(getMyInfo);
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} GROUP BY groupIdx`);
-
-            
+            const bookMarkQuery = `SELECT *,count(*) as bookMarkCnt FROM (SELECT * FROM PLACE_TB WHERE placeIdx IN (SELECT placeIdx FROM BOOKMARK_TB WHERE userIdx=${userIdx}) AND groupIdx=${groupIdx}) as PLACE natural join USER_TB`;
+           // const getPlaceCount = `SELECT count(*) as placeCnt FROM (SELECT * FROM (SELECT placeIdx,placeImageUrl,placeName,groupIdx,userIdx FROM PLACE_TB as p natural left outer join PLACEIMAGE_TB as i where p.placeIdx = i.placeIdx)as a WHERE a.groupIdx = ${groupIdx} and userIdx = ${userIdx} group by placeIdx) as p natural left outer join USER_TB as u`
             const resultMap = new Map();
+            const bookMarkCnt = await pool.queryParam(bookMarkQuery);
+            //console.log(bookMarkCnt);
+            //console.log(placeResult);
             groupResult.forEach((group) => {
                 resultMap.set(group.groupIdx, {
                     userName: group.userName,
@@ -17,11 +20,19 @@ const myInfo = {
                     userImage: group.profileImageUrl,
                     state: group.state,
                     postCount: 0,
+                    bookMarkCnt : 0,
                 });
             });
-            console.log(resultMap);
-            placeResult.forEach(place => resultMap.get(place.groupIdx).postCount = place.postCount);
-            console.log(resultMap)
+            
+            if(placeResult !== undefined) {
+                resultMap.get(placeResult[0].groupIdx).postCount = placeResult[0].postCount
+            }
+
+            if(bookMarkCnt !== undefined) {
+                resultMap.get(placeResult[0].groupIdx).bookMarkCnt = bookMarkCnt[0].bookMarkCnt
+            }
+            
+            console.log(...resultMap.values())
             return [...resultMap.values()]; //객체를 풀어주고 {}를 다시 배열에 집어 넣는다
         } catch (err) {
             console.log('마이페이지 정보를 불러오지 못했습니다.: ', err);

@@ -20,6 +20,7 @@ const group = {
     //         throw err;
     //     }
     // },
+    
     apply : async({userName,userIdx,groupIdx,part}) => {
         const editName = `UPDATE USER_TB SET userName = '${userName}' WHERE userIdx = ?`;
         const insertPart = `INSERT INTO GROUP_USER_RELATION_TB(groupIdx,userIdx,part,state) VALUES(?,?,?,?)`;
@@ -223,6 +224,7 @@ const group = {
             throw err;
         }
     },
+
     getGroupPostCnt: async (groupIdx) => {
         const getGroupPostCnt = `SELECT count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupId}`;
         try {
