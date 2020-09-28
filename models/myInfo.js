@@ -106,7 +106,7 @@ const myInfo = {
 
             getPlacesInfo.forEach((it) => {
                 it.likeCnt = 0;
-                it.subway = [];
+                it.subwayName = [];
             });
 
             getPlacesInfo.forEach(ele => result.set(ele.placeIdx, {
@@ -114,7 +114,7 @@ const myInfo = {
                 placeName: ele.placeName,
                 placeImageUrl:  ele.placeImageUrl,
                 likeCnt: ele.likeCnt,
-                subway: ele.subway
+                subwayName: ele.subwayName
             }))
 
             getLikeCnt.forEach(ele => {
@@ -122,7 +122,7 @@ const myInfo = {
             })
 
             getSubwayNames.forEach(ele => {
-                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName)
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subwayName.push(ele.subwayName)
             })
 
             const getCount = await pool.queryParam(getPlaceCount) // 작성한 글 총 갯수
