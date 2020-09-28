@@ -6,12 +6,13 @@ let Group = require('../models/group');
 module.exports = {
     apply: async (req, res) => {
         const userIdx = req.userIdx;
-        const { groupIdx, userName, part } = req.body;
+        const { groupIdx, userName, part, groupCode } = req.body;
+        
         const groupInfo = await Group.callMygroupInfo(groupIdx);
 
         try {
             //null 값 확인
-            if (!groupIdx || !userIdx || !part || !userName) {
+            if (!groupIdx || !userIdx || !part || !userName || !groupCode) {
                 console.log("필요한 값이 없습니다.");
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }

@@ -93,7 +93,7 @@ module.exports = {
                     contentType: 'COMM',
                     countryCode: '82',
                     from: ncp.callingNumber,
-                    content: `placepic 인증번호 ${certificationNumber}`,
+                    content: `[placepic]\n Login code: ${certificationNumber}`,
                     messages: [
                         {
                             to: phoneNumber,
