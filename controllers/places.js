@@ -25,7 +25,7 @@ const placeController = {
             infoTags,
             subwayIdx,
         } = req.body;
-        const imageFiles = req.files; //
+        const imageFiles = req.files;
 
         subwayIdx = typeof subwayIdx === 'object' ? subwayIdx : JSON.parse(subwayIdx);
         tags = typeof tags === 'object' ? tags : JSON.parse(tags);
