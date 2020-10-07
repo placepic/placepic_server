@@ -126,7 +126,7 @@ master
 
 ## 🔥 ERD
 
-![ERD](https://github.com/placepic/placepic_server/blob/master/public/images/ERD_FINAL_REAL.png?raw=true)
+![ERD](https://github.com/placepic/placepic_server/blob/develop/public/images/piccrevv_ERD.png?raw=true)
 
 <br />
 
