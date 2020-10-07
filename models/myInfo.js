@@ -23,16 +23,16 @@ const myInfo = {
                     bookMarkCnt : 0,
                 });
             });
-            
-            if(placeResult !== undefined) {
+
+        
+            if(placeResult.length !== 0) {
                 resultMap.get(placeResult[0].groupIdx).postCount = placeResult[0].postCount
             }
 
-            if(bookMarkCnt !== undefined) {
+            if(bookMarkCnt[0].bookMarkCnt !== 0) {
                 resultMap.get(placeResult[0].groupIdx).bookMarkCnt = bookMarkCnt[0].bookMarkCnt
             }
             
-            console.log(...resultMap.values())
             return [...resultMap.values()]; //객체를 풀어주고 {}를 다시 배열에 집어 넣는다
         } catch (err) {
             console.log('마이페이지 정보를 불러오지 못했습니다.: ', err);
