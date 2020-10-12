@@ -386,10 +386,12 @@ const place = {
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
             const subwayTable = tableModule.getSubwayGroup();
-            // let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
-            let placeTable = `SELECT * FROM (SELECT * FROM ${table} WHERE groupIdx=${groupIdx}) as PLACE
-                natural left outer join GROUP_USER_RELATION_TB`;
+            let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
+            // let placeTable = `SELECT * FROM (SELECT * FROM ${table} WHERE groupIdx=${groupIdx}) as PLACE
+            //     natural left outer join GROUP_USER_RELATION_TB`;
             if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
+
+            placeTable = `SELECT * FROM (${placeTable}) as PLACE natural left outer join GROUP_USER_RELATION_TB`;
 
             const placeTagQuery = `SELECT * FROM 
                 (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG 
