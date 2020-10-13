@@ -88,4 +88,16 @@ module.exports = {
         }
     },
 
+    getProfileInfo : async(req,res) => {
+        try {
+            const userIdx = req.params.userIdx;
+            const groupIdx = req.params.groupIdx;
+
+            const result = await Group.getProfileInfo(userIdx,groupIdx);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CALL_YOUR_INFO, result));
+        } catch (e) {
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
+        }
+    }
+
 }

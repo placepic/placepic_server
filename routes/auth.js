@@ -25,4 +25,5 @@ router.delete('/groups/admin/delete/:groupIdx/:userIdx', authUtil.checkToken, ad
 router.get('/myInfo/:groupIdx', authUtil.checkToken, myInfo.getMyInfo); //만약 state가 2이면 못들어오게 // 수정 // 바꿀꺼 없음.. profileUser이거 user테이블에서 삭제되면 바꾸기
 router.get('/myInfo/places/:groupIdx', authUtil.checkToken, myInfo.getPlacesWithUser); // 수정 x
 router.get('/groups/userlist/:groupIdx', authUtil.checkToken, groups.getMyGroupRanking); // 수정
+router.get('/groups/:groupIdx/userInfo/:userIdx', groups.getProfileInfo);
 module.exports = router;
