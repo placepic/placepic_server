@@ -103,6 +103,9 @@ module.exports = {
     NOT_IN_GROUP_USER: '그룹에 유저가 속해있지 않습니다.',
     EDIT_MYINFO: '프로필사진, 소속 변경 완료',
 
+    //Your INFO
+    CALL_YOUR_INFO : '다른유저의 프로필을 불러오는데 성공',
+
     //BANNER
     GET_BANNER_SUCCESS: '배너 리스트 조회 성공.',
     GET_BANNER_FAIL: '배너 가져오기 실패',
