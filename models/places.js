@@ -489,7 +489,7 @@ const place = {
         const isLikedQuery = `SELECT * FROM ${likeTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         const likeCountQuery = `SELECT COUNT(*) as likeCnt FROM ${likeTB} WHERE placeIdx = ${placeIdx}`;
         const bookmarkCountQuery = `SELECT COUNT(*) as bookmarkCnt FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
-        const userQuery = `SELECT u.userName, g.profileImageUrl, g.part 
+        const userQuery = `SELECT u.userIdx, u.userName, g.profileImageUrl, g.part 
                         FROM USER_TB as u LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
                         WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and u.userIdx = (SELECT userIdx FROM PLACE_TB WHERE placeIdx =${placeIdx});;`;
         const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`;
