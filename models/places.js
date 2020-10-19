@@ -155,7 +155,6 @@ const place = {
                     ', '
                 )}) GROUP BY placeIdx`
             );
-            console.log(likeResult);
             const result = new Map();
             placeResult.forEach((ele) =>
                 result.set(ele.placeIdx, {
@@ -167,7 +166,6 @@ const place = {
                     placeMapY: ele.placeMapY,
                     placeCreatedAt: ele.placeCreatedAt,
                     placeUpdatedAt: ele.placeUpdatedAt,
-
                     placeReview: ele.placeReview,
                     category: categoryTable.find((category) => category.categoryIdx === ele.categoryIdx),
                     groupIdx: ele.groupIdx,
@@ -178,7 +176,7 @@ const place = {
                         userIdx: ele.userIdx,
                         userName: ele.userName ? ele.userName : '',
                         email: ele.email ? ele.email : '',
-                        profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : '',
+                        profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl.replace("origin", "w_200") : '',
                     },
                     imageUrl: [],
                     likeCount:
@@ -195,7 +193,7 @@ const place = {
             );
 
             imageResult.forEach((ele) => {
-                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).imageUrl.push(ele.placeImageUrl);
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).imageUrl.push(ele.placeImageUrl.replace("origin", "w_400"));
             });
             const subwayResult = await pool.queryParam(
                 `SELECT subwayIdx, placeIdx FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx IN (${[...placeIdxs].join(

@@ -122,7 +122,7 @@ const myInfo = {
             getPlacesInfo.forEach(ele => result.set(ele.placeIdx, {
                 placeIdx: ele.placeIdx,
                 placeName: ele.placeName,
-                placeImageUrl:  ele.placeImageUrl,
+                placeImageUrl:  ele.placeImageUrl.replace("origin", "w_400"),
                 likeCnt: ele.likeCnt,
                 subwayName: ele.subwayName
             }))
