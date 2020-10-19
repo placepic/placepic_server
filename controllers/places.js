@@ -317,6 +317,13 @@ const placeController = {
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
         try {
+            const isPlace = await placeDB.isCheckPlace(placeIdx);
+            if(isPlace.length === 0) {
+                console.log('유효하지 않는 placeIdx 입니다.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
+            }
             const result = await placeDB.getOnePlace({ userIdx, placeIdx });
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
         } catch (err) {
