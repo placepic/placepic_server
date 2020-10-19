@@ -120,6 +120,9 @@ const place = {
                                 where placeIdx = ${placeIdx};`;
         try {
             const result = await pool.queryParam(getLikeListQuery);
+            result.forEach(item => {
+                item.profileImageUrl = item.profileImageUrl.replace("origin", "w_200");
+            })
             return result;
         } catch (err) {
             console.log('get like list err', err);
@@ -428,7 +431,7 @@ const place = {
 
             retObj.imageUrl = [];
             for (let it in placeImageUrl) {
-                retObj.imageUrl.push(placeImageUrl[it].placeImageUrl.replace("origin", "w_400"));
+                retObj.imageUrl.push(placeImageUrl[it].placeImageUrl);
             }
 
             retObj.keyword = [];

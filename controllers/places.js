@@ -293,7 +293,6 @@ const placeController = {
     },
     getLikeList: async (req, res) => {
         const placeIdx = req.params.placeIdx;
-        console.log(req.params);
         try {
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if (isPlace.length === 0) {
