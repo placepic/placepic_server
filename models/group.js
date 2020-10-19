@@ -384,7 +384,7 @@ const group = {
             groupResult.forEach((group) => {
                 resultMap.set(group.userIdx, {
                     userName: group.userName,
-                    profileImageUrl: group.profileImageUrl,
+                    profileImageUrl: group.profileImageUrl.replace("origin", "w_200"),
                     part: group.part,
                     postCount: group.postCount,
                     rank: 0
