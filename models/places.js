@@ -428,7 +428,7 @@ const place = {
 
             retObj.imageUrl = [];
             for (let it in placeImageUrl) {
-                retObj.imageUrl.push(placeImageUrl[it].placeImageUrl);
+                retObj.imageUrl.push(placeImageUrl[it].placeImageUrl.replace("origin", "w_400"));
             }
 
             retObj.keyword = [];
@@ -444,6 +444,7 @@ const place = {
 
             writer[0].postCount = postCount[0].postCount;
             writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]) || isAdminResult[0].state === 0;
+            writer[0].profileImageUrl = writer[0].profileImageUrl.replace("origin", "w_200");
             retObj.uploader = writer[0];
             retObj.mobileNaverMapLink =
                 'http://m.map.naver.com/search2/search.nhn?query=' +
