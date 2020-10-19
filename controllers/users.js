@@ -101,8 +101,7 @@ module.exports = {
         const { phoneNumber } = req.body;
 
         // TODO 인증번호 변경하기!
-        // const certificationNumber = random.randCode();
-        const certificationNumber = '1111';
+        const certificationNumber = await random.randCode();
 
         try {
             if (!phoneNumber) {
