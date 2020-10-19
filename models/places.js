@@ -338,7 +338,7 @@ const place = {
                             userIdx: ele.userIdx,
                             userName: ele.userName ? ele.userName : '',
                             email: ele.email ? ele.email : '',
-                            profileURL: ele.profileImageUrl ? ele.profileImageUrl : '',
+                            profileURL: ele.profileImageUrl ? ele.profileImageUrl.replace("origin","w_200") : '',
                         },
                         imageUrl: [],
                     });
@@ -355,7 +355,7 @@ const place = {
             );
 
             images.forEach((img) => {
-                if (queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
+                if (queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl.replace("origin", "w_400"));
             });
 
             // filtering
@@ -380,8 +380,6 @@ const place = {
                     return false;
                 });
             }
-
-            console.log('GET places in group');
             return result;
         } catch (e) {
             throw e;
