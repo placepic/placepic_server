@@ -614,7 +614,6 @@ const place = {
             if (totalPage < page) {
                 page = totalPage;
             }
-            console.log(totalPage);
             let result = new Map();
             getUserPlace.forEach((ele) =>
                 result.set(ele.placeIdx, {
@@ -623,10 +622,10 @@ const place = {
                     groupIdx: ele.groupIdx,
                     userName: ele.userName,
                     part: ele.part,
-                    profileImageUrl: ele.profileImageUrl,
+                    profileImageUrl: ele.profileImageUrl.replace("origin", "w_200"),
                     placeName: ele.placeName,
                     placeReview: ele.placeReview,
-                    placeImageUrl: ele.placeImageUrl,
+                    placeImageUrl: ele.placeImageUrl.replace("origin", "w_400"),
                     placeCreatedAt: ele.placeCreatedAt,
                     subway: [],
                     tag: [],
@@ -636,19 +635,10 @@ const place = {
             getTag.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).tag.push(ele.tagName);
             });
-            // getTag.forEach(ele => {
 
-            //         if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
-            //         resultTag.get(ele.placeIdx).push(ele.tagName)
-            // })
             getLikeCnt.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
             });
-            // getLikeCnt.forEach(ele => {
-            //     if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
-            //         resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
-
-            // })
             getsubway.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName);
             });
