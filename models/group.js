@@ -383,6 +383,7 @@ const group = {
             const resultMap = new Map();
             groupResult.forEach((group) => {
                 resultMap.set(group.userIdx, {
+                    userIdx: group.userIdx,
                     userName: group.userName,
                     profileImageUrl: group.profileImageUrl.replace("origin", "w_200"),
                     part: group.part,
