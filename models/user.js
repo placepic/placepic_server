@@ -1,4 +1,5 @@
 const pool = require('../modules/pool');
+const superUser = require('../config/placepic');
 const crypto = require('crypto');
 const table = 'USER_TB';
 const moment = require('moment');
@@ -86,6 +87,15 @@ const user = {
             console.log('checkUser ERROR : ', err);
             throw err;
         }
+    },
+
+    checkSuperUserPhoneNumber: async (phoneNumber, certificationNumber) => {
+        if( (phoneNumber === superUser.phoneNumber) && (certificationNumber === superUser.certificationNumber)){
+            console.log(phoneNumber);
+            console.log(certificationNumber)
+            return true;
+        }
+        return false;
     },
 
     sendMessage: async (phoneNumber, certificationNumber) => {
