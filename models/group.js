@@ -163,18 +163,13 @@ const group = {
         const getGroupbyUser = `SELECT groupIdx, groupName, groupImage, groupCode , count(userIdx) as userCnt FROM GROUP_TB natural left outer join GROUP_USER_RELATION_TB group by groupIdx;`;
         try {
             const getGroupResult = await pool.queryParam(getGroupbyUser);
-            console.log(getGroupResult);
             if (getGroupResult.length === 0) {
                 console.log("불러올 지원가능한 그룹이 없습니다.");
                 return getGroupResult; //groupResult 가 [] 일때.
             }
             const groupIdxs = getGroupResult.map(group => group.groupIdx);
-            console.log(groupIdxs)
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
-            console.log(placeResult);
             const getState = await pool.queryParam(`SELECT * FROM placepic.GROUP_USER_RELATION_TB where userIdx = ${userIdx} group by groupIdx;`);
-            
-            console.log(getState);
 
             const resultMap = new Map();
             getGroupResult.forEach((group) => {
@@ -463,9 +458,7 @@ const group = {
         
             
                 const resultMap = new Map();
-    
-                //console.log(bookMarkCnt);
-                //console.log(placeResult);
+
                 groupResult.forEach((group) => {
                     resultMap.set(group.groupIdx, {
                         userName: group.userName,

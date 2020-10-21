@@ -440,9 +440,9 @@ const placeController = {
     },
     getPlacesAtHomeByPage: async (req, res) => {
         const groupIdx = req.params.groupIdx;
-        const page = req.query.page === undefined ? 1 : req.query.page;
+        const page = req.query.page || 1;
         // TODO 동관
-        // 여기서 page 없으면 에러처리 해야될꺼같아요  -> 3항 연산자 이용해서 하면 해결가능!~~
+        // 여기서 page 없으면 에러처리 해야될꺼같아요  -> 요롷게하면 해결 가능
         // 그리고 위키 업데이트도 부탁드립니다~
         const result = await placeDB.getPlacesAtHomeByPage(page, groupIdx);
         try {
