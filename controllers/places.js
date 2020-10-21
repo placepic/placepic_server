@@ -478,6 +478,12 @@ const placeController = {
                     .status(statusCode.BAD_REQUEST)
                     .send(util.success(statusCode.BAD_REQUEST, responseMessage.NOT_ACCESS_BANNER));
             }
+            const existPlace = await placeDB.isGetBannerPlace(bannerIdx);
+            if(!existPlace){
+                return res
+                    .status(statusCode.OK)
+                    .send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, []));
+            }
             const bannerList = await placeDB.getBannerPlaces(bannerIdx);
             return res
                 .status(statusCode.OK)

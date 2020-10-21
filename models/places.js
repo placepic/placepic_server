@@ -672,12 +672,8 @@ const place = {
             const getPlaceIndexQuery = `SELECT placeIdx FROM PLACE_BANNER_RELATION_TB WHERE bannerIdx = ${bannerIdx}`;
             const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
             let placeIdxs = getPlaceList.map((it) => it.placeIdx);
-            const getLikeQuery = `SELECT l.placeIdx, count(*) as cnt FROM LIKE_TB as l left join PLACE_TB as p on l.placeIdx = p.placeIdx WHERE l.placeIdx in (${[
-                ...placeIdxs,
-            ].join(', ')}) group by l.placeIdx;`;
-            const getPlaceQuery = `SELECT placeIdx, placeName FROM PLACE_TB WHERE placeIdx in (${[...placeIdxs].join(
-                ', '
-            )})`;
+            const getLikeQuery = `SELECT l.placeIdx, count(*) as cnt FROM LIKE_TB as l left join PLACE_TB as p on l.placeIdx = p.placeIdx WHERE l.placeIdx in (${[...placeIdxs].join(', ')}) group by l.placeIdx;`;
+            const getPlaceQuery = `SELECT placeIdx, placeName FROM PLACE_TB WHERE placeIdx in (${[...placeIdxs].join(', ')})`;
             const getPlaceImageQuery = `SELECT placeIdx, placeImageUrl FROM PLACEIMAGE_TB WHERE placeIdx in (${[
                 ...placeIdxs,
             ].join(', ')})`;
@@ -731,6 +727,19 @@ const place = {
             throw err;
         }
     },
+    isGetBannerPlace: async (bannerIdx) => {
+        const getPlaceIndexQuery = `SELECT placeIdx FROM PLACE_BANNER_RELATION_TB WHERE bannerIdx = ${bannerIdx}`;
+        try {
+            const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
+            const existBannerPlace = getPlaceList[0] === undefined ? false : true;
+            if(existBannerPlace){
+                return true
+            }
+            return false;
+        } catch (err) {
+            throw err;
+        }
+    }
 };
 
 module.exports = place;
