@@ -4,23 +4,7 @@ const groupTable = 'GROUP_TB';
 const STATE_PENDING = 2;
 const _ = require('lodash');
 
-const group = {
-    // 그룹 신청하기 (안씀)
-    // apply: async (groupIdx, userIdx) => { // 그룹신청할때 테이블 조인할때 userIdx값이 이미 회원가입할때 들어가니까 userIdx받아서 그 userIdx에 해당하는 테이블 group_user_테이블이랑 조인해서 이름,소속 넣어준다? state는 1로 넣어주고 
-    //     const fields = 'groupIdx,userIdx,userName,part,state';
-    //     const questions = `?, ?, ?, ?`;
-    //     const values = [groupIdx, userIdx, part, phoneNumber];
-    //     const query = `INSERT INTO USER_TB as a natural join GROUP_USER_RELATION_TB as b (${fields}) VALUES(${questions})`;
-    //     try {
-    //         const result = await pool.queryParamArr(query, values);
-    //         const insertId = result.insertId;
-    //         return insertId;
-    //     } catch (err) {
-    //         console.log('apply ERROR : ', err);
-    //         throw err;
-    //     }
-    // },
-    
+const group = {    
     apply : async({userName,userIdx,groupIdx,part}) => {
         const editName = `UPDATE USER_TB SET userName = '${userName}' WHERE userIdx = ?`;
         const insertPart = `INSERT INTO GROUP_USER_RELATION_TB(groupIdx,userIdx,part,state) VALUES(?,?,?,?)`;
@@ -163,18 +147,13 @@ const group = {
         const getGroupbyUser = `SELECT groupIdx, groupName, groupImage, groupCode , count(userIdx) as userCnt FROM GROUP_TB natural left outer join GROUP_USER_RELATION_TB group by groupIdx;`;
         try {
             const getGroupResult = await pool.queryParam(getGroupbyUser);
-            console.log(getGroupResult);
             if (getGroupResult.length === 0) {
                 console.log("불러올 지원가능한 그룹이 없습니다.");
                 return getGroupResult; //groupResult 가 [] 일때.
             }
             const groupIdxs = getGroupResult.map(group => group.groupIdx);
-            console.log(groupIdxs)
             const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
-            console.log(placeResult);
             const getState = await pool.queryParam(`SELECT * FROM placepic.GROUP_USER_RELATION_TB where userIdx = ${userIdx} group by groupIdx;`);
-            
-            console.log(getState);
 
             const resultMap = new Map();
             getGroupResult.forEach((group) => {
@@ -383,8 +362,9 @@ const group = {
             const resultMap = new Map();
             groupResult.forEach((group) => {
                 resultMap.set(group.userIdx, {
+                    userIdx: group.userIdx,
                     userName: group.userName,
-                    profileImageUrl: group.profileImageUrl,
+                    profileImageUrl: group.profileImageUrl.replace("origin", "w_200"),
                     part: group.part,
                     postCount: group.postCount,
                     rank: 0
@@ -462,9 +442,7 @@ const group = {
         
             
                 const resultMap = new Map();
-    
-                //console.log(bookMarkCnt);
-                //console.log(placeResult);
+
                 groupResult.forEach((group) => {
                     resultMap.set(group.groupIdx, {
                         userName: group.userName,

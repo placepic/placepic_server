@@ -61,6 +61,7 @@ const MyInfo = {
         const groupIdx = req.params.groupIdx;
         try {
             const result = await myInfo.getPlacesWithUser(userIdx,groupIdx);
+            result.UserPlace.sort((a, b) => b.placeIdx - a.placeIdx);
             return res.status(statusCode.OK).send(util.success(statusCode.OK,responseMessage.READ_PLACES, result));
         }catch(err){
             console.log('getLike err',err);

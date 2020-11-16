@@ -293,7 +293,6 @@ const placeController = {
     },
     getLikeList: async (req, res) => {
         const placeIdx = req.params.placeIdx;
-        console.log(req.params);
         try {
             const isPlace = await placeDB.isCheckPlace(placeIdx);
             if (isPlace.length === 0) {
@@ -317,6 +316,13 @@ const placeController = {
         const userIdx = req.userIdx;
         const placeIdx = req.params.placeIdx;
         try {
+            const isPlace = await placeDB.isCheckPlace(placeIdx);
+            if(isPlace.length === 0) {
+                console.log('유효하지 않는 placeIdx 입니다.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
+            }
             const result = await placeDB.getOnePlace({ userIdx, placeIdx });
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
         } catch (err) {
@@ -434,9 +440,9 @@ const placeController = {
     },
     getPlacesAtHomeByPage: async (req, res) => {
         const groupIdx = req.params.groupIdx;
-        const page = req.query.page;
+        const page = req.query.page || 1;
         // TODO 동관
-        // 여기서 page 없으면 에러처리 해야될꺼같아요~~
+        // 여기서 page 없으면 에러처리 해야될꺼같아요  -> 요롷게하면 해결 가능
         // 그리고 위키 업데이트도 부탁드립니다~
         const result = await placeDB.getPlacesAtHomeByPage(page, groupIdx);
         try {
@@ -471,6 +477,12 @@ const placeController = {
                 return res
                     .status(statusCode.BAD_REQUEST)
                     .send(util.success(statusCode.BAD_REQUEST, responseMessage.NOT_ACCESS_BANNER));
+            }
+            const existPlace = await placeDB.isGetBannerPlace(bannerIdx);
+            if(!existPlace){
+                return res
+                    .status(statusCode.OK)
+                    .send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, []));
             }
             const bannerList = await placeDB.getBannerPlaces(bannerIdx);
             return res

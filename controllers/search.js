@@ -9,6 +9,7 @@ const placeDB = require('../models/places');
 const searchController = {
     searchPlaceWithNaverAPI: async (req, res) => {
         try {
+            if (req.query.query.trim() === '') return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             let result = await api.mapFindAPI(req.query.query);
 
             const placeIdxInDB = (await placeDB.getPlacesByGroup(req.params.groupIdx, {})).map(place => '' + place.placeMapX + place.placeMapY);

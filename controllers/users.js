@@ -5,6 +5,7 @@ let User = require('../models/user');
 const crypto = require('crypto');
 const jwt = require('../modules/jwt');
 const random = require('../modules/randomCode');
+const superUser = require('../config/placepic');
 
 module.exports = {
     checkEmail: async (req, res) => {
@@ -99,18 +100,20 @@ module.exports = {
     /** SP3 회원가입 & 로그인 */
     getCertificationNumber: async (req, res) => {
         const { phoneNumber } = req.body;
-
         // TODO 인증번호 변경하기!
-        // const certificationNumber = random.randCode();
-        const certificationNumber = '1111';
+        let certificationNumber = await random.randCode();
 
         try {
             if (!phoneNumber) {
-                console.log('정확한 값을 입력해주세요.');
                 return res
                     .status(statusCode.BAD_REQUEST)
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }
+            //superUser 번호
+            if(phoneNumber === superUser.phoneNumber ){
+                certificationNumber = superUser.certificationNumber
+            }
+
             if (await User.checkUserPhoneNumber(phoneNumber)) {
                 // 인증번호 초기화
                 await User.updateCertificationNumber(phoneNumber, certificationNumber);
@@ -122,7 +125,6 @@ module.exports = {
                 // await User.signUpSP3(hashedPhoneNumber, salt, certificationNumber);
                 await User.signUpSP3(phoneNumber, 'salt', certificationNumber);
             }
-
             // 메시지 발송
             const result = await User.sendMessage(phoneNumber, certificationNumber);
             return res
@@ -151,7 +153,6 @@ module.exports = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
             }
             if (user[0].certificationNumber !== certificationNumber) {
-                console.log('인증번호가 일치하지 않습니다.');
                 return res
                     .status(statusCode.BAD_REQUEST)
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.MISS_MATCH_CN));
