@@ -222,7 +222,6 @@ const place = {
             const subwayTable = tableModule.getSubwayGroup();
             const tagTable = tableModule.getTag();
             const categoryTable = tableModule.getCategory();
-
             const placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx} AND (placeName LIKE "%${query}%")`;
             const placeTagQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG natural left outer join USER_TB`;
             const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
@@ -381,6 +380,8 @@ const place = {
                     return false;
                 });
             }
+            
+            console.log('GET places in group');
             return result;
         } catch (e) {
             throw e;
@@ -573,7 +574,6 @@ const place = {
             //         if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
             //         resultTag.get(ele.placeIdx).push(ele.tagName)
             // })
-            console.log(resultTag);
             getLikeCnt.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
             });
