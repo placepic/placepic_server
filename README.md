@@ -103,7 +103,7 @@ master
 
 | **🙋 [김동관](https://github.com/dk-master)** | **🙋‍ [최영훈](https://github.com/dudgns3tp)** | **🙋‍ [홍준엽](https://github.com/junyup0319)** |
 | :---: |:---:| :---:|
-| [![FVCproductions](https://avatars3.githubusercontent.com/u/61861809?s=460&u=f834deb744174671e44ea2b579f8bfe22e280de2&v=4)]()    | [![FVCproductions](https://avatars1.githubusercontent.com/u/40652160?s=460&u=9cd767fc9ae0adc0948fec0fb7c4fe126a64ffae&v=4)]() | [![FVCproductions](https://avatars2.githubusercontent.com/u/39546874?s=460&u=049590b1c31828d01c5555b4c34d1c414a0711ba&v=4)]()  |
+| [![FVCproductions](https://avatars3.githubusercontent.com/u/61861809?s=460&u=f834deb744174671e44ea2b579f8bfe22e280de2&v=4)]()    | [![FVCproductions](https://avatars1.githubusercontent.com/u/40652160?s=460&u=9cd767fc9ae0adc0948fec0fb7c4fe126a64ffae&v=4)]() | [![FVCproductions](https://user-images.githubusercontent.com/61861809/99889744-85b95200-2c9b-11eb-99e4-8a453a8b6e07.jpg)]()  |
 | 서버 개발자 | 서버 리드 개발자| 서버 개발자|
 |  **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** | **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** | **![placepic_bedge](https://img.shields.io/badge/placepic-sprint1-F65C6C)** |
 |rdb설계  <br /> 배포 환경 구축 <br /> 회원가입, 로그인 <br /> 그룹 인증 관리 <br /> 그룹 리스트 조회  <br />|rdb설계 <br /> 배포 환경 구축 <br /> place 업로드 <br /> 지하철 API <br /> 네이버 지도 API |rdb설계 <br /> 배포 환경 구축 <br /> 장소 검색 필터링 <br /> 장소 검색 API <br /> 장소 검색 sorting|
