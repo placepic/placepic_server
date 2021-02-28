@@ -425,8 +425,9 @@ const placeController = {
         // 여기서 page 없으면 에러처리 해야될꺼같아요  -> 요롷게하면 해결 가능
         // 그리고 위키 업데이트도 부탁드립니다~
         const result = await placeDB.getPlacesAtHomeByPage(page, groupIdx);
+        const isAdmin = await placeDB.isAdminByGroupIdx(req.userIdx, groupIdx);
         try {
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, {isAdmin, ...result}));
         } catch (err) {
             console.log('친생픽 불러오기 에러', err);
             return res
