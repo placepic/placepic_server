@@ -17,7 +17,6 @@ module.exports ={
             randCode += possible.charAt(Math.floor(Math.random() * possible.length));
         return unixTime + randCode; // 6자리 랜덤코드와 현재 시간 합
     }
-    //testing에 필요한 전화번호 랜덤값 return
     ,randNumber:()=>{
         var min = Math.ceil(min);
         var max = Math.floor(max);

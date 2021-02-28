@@ -12,24 +12,8 @@ const _ = require('lodash');
 const placeController = {
     addPlace: async (req, res) => {
         const userIdx = req.userIdx;
-        let {
-            title,
-            address,
-            roadAddress,
-            mapx,
-            mapy,
-            placeReview,
-            categoryIdx,
-            groupIdx,
-            tags,
-            infoTags,
-            subwayIdx,
-        } = req.body;
-        const imageFiles = req.files;
-
-        subwayIdx = typeof subwayIdx === 'object' ? subwayIdx : JSON.parse(subwayIdx);
-        tags = typeof tags === 'object' ? tags : JSON.parse(tags);
-        infoTags = typeof infoTags === 'object' ? infoTags : JSON.parse(infoTags);
+        let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
+        const imageFiles = req.files; 
 
         if (imageFiles === undefined || imageFiles.length === 0) {
             console.log('이미지 입력해주세요.');
@@ -58,17 +42,13 @@ const placeController = {
                     .status(statusCode.BAD_REQUEST)
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }
-
-            /* 1. 그룹 ,유저 relation TB 확인해서 유효성 검사 하기*/
-            const isValidUserGroup = await groupDB.validUserGroup(userIdx, groupIdx);
-            if (isValidUserGroup[0] === undefined) {
-                console.log('잘못된 접근입니다.');
-                return res
-                    .status(statusCode.BAD_REQUEST)
-                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.INVALID_GROUP_USER));
+            
+            const isValidUserGroup = await groupDB.validUserGroup(userIdx,groupIdx);
+            if(isValidUserGroup[0] === undefined){
+                console.log('잘못된 접근입니다.')
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.INVALID_GROUP_USER));
             }
 
-            //2. category 유효성 검사
             const isValidCategory = await categoryDB.getOneCategory(categoryIdx);
 
             if (isValidCategory.categoryIdx === undefined) {
