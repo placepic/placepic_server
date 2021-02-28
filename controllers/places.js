@@ -13,7 +13,7 @@ const placeController = {
     addPlace : async (req, res) =>{
         const userIdx = req.userIdx;
         let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
-        const imageFiles = req.files; // 
+        const imageFiles = req.files; 
 
         subwayIdx = typeof(subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
         tags = typeof(tags) === "object" ? tags : JSON.parse(tags);
@@ -31,14 +31,12 @@ const placeController = {
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NULL_VALUE));
             }
             
-            /* 1. 그룹 ,유저 relation TB 확인해서 유효성 검사 하기*/
             const isValidUserGroup = await groupDB.validUserGroup(userIdx,groupIdx);
             if(isValidUserGroup[0] === undefined){
                 console.log('잘못된 접근입니다.')
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.INVALID_GROUP_USER));
             }
 
-            //2. category 유효성 검사
             const isValidCategory = await categoryDB.getOneCategory(categoryIdx);
 
             if(isValidCategory.categoryIdx === undefined){
@@ -46,7 +44,6 @@ const placeController = {
                 return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_CATEGORY));
             }
             
-            // 3. tags 유효성 검사
             const isValidTagsOfCategory = tagsDB.getCategoryTags(categoryIdx);
             const isValidDefaultTagsOfCategory = tagsDB.getCategoryDefaultTags(categoryIdx);
             let allTagIdx = [];
@@ -73,7 +70,6 @@ const placeController = {
                 }
             }
         
-            //4. subway 유효성 검사
             for(let it in subwayIdx){
                 let isMatchedSubway = subwayIdx[it] ? await subwayDB.isMatchedStation(subwayIdx[it]) : null; 
                 if(isMatchedSubway === undefined){

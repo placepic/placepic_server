@@ -29,7 +29,7 @@ const myInfo = {
         const editProfilePartQuery = `UPDATE USER_TB as a natural left outer join GROUP_USER_RELATION_TB as b SET b.part = '${part}' WHERE a.userIdx = ${userIdx} and b.groupIdx = ${groupIdx};`;
         try {
             const result = await pool.queryParam(editProfileImageQuery);
-            const result1 =await pool.queryParam(editProfilePartQuery);
+            const result1 = await pool.queryParam(editProfilePartQuery);
 
         } catch (err) {
             console.log('editStatusApplyUser ERROR : ', err);
