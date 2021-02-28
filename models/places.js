@@ -717,6 +717,9 @@ const place = {
         } catch (err) {
             throw err;
         }
+    },
+    postBanner: async ({bannerTitle, bannerBadgeName, bannerBadgeColor, bannerDescription}) => {
+
     }
 };
 

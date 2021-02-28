@@ -14,6 +14,7 @@ router.get('/like/:placeIdx', authUtils.checkToken, controller.getLikeList);
 router.get('/:placeIdx', authUtils.checkToken, controller.getOnePlace);
 router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);
 router.get('/group/:groupIdx/banner', authUtils.checkToken, controller.getBannerList);
+router.post('/group/:groupIdx/banner', authUtils.checkToken, uploads.single('image'), controller.createBanner);
 router.get('/group/:groupIdx/banner/:bannerIdx', authUtils.checkToken, controller.getBannerPlaces);
 router.get('/home/:groupIdx', authUtils.checkToken, controller.getPlacesAtHome);
 router.get('/home/page/:groupIdx', authUtils.checkToken,controller.getPlacesAtHomeByPage);

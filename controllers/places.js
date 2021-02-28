@@ -475,6 +475,10 @@ const placeController = {
                 .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_BANNER_FAIL));
         }
     },
+    createBanner: async (req, res) => {
+        console.log(req);
+        res.send('hello')
+    }
 };
 
 module.exports = placeController;
