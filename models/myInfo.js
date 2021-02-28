@@ -10,7 +10,6 @@ const myInfo = {
             const bookMarkQuery = `SELECT *,count(*) as bookMarkCnt FROM (SELECT * FROM PLACE_TB WHERE placeIdx IN (SELECT placeIdx FROM BOOKMARK_TB WHERE userIdx=${userIdx}) AND groupIdx=${groupIdx}) as PLACE natural join USER_TB`;
             const bookMarkCnt = await pool.queryParam(bookMarkQuery);
 
-           // const getPlaceCount = `SELECT count(*) as placeCnt FROM (SELECT * FROM (SELECT placeIdx,placeImageUrl,placeName,groupIdx,userIdx FROM PLACE_TB as p natural left outer join PLACEIMAGE_TB as i where p.placeIdx = i.placeIdx)as a WHERE a.groupIdx = ${groupIdx} and userIdx = ${userIdx} group by placeIdx) as p natural left outer join USER_TB as u`
             const resultMap = new Map();
 
             groupResult.forEach((group) => {
@@ -40,18 +39,6 @@ const myInfo = {
         }
     },
 
-    // editMyInfo : async (userIdx,groupIdx,profileImageUrl,part) => {
-    //     const editProfileImageQuery = `UPDATE USER_TB as a natural left outer join GROUP_USER_RELATION_TB as b SET a.profileImageUrl = '${profileImageUrl}' WHERE a.userIdx = ${userIdx} and b.groupIdx = ${groupIdx};`;
-    //     const editProfilePartQuery = `UPDATE USER_TB as a natural left outer join GROUP_USER_RELATION_TB as b SET b.part = '${part}' WHERE a.userIdx = ${userIdx} and b.groupIdx = ${groupIdx};`;
-    //     try {
-    //         const result = await pool.queryParam(editProfileImageQuery);
-    //         const result1 =await pool.queryParam(editProfilePartQuery);
-
-    //     } catch (err) {
-    //         console.log('editStatusApplyUser ERROR : ', err);
-    //         throw err;
-    //     }
-    // },
     editMyInfo : async (userIdx,groupIdx,profileImageUrl,part) => {
         const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
