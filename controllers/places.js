@@ -12,6 +12,7 @@ const _ = require('lodash');
 const placeController = {
     addPlace: async (req, res) => {
         const userIdx = req.userIdx;
+<<<<<<< HEAD
         let {
             title,
             address,
@@ -30,6 +31,10 @@ const placeController = {
         subwayIdx = typeof subwayIdx === 'object' ? subwayIdx : JSON.parse(subwayIdx);
         tags = typeof tags === 'object' ? tags : JSON.parse(tags);
         infoTags = typeof infoTags === 'object' ? infoTags : JSON.parse(infoTags);
+=======
+        let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
+        const imageFiles = req.files; 
+>>>>>>> 213487bd4abf51de3644ff6f3e15feaf391f0205
 
         if (imageFiles === undefined || imageFiles.length === 0) {
             console.log('이미지 입력해주세요.');
@@ -58,6 +63,7 @@ const placeController = {
                     .status(statusCode.BAD_REQUEST)
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }
+<<<<<<< HEAD
 
             /* 1. 그룹 ,유저 relation TB 확인해서 유효성 검사 하기*/
             const isValidUserGroup = await groupDB.validUserGroup(userIdx, groupIdx);
@@ -66,9 +72,15 @@ const placeController = {
                 return res
                     .status(statusCode.BAD_REQUEST)
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.INVALID_GROUP_USER));
+=======
+            
+            const isValidUserGroup = await groupDB.validUserGroup(userIdx,groupIdx);
+            if(isValidUserGroup[0] === undefined){
+                console.log('잘못된 접근입니다.')
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.INVALID_GROUP_USER));
+>>>>>>> 213487bd4abf51de3644ff6f3e15feaf391f0205
             }
 
-            //2. category 유효성 검사
             const isValidCategory = await categoryDB.getOneCategory(categoryIdx);
 
             if (isValidCategory.categoryIdx === undefined) {
@@ -77,8 +89,12 @@ const placeController = {
                     .status(statusCode.BAD_REQUEST)
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_READ_CATEGORY));
             }
+<<<<<<< HEAD
 
             // 3. tags 유효성 검사
+=======
+            
+>>>>>>> 213487bd4abf51de3644ff6f3e15feaf391f0205
             const isValidTagsOfCategory = tagsDB.getCategoryTags(categoryIdx);
             const isValidDefaultTagsOfCategory = tagsDB.getCategoryDefaultTags(categoryIdx);
             let allTagIdx = [];
@@ -108,6 +124,7 @@ const placeController = {
                         .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_MATCHED_CATEGORY_INFO_TAG));
                 }
             }
+<<<<<<< HEAD
 
             //4. subway 유효성 검사
             for (let it in subwayIdx) {
@@ -118,6 +135,15 @@ const placeController = {
                         .status(statusCode.BAD_REQUEST)
                         .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_READ_SUBWAY));
                 }
+=======
+        
+            for(let it in subwayIdx){
+                let isMatchedSubway = subwayIdx[it] ? await subwayDB.isMatchedStation(subwayIdx[it]) : null; 
+                if(isMatchedSubway === undefined){
+                    console.log("올바르지 않는 지하철 정보입니다.");
+                    return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.NO_READ_SUBWAY));
+                }   
+>>>>>>> 213487bd4abf51de3644ff6f3e15feaf391f0205
             }
 
             const placesResult = await placeDB.addPlace({

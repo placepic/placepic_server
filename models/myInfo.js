@@ -56,6 +56,7 @@ const myInfo = {
         const editProfileImageQuery = `UPDATE GROUP_USER_RELATION_TB SET profileImageUrl = '${profileImageUrl}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`;
         try {
+<<<<<<< HEAD
             if(profileImageUrl === undefined){
             const result1 =await pool.queryParam(editProfilePartQuery);
             }
@@ -78,6 +79,10 @@ const myInfo = {
             throw err;
         }
     },
+=======
+            const result = await pool.queryParam(editProfileImageQuery);
+            const result1 = await pool.queryParam(editProfilePartQuery);
+>>>>>>> 213487bd4abf51de3644ff6f3e15feaf391f0205
 
     editProfilePart : async (userIdx,groupIdx,part) => {
         const editProfilePartQuery = `UPDATE GROUP_USER_RELATION_TB SET part = '${part}' WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx};`
