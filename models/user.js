@@ -148,8 +148,6 @@ const user = {
         const query = `SELECT * FROM ${table} WHERE phoneNumber = ${phoneNumber}`;
         try {
             const result = await pool.queryParam(query);
-            // if (result.length === 0) return new Error('asd');
-            // if (result[0].certificationNumber !== certificationNumber) return false;
             return result;
         } catch (e) {
             throw e;

@@ -106,11 +106,7 @@ const place = {
             throw err;
         }
     },
-    /**
-     * getLikeList 수정
-     * 수정한 부분 : profileImageUrl
-     * 자세한 설명: 노션
-     */
+
     getLikeList: async (placeIdx) => {
         const getLikeListQuery = `SELECT u.userName, u.profileImageUrl, l.likeCreatedAt, u.part 
                                 FROM LIKE_TB as l
@@ -294,8 +290,6 @@ const place = {
             const categoryTable = tableModule.getCategory();
             const subwayTable = tableModule.getSubwayGroup();
             let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
-            // let placeTable = `SELECT * FROM (SELECT * FROM ${table} WHERE groupIdx=${groupIdx}) as PLACE
-            //     natural left outer join GROUP_USER_RELATION_TB`;
             if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
 
             placeTable = `SELECT * FROM (${placeTable}) as PLACE natural left outer join GROUP_USER_RELATION_TB`;
@@ -569,19 +563,9 @@ const place = {
             getTag.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).tag.push(ele.tagName);
             });
-            // getTag.forEach(ele => {
-
-            //         if(!resultTag.has(ele.placeIdx)) resultTag.set(ele.placeIdx,[])
-            //         resultTag.get(ele.placeIdx).push(ele.tagName)
-            // })
             getLikeCnt.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
             });
-            // getLikeCnt.forEach(ele => {
-            //     if(!resultLikeCnt.has(ele.placeIdx)) resultLikeCnt.set(ele.placeIdx, 0)
-            //         resultLikeCnt.set(ele.placeIdx,ele.likeCnt)
-
-            // })
             getsubway.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName);
             });
@@ -644,12 +628,6 @@ const place = {
             });
             const resultValue = [...result.values()];
 
-            // TODO 동관
-            // 이부분 변경했습니다! (totalPage를 배열 밖으로 처리했슴다)
-            // response 변경된 부분 wiki도 수정했습니다!! 확인부탁드림다!
-            // https://github.com/placepic/placepic_server/wiki/%5BGET%5D-%ED%99%88-%ED%99%94%EB%A9%B4-%EC%9E%A5%EC%86%8C%EB%A6%AC%EC%8A%A4%ED%8A%B8-%ED%8E%98%EC%9D%B4%EC%A7%80%EB%84%A4%EC%9D%B4%EC%85%98-(%EB%8F%99%EA%B4%80-SP3)
-
-            // resultValue.push({ totalPage: totalPage });
             return { places: resultValue, totalPage };
         } catch (err) {
             console.log('getPlacesAtHome err', err);
