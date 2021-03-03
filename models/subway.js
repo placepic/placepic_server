@@ -13,7 +13,6 @@ const subway = {
         try{
             const query = `SELECT * FROM ${subwayTable} WHERE  subwayIdx = "${subwayIdx}"`;
             const subwayDto = await pool.queryParam(query);
-            console.log(subwayDto);
             return subwayDto[0];
         }catch(err){
             console.log('isMatchedStation error : ', err);
