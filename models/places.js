@@ -529,16 +529,6 @@ const place = {
             throw err;
         }
     },
-    isAdminByGroupIdx: async (userIdx, groupIdx) => {
-        const query = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx}`;
-        try {
-            const result = await pool.queryParam(query);
-            return result[0].state;
-        } catch (err) {
-            console.log('isAdmin err', err);
-            throw err;
-        }
-    },
     getPlacesAtHome: async (groupIdx) => {
         const getPlaceResult = `SELECT userIdx,placeIdx,groupIdx,userName,part,profileImageUrl,placeName,placeReview,placeImageUrl,placeCreatedAt FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc;`;
         // 유저정보, 장소정보 목록
@@ -727,9 +717,6 @@ const place = {
         } catch (err) {
             throw err;
         }
-    },
-    postBanner: async ({bannerTitle, bannerBadgeName, bannerBadgeColor, bannerDescription}) => {
-
     }
 };
 
