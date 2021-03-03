@@ -15,6 +15,10 @@ const placeController = {
         let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
         const imageFiles = req.files; 
 
+        subwayIdx = typeof(subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
+        tags = typeof(tags) === "object" ? tags : JSON.parse(tags);
+        infoTags = typeof(infoTags) === "object" ? infoTags : JSON.parse(infoTags);
+
         if (imageFiles === undefined || imageFiles.length === 0) {
             console.log('이미지 입력해주세요.');
             return res
