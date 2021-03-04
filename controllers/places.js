@@ -12,12 +12,12 @@ const _ = require('lodash');
 const placeController = {
     addPlace: async (req, res) => {
         const userIdx = req.userIdx;
-        let {title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx} = req.body;
-        const imageFiles = req.files; 
+        let { title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx } = req.body;
+        const imageFiles = req.files;
 
-        subwayIdx = typeof(subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
-        tags = typeof(tags) === "object" ? tags : JSON.parse(tags);
-        infoTags = typeof(infoTags) === "object" ? infoTags : JSON.parse(infoTags);
+        subwayIdx = typeof (subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
+        tags = typeof (tags) === "object" ? tags : JSON.parse(tags);
+        infoTags = typeof (infoTags) === "object" ? infoTags : JSON.parse(infoTags);
 
         if (imageFiles === undefined || imageFiles.length === 0) {
             console.log('이미지 입력해주세요.');
@@ -46,11 +46,11 @@ const placeController = {
                     .status(statusCode.BAD_REQUEST)
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }
-            
-            const isValidUserGroup = await groupDB.validUserGroup(userIdx,groupIdx);
-            if(isValidUserGroup[0] === undefined){
+
+            const isValidUserGroup = await groupDB.validUserGroup(userIdx, groupIdx);
+            if (isValidUserGroup[0] === undefined) {
                 console.log('잘못된 접근입니다.')
-                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST,responseMessage.INVALID_GROUP_USER));
+                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.INVALID_GROUP_USER));
             }
 
             const isValidCategory = await categoryDB.getOneCategory(categoryIdx);
@@ -301,7 +301,7 @@ const placeController = {
         const placeIdx = req.params.placeIdx;
         try {
             const isPlace = await placeDB.isCheckPlace(placeIdx);
-            if(isPlace.length === 0) {
+            if (isPlace.length === 0) {
                 console.log('유효하지 않는 placeIdx 입니다.');
                 return res
                     .status(statusCode.BAD_REQUEST)
@@ -429,8 +429,9 @@ const placeController = {
         // 여기서 page 없으면 에러처리 해야될꺼같아요  -> 요롷게하면 해결 가능
         // 그리고 위키 업데이트도 부탁드립니다~
         const result = await placeDB.getPlacesAtHomeByPage(page, groupIdx);
+        const isAdmin = await placeDB.isAdminByGroupIdx(req.userIdx, groupIdx);
         try {
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, { isAdmin, ...result }));
         } catch (err) {
             console.log('친생픽 불러오기 에러', err);
             return res
@@ -463,7 +464,7 @@ const placeController = {
                     .send(util.success(statusCode.BAD_REQUEST, responseMessage.NOT_ACCESS_BANNER));
             }
             const existPlace = await placeDB.isGetBannerPlace(bannerIdx);
-            if(!existPlace){
+            if (!existPlace) {
                 return res
                     .status(statusCode.OK)
                     .send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, []));

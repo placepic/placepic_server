@@ -264,7 +264,7 @@ const place = {
             const placeIdxSet = new Set([...queryResult.values()].map((q) => q.placeIdx));
             const images = await pool.queryParam(
                 `SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${
-                    [...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)
+                [...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)
                 })`
             );
 
@@ -332,7 +332,7 @@ const place = {
                             userIdx: ele.userIdx,
                             userName: ele.userName ? ele.userName : '',
                             email: ele.email ? ele.email : '',
-                            profileURL: ele.profileImageUrl ? ele.profileImageUrl.replace("origin","w_200") : '',
+                            profileURL: ele.profileImageUrl ? ele.profileImageUrl.replace("origin", "w_200") : '',
                         },
                         imageUrl: [],
                     });
@@ -344,7 +344,7 @@ const place = {
 
             const images = await pool.queryParam(
                 `SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${
-                    placeIdxSet.size === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ')
+                placeIdxSet.size === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ')
                 })`
             );
 
@@ -374,7 +374,7 @@ const place = {
                     return false;
                 });
             }
-            
+
             console.log('GET places in group');
             return result;
         } catch (e) {
@@ -521,6 +521,16 @@ const place = {
     },
     isAdmin: async (userIdx, placeIdx) => {
         const query = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and userIdx = ${userIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            return result[0].state;
+        } catch (err) {
+            console.log('isAdmin err', err);
+            throw err;
+        }
+    },
+    isAdminByGroupIdx: async (userIdx, groupIdx) => {
+        const query = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx}`;
         try {
             const result = await pool.queryParam(query);
             return result[0].state;
@@ -710,7 +720,7 @@ const place = {
         try {
             const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
             const existBannerPlace = getPlaceList[0] === undefined ? false : true;
-            if(existBannerPlace){
+            if (existBannerPlace) {
                 return true
             }
             return false;
