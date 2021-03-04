@@ -12,13 +12,14 @@ router.delete('/bookmark/:placeIdx', authUtils.checkToken, controller.deleteBook
 router.delete('/like/:placeIdx', authUtils.checkToken, controller.deleteLike);
 router.get('/like/:placeIdx', authUtils.checkToken, controller.getLikeList);
 router.get('/:placeIdx', authUtils.checkToken, controller.getOnePlace);
+router.post('/:placeIdx/comment', authUtils.checkToken, controller.createComment);
 router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);
 router.get('/group/:groupIdx/banner', authUtils.checkToken, controller.getBannerList);
 router.get('/group/:groupIdx/banner/:bannerIdx', authUtils.checkToken, controller.getBannerPlaces);
 router.get('/home/:groupIdx', authUtils.checkToken, controller.getPlacesAtHome);
-router.get('/home/page/:groupIdx', authUtils.checkToken,controller.getPlacesAtHomeByPage);
+router.get('/home/page/:groupIdx', authUtils.checkToken, controller.getPlacesAtHomeByPage);
 router.get('/search/group/:groupIdx', authUtils.checkToken, controller.getPlacesByQuery);
 router.post('/', authUtils.checkToken, uploads.array('image'), controller.addPlace);
-router.delete('/:placeIdx',authUtils.checkToken, controller.deletePlace);
+router.delete('/:placeIdx', authUtils.checkToken, controller.deletePlace);
 
 module.exports = router;

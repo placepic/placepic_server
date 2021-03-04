@@ -6,6 +6,7 @@ const groupDB = require('../models/group');
 const categoryDB = require('../models/category');
 const tagsDB = require('../models/tag');
 const subwayDB = require('../models/subway');
+const commentDB = require('../models/comment');
 
 const _ = require('lodash');
 
@@ -480,6 +481,27 @@ const placeController = {
                 .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_BANNER_FAIL));
         }
     },
+    createComment: async (req, res) => {
+        const placeIdx = parseInt(req.params.placeIdx);
+        const userIdx = req.userIdx;
+        const content = req.body.content;
+        const parentIdx = req.body.parentIdx || null;
+
+        if (!placeIdx || !content) {
+            console.log('필요한 값이 없습니다.');
+            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+        }
+
+        try {
+            const result = await commentDB.createComment({ userIdx, content, placeIdx, parentIdx });
+            res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATE_COMMENT_SUCCESS, result));
+        } catch (err) {
+            console.log('댓글 생성 에러', err);
+            return res
+                .status(statusCode.INTERNAL_SERVER_ERROR)
+                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+        }
+    }
 };
 
 module.exports = placeController;
