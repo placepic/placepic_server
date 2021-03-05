@@ -41,7 +41,9 @@ const user = {
         const query = `SELECT * FROM ${table} WHERE email = "${email}";`;
         try {
             const result = await pool.queryParam(query);
-            const hashedPassword = await crypto.pbkdf2Sync(password, result[0].salt, 1, 32, 'sha512').toString('hex');
+            const hashedPassword = await crypto
+                .pbkdf2Sync(password, result[0].salt, 1, 32, 'sha512')
+                .toString('hex');
 
             if (result[0].password === hashedPassword) return result;
             else {
@@ -90,9 +92,12 @@ const user = {
     },
 
     checkSuperUserPhoneNumber: async (phoneNumber, certificationNumber) => {
-        if( (phoneNumber === superUser.phoneNumber) && (certificationNumber === superUser.certificationNumber)){
+        if (
+            phoneNumber === superUser.phoneNumber &&
+            certificationNumber === superUser.certificationNumber
+        ) {
             console.log(phoneNumber);
-            console.log(certificationNumber)
+            console.log(certificationNumber);
             return true;
         }
         return false;

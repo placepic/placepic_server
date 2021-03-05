@@ -1,8 +1,8 @@
 const poolPromise = require('../config/database');
 
-module.exports = { 
+module.exports = {
     queryParam: async (query) => {
-        return new Promise ( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const pool = await poolPromise;
                 const connection = await pool.getConnection();
@@ -44,7 +44,7 @@ module.exports = {
                 const connection = await pool.getConnection();
                 try {
                     await connection.beginTransaction();
-                    for(let it of args){
+                    for (let it of args) {
                         await it(connection);
                     }
                     await connection.commit();
@@ -53,7 +53,7 @@ module.exports = {
                     await connection.rollback();
                     console.log('transaction error :', err);
                     reject(err);
-                } finally{
+                } finally {
                     pool.releaseConnection(connection);
                 }
             } catch (err) {
@@ -61,5 +61,5 @@ module.exports = {
                 reject(err);
             }
         });
-    }
-}
+    },
+};

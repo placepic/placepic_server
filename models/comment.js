@@ -19,8 +19,7 @@ const comment = {
         } catch (err) {
             throw err;
         }
-
-    }
-}
+    },
+};
 
 module.exports = comment;
