@@ -59,11 +59,17 @@ const place = {
                     }
 
                     for (let i = 0; i < tagIdxData.length; i++) {
-                        await conn.query(addPlaceTagQuery, [parseInt(placeIdx), parseInt(tagIdxData[i])]);
+                        await conn.query(addPlaceTagQuery, [
+                            parseInt(placeIdx),
+                            parseInt(tagIdxData[i]),
+                        ]);
                     }
 
                     for (let i in subwayIdx) {
-                        await conn.query(addPlaceSubwayQuery, [parseInt(subwayIdx[i]), parseInt(placeIdx)]);
+                        await conn.query(addPlaceSubwayQuery, [
+                            parseInt(subwayIdx[i]),
+                            parseInt(placeIdx),
+                        ]);
                     }
                 })
                 .catch((err) => {
@@ -79,7 +85,11 @@ const place = {
         const nowUnixTime = parseInt(moment().format('X'));
         const addLikeQuery = `INSERT INTO ${likeTB} (userIdx,placeIdx,likeCreatedAt) VALUES (?,?,?)`;
         try {
-            const addLikeResult = await pool.queryParamArr(addLikeQuery, [userIdx, placeIdx, nowUnixTime]);
+            const addLikeResult = await pool.queryParamArr(addLikeQuery, [
+                userIdx,
+                placeIdx,
+                nowUnixTime,
+            ]);
             return addLikeResult.insertId;
         } catch (err) {
             console.log('addLike 에러', err);
@@ -89,7 +99,10 @@ const place = {
     addBookmark: async ({ userIdx, placeIdx }) => {
         const addBookmarkQuery = `INSERT INTO ${bookmarkTB} (userIdx,placeIdx) VALUES (?,?)`;
         try {
-            const addBookmarkResult = await pool.queryParamArr(addBookmarkQuery, [userIdx, placeIdx]);
+            const addBookmarkResult = await pool.queryParamArr(addBookmarkQuery, [
+                userIdx,
+                placeIdx,
+            ]);
             return addBookmarkResult.insertId;
         } catch (err) {
             console.log('add bookmark 에러', err);
@@ -116,9 +129,9 @@ const place = {
                                 where placeIdx = ${placeIdx};`;
         try {
             const result = await pool.queryParam(getLikeListQuery);
-            result.forEach(item => {
-                item.profileImageUrl = item.profileImageUrl.replace("origin", "w_200");
-            })
+            result.forEach((item) => {
+                item.profileImageUrl = item.profileImageUrl.replace('origin', 'w_200');
+            });
             return result;
         } catch (err) {
             console.log('get like list err', err);
@@ -142,14 +155,12 @@ const place = {
         try {
             const bookmarkQuery = `SELECT * FROM (SELECT * FROM ${table} WHERE placeIdx IN (SELECT placeIdx FROM ${bookmarkTB} WHERE userIdx=${userIdx}) AND groupIdx=${groupIdx}) as PLACE natural join USER_TB`;
             const placeResult = await pool.queryParam(bookmarkQuery);
-
             if (placeResult.length === 0) return [];
             const placeIdxs = new Set(placeResult.map((p) => p.placeIdx));
-
             const likeResult = await pool.queryParam(
-                `SELECT placeIdx, count(*) as likeCount FROM LIKE_TB WHERE placeIdx IN (${[...placeIdxs].join(
-                    ', '
-                )}) GROUP BY placeIdx`
+                `SELECT placeIdx, count(*) as likeCount FROM LIKE_TB WHERE placeIdx IN (${[
+                    ...placeIdxs,
+                ].join(', ')}) GROUP BY placeIdx`
             );
             const result = new Map();
             placeResult.forEach((ele) =>
@@ -163,7 +174,9 @@ const place = {
                     placeCreatedAt: ele.placeCreatedAt,
                     placeUpdatedAt: ele.placeUpdatedAt,
                     placeReview: ele.placeReview,
-                    category: categoryTable.find((category) => category.categoryIdx === ele.categoryIdx),
+                    category: categoryTable.find(
+                        (category) => category.categoryIdx === ele.categoryIdx
+                    ),
                     groupIdx: ele.groupIdx,
                     placeViews: ele.placeViews,
                     tag: [],
@@ -172,7 +185,9 @@ const place = {
                         userIdx: ele.userIdx,
                         userName: ele.userName ? ele.userName : '',
                         email: ele.email ? ele.email : '',
-                        profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl.replace("origin", "w_200") : '',
+                        profileURL: ele.userProfileImageUrl
+                            ? ele.userProfileImageUrl.replace('origin', 'w_200')
+                            : '',
                     },
                     imageUrl: [],
                     likeCount:
@@ -189,24 +204,33 @@ const place = {
             );
 
             imageResult.forEach((ele) => {
-                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).imageUrl.push(ele.placeImageUrl.replace("origin", "w_400"));
+                if (result.has(ele.placeIdx))
+                    result
+                        .get(ele.placeIdx)
+                        .imageUrl.push(ele.placeImageUrl.replace('origin', 'w_400'));
             });
             const subwayResult = await pool.queryParam(
-                `SELECT subwayIdx, placeIdx FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx IN (${[...placeIdxs].join(
-                    ', '
-                )})`
+                `SELECT subwayIdx, placeIdx FROM SUBWAY_PLACE_RELATION_TB WHERE placeIdx IN (${[
+                    ...placeIdxs,
+                ].join(', ')})`
             );
             subwayResult.forEach((ele) => {
                 if (result.has(ele.placeIdx))
-                    result.get(ele.placeIdx).subway.push(subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx));
+                    result
+                        .get(ele.placeIdx)
+                        .subway.push(subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx));
             });
 
             const tagResult = await pool.queryParam(
-                `SELECT tagIdx, placeIdx FROM PLACE_TAG_RELATION_TB WHERE placeIdx IN (${[...placeIdxs].join(', ')})`
+                `SELECT tagIdx, placeIdx FROM PLACE_TAG_RELATION_TB WHERE placeIdx IN (${[
+                    ...placeIdxs,
+                ].join(', ')})`
             );
             tagResult.forEach((ele) => {
                 if (result.has(ele.placeIdx))
-                    result.get(ele.placeIdx).tag.push(tagTable.find((tag) => tag.tagIdx === ele.tagIdx));
+                    result
+                        .get(ele.placeIdx)
+                        .tag.push(tagTable.find((tag) => tag.tagIdx === ele.tagIdx));
             });
             return [...result.values()];
         } catch (e) {
@@ -223,53 +247,66 @@ const place = {
             const placeSubwayQuery = `SELECT * FROM (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY natural left outer join USER_TB`;
             const queryResult = new Map();
 
-            (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery)).forEach((ele) => {
-                if (queryResult.has(ele.placeIdx)) {
-                    if (!_.isNil(ele.tagIdx))
-                        queryResult.get(ele.placeIdx).tag.push(tagTable.find((tag) => tag.tagIdx === ele.tagIdx));
-                    if (!_.isNil(ele.subwayIdx))
-                        queryResult
-                            .get(ele.placeIdx)
-                            .subway.push(subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx));
-                } else {
-                    queryResult.set(ele.placeIdx, {
-                        placeIdx: ele.placeIdx,
-                        placeName: ele.placeName,
-                        placeAddress: ele.placeAddress,
-                        placeRoadAddress: ele.placeRoadAddress,
-                        placeMapX: ele.placeMapX,
-                        placeMapY: ele.placeMapY,
-                        placeCreatedAt: ele.placeCreatedAt,
-                        placeUpdatedAt: ele.placeUpdatedAt,
-                        placeReview: ele.placeReview,
-                        category: categoryTable.find((category) => category.categoryIdx === ele.categoryIdx),
-                        groupIdx: ele.groupIdx,
-                        placeViews: ele.placeViews,
-                        tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find((tag) => tag.tagIdx === ele.tagIdx)],
-                        subway: _.isNil(ele.subwayIdx)
-                            ? []
-                            : [subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx)],
-                        user: {
-                            userIdx: ele.userIdx,
-                            userName: ele.userName ? ele.userName : '',
-                            email: ele.email ? ele.email : '',
-                            profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : '',
-                        },
-                        imageUrl: [],
-                    });
-                }
-            });
+            (await pool.queryParam(placeTagQuery))
+                .concat(await pool.queryParam(placeSubwayQuery))
+                .forEach((ele) => {
+                    if (queryResult.has(ele.placeIdx)) {
+                        if (!_.isNil(ele.tagIdx))
+                            queryResult
+                                .get(ele.placeIdx)
+                                .tag.push(tagTable.find((tag) => tag.tagIdx === ele.tagIdx));
+                        if (!_.isNil(ele.subwayIdx))
+                            queryResult
+                                .get(ele.placeIdx)
+                                .subway.push(
+                                    subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx)
+                                );
+                    } else {
+                        queryResult.set(ele.placeIdx, {
+                            placeIdx: ele.placeIdx,
+                            placeName: ele.placeName,
+                            placeAddress: ele.placeAddress,
+                            placeRoadAddress: ele.placeRoadAddress,
+                            placeMapX: ele.placeMapX,
+                            placeMapY: ele.placeMapY,
+                            placeCreatedAt: ele.placeCreatedAt,
+                            placeUpdatedAt: ele.placeUpdatedAt,
+                            placeReview: ele.placeReview,
+                            category: categoryTable.find(
+                                (category) => category.categoryIdx === ele.categoryIdx
+                            ),
+                            groupIdx: ele.groupIdx,
+                            placeViews: ele.placeViews,
+                            tag: _.isNil(ele.tagIdx)
+                                ? []
+                                : [tagTable.find((tag) => tag.tagIdx === ele.tagIdx)],
+                            subway: _.isNil(ele.subwayIdx)
+                                ? []
+                                : [subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx)],
+                            user: {
+                                userIdx: ele.userIdx,
+                                userName: ele.userName ? ele.userName : '',
+                                email: ele.email ? ele.email : '',
+                                profileURL: ele.userProfileImageUrl ? ele.userProfileImageUrl : '',
+                            },
+                            imageUrl: [],
+                        });
+                    }
+                });
 
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map((q) => q.placeIdx));
             const images = await pool.queryParam(
                 `SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${
-                [...placeIdxSet].length === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ').slice(0, -2)
+                    [...placeIdxSet].length === 1
+                        ? [...placeIdxSet].join('')
+                        : [...placeIdxSet].join(', ').slice(0, -2)
                 })`
             );
 
             images.forEach((img) => {
-                if (queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
+                if (queryResult.has(img.placeIdx))
+                    queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl);
             });
 
             return [...queryResult.values()];
@@ -290,10 +327,10 @@ const place = {
             const categoryTable = tableModule.getCategory();
             const subwayTable = tableModule.getSubwayGroup();
             let placeTable = `SELECT * FROM ${table} WHERE groupIdx=${groupIdx}`;
-            if (queryObject.categoryIdx !== undefined) placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
+            if (queryObject.categoryIdx !== undefined)
+                placeTable += ` and categoryIdx=${queryObject.categoryIdx}`;
 
             placeTable = `SELECT * FROM (${placeTable}) as PLACE natural left outer join GROUP_USER_RELATION_TB`;
-
             const placeTagQuery = `SELECT * FROM 
                 (SELECT * FROM (${placeTable}) as PLACE natural left outer join PLACE_TAG_RELATION_TB) as PLACETAG 
                 natural left outer join USER_TB`;
@@ -303,53 +340,67 @@ const place = {
 
             const queryResult = new Map();
 
-            (await pool.queryParam(placeTagQuery)).concat(await pool.queryParam(placeSubwayQuery)).forEach((ele) => {
-                if (queryResult.has(ele.placeIdx)) {
-                    if (!_.isNil(ele.tagIdx))
-                        queryResult.get(ele.placeIdx).tag.push(tagTable.find((tag) => tag.tagIdx === ele.tagIdx));
-                    if (!_.isNil(ele.subwayIdx))
-                        queryResult
-                            .get(ele.placeIdx)
-                            .subway.push(subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx));
-                } else {
-                    queryResult.set(ele.placeIdx, {
-                        placeIdx: ele.placeIdx,
-                        placeName: ele.placeName,
-                        placeAddress: ele.placeAddress,
-                        placeRoadAddress: ele.placeRoadAddress,
-                        placeMapX: ele.placeMapX,
-                        placeMapY: ele.placeMapY,
-                        placeCreatedAt: ele.placeCreatedAt,
-                        placeUpdatedAt: ele.placeUpdatedAt,
-
-                        placeReview: ele.placeReview,
-                        category: categoryTable.find((category) => category.categoryIdx === ele.categoryIdx),
-                        groupIdx: ele.groupIdx,
-                        placeViews: ele.placeViews,
-                        tag: _.isNil(ele.tagIdx) ? [] : [tagTable.find((tag) => tag.tagIdx === ele.tagIdx)],
-                        subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(ele.subwayIdx)],
-                        user: {
-                            userIdx: ele.userIdx,
-                            userName: ele.userName ? ele.userName : '',
-                            email: ele.email ? ele.email : '',
-                            profileURL: ele.profileImageUrl ? ele.profileImageUrl.replace("origin", "w_200") : '',
-                        },
-                        imageUrl: [],
-                    });
-                }
-            });
+            (await pool.queryParam(placeTagQuery))
+                .concat(await pool.queryParam(placeSubwayQuery))
+                .forEach((ele) => {
+                    if (queryResult.has(ele.placeIdx)) {
+                        if (!_.isNil(ele.tagIdx))
+                            queryResult
+                                .get(ele.placeIdx)
+                                .tag.push(tagTable.find((tag) => tag.tagIdx === ele.tagIdx));
+                        if (!_.isNil(ele.subwayIdx))
+                            queryResult
+                                .get(ele.placeIdx)
+                                .subway.push(
+                                    subwayTable.find((sub) => sub.subwayIdx === ele.subwayIdx)
+                                );
+                    } else {
+                        queryResult.set(ele.placeIdx, {
+                            placeIdx: ele.placeIdx,
+                            placeName: ele.placeName,
+                            placeAddress: ele.placeAddress,
+                            placeRoadAddress: ele.placeRoadAddress,
+                            placeMapX: ele.placeMapX,
+                            placeMapY: ele.placeMapY,
+                            placeCreatedAt: ele.placeCreatedAt,
+                            placeUpdatedAt: ele.placeUpdatedAt,
+                            placeReview: ele.placeReview,
+                            category: categoryTable.find(
+                                (category) => category.categoryIdx === ele.categoryIdx
+                            ),
+                            groupIdx: ele.groupIdx,
+                            placeViews: ele.placeViews,
+                            tag: _.isNil(ele.tagIdx)
+                                ? []
+                                : [tagTable.find((tag) => tag.tagIdx === ele.tagIdx)],
+                            subway: _.isNil(ele.subwayIdx) ? [] : [subwayTable.find(ele.subwayIdx)],
+                            user: {
+                                userIdx: ele.userIdx,
+                                userName: ele.userName ? ele.userName : '',
+                                email: ele.email ? ele.email : '',
+                                profileURL: ele.profileImageUrl
+                                    ? ele.profileImageUrl.replace('origin', 'w_200')
+                                    : '',
+                            },
+                            imageUrl: [],
+                        });
+                    }
+                });
 
             if (queryResult.size === 0) return [];
             const placeIdxSet = new Set([...queryResult.values()].map((q) => q.placeIdx));
 
             const images = await pool.queryParam(
                 `SELECT placeIdx, placeImageUrl, thumbnailImage FROM PLACEIMAGE_TB WHERE placeIdx IN (${
-                placeIdxSet.size === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ')
+                    placeIdxSet.size === 1 ? [...placeIdxSet].join('') : [...placeIdxSet].join(', ')
                 })`
             );
 
             images.forEach((img) => {
-                if (queryResult.has(img.placeIdx)) queryResult.get(img.placeIdx).imageUrl.push(img.placeImageUrl.replace("origin", "w_400"));
+                if (queryResult.has(img.placeIdx))
+                    queryResult
+                        .get(img.placeIdx)
+                        .imageUrl.push(img.placeImageUrl.replace('origin', 'w_400'));
             });
 
             // filtering
@@ -359,7 +410,8 @@ const place = {
                 if (!_.isNil(queryObject.tagIdx)) {
                     result = result.filter((ele) => {
                         for (let tagIdx of queryObject.tagIdx.split(',')) {
-                            if (ele.tag.findIndex((tag) => tag.tagIdx === tagIdx * 1) === -1) return false;
+                            if (ele.tag.findIndex((tag) => tag.tagIdx === tagIdx * 1) === -1)
+                                return false;
                         }
                         return true;
                     });
@@ -369,7 +421,8 @@ const place = {
             if (!_.isNil(queryObject.subwayIdx)) {
                 result = result.filter((ele) => {
                     for (let subwayIdx of queryObject.subwayIdx.split(',')) {
-                        if (ele.subway.findIndex((sub) => sub.subwayIdx === subwayIdx * 1) !== -1) return true;
+                        if (ele.subway.findIndex((sub) => sub.subwayIdx === subwayIdx * 1) !== -1)
+                            return true;
                     }
                     return false;
                 });
@@ -440,7 +493,7 @@ const place = {
 
             writer[0].postCount = postCount[0].postCount;
             writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]) || isAdminResult[0].state === 0;
-            writer[0].profileImageUrl = writer[0].profileImageUrl.replace("origin", "w_200");
+            writer[0].profileImageUrl = writer[0].profileImageUrl.replace('origin', 'w_200');
             retObj.uploader = writer[0];
             retObj.mobileNaverMapLink =
                 'http://m.map.naver.com/search2/search.nhn?query=' +
@@ -616,10 +669,10 @@ const place = {
                     groupIdx: ele.groupIdx,
                     userName: ele.userName,
                     part: ele.part,
-                    profileImageUrl: ele.profileImageUrl.replace("origin", "w_200"),
+                    profileImageUrl: ele.profileImageUrl.replace('origin', 'w_200'),
                     placeName: ele.placeName,
                     placeReview: ele.placeReview,
-                    placeImageUrl: ele.placeImageUrl.replace("origin", "w_400"),
+                    placeImageUrl: ele.placeImageUrl.replace('origin', 'w_400'),
                     placeCreatedAt: ele.placeCreatedAt,
                     subway: [],
                     tag: [],
@@ -660,8 +713,12 @@ const place = {
             const getPlaceIndexQuery = `SELECT placeIdx FROM PLACE_BANNER_RELATION_TB WHERE bannerIdx = ${bannerIdx}`;
             const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
             let placeIdxs = getPlaceList.map((it) => it.placeIdx);
-            const getLikeQuery = `SELECT l.placeIdx, count(*) as cnt FROM LIKE_TB as l left join PLACE_TB as p on l.placeIdx = p.placeIdx WHERE l.placeIdx in (${[...placeIdxs].join(', ')}) group by l.placeIdx;`;
-            const getPlaceQuery = `SELECT placeIdx, placeName FROM PLACE_TB WHERE placeIdx in (${[...placeIdxs].join(', ')})`;
+            const getLikeQuery = `SELECT l.placeIdx, count(*) as cnt FROM LIKE_TB as l left join PLACE_TB as p on l.placeIdx = p.placeIdx WHERE l.placeIdx in (${[
+                ...placeIdxs,
+            ].join(', ')}) group by l.placeIdx;`;
+            const getPlaceQuery = `SELECT placeIdx, placeName FROM PLACE_TB WHERE placeIdx in (${[
+                ...placeIdxs,
+            ].join(', ')})`;
             const getPlaceImageQuery = `SELECT placeIdx, placeImageUrl FROM PLACEIMAGE_TB WHERE placeIdx in (${[
                 ...placeIdxs,
             ].join(', ')})`;
@@ -694,7 +751,8 @@ const place = {
             });
 
             getPlaceSubway.forEach((ele) => {
-                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subwayName.push(ele.subwayName);
+                if (result.has(ele.placeIdx))
+                    result.get(ele.placeIdx).subwayName.push(ele.subwayName);
             });
             return {
                 banner: getOneBanner[0],
@@ -721,13 +779,13 @@ const place = {
             const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
             const existBannerPlace = getPlaceList[0] === undefined ? false : true;
             if (existBannerPlace) {
-                return true
+                return true;
             }
             return false;
         } catch (err) {
             throw err;
         }
-    }
+    },
 };
 
 module.exports = place;

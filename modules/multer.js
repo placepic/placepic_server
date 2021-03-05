@@ -8,9 +8,9 @@ const upload = multer({
     storage: multerS3({
         s3: s3,
         bucket: 'sopt26',
-        key: function(req, file, cb){
+        key: function (req, file, cb) {
             cb(null, 'images/origin/' + Date.now() + '.' + file.originalname.split('.').pop()); // 이름 설정
-        }
-    })
+        },
+    }),
 });
 module.exports = upload;
