@@ -624,9 +624,9 @@ const placeController = {
         }
 
         try {
-            const result = await commentDB.createComment({ userIdx, content, placeIdx, parentIdx });
+            await commentDB.createComment({ userIdx, content, placeIdx, parentIdx });
             res.status(statusCode.OK).send(
-                util.success(statusCode.OK, responseMessage.CREATE_COMMENT_SUCCESS, result)
+                util.success(statusCode.OK, responseMessage.CREATE_COMMENT_SUCCESS)
             );
         } catch (err) {
             console.log('댓글 생성 에러', err);
@@ -666,8 +666,11 @@ const placeController = {
             users.forEach((user) => userMap.set(user.userIdx, user));
             comments = comments
                 .map((comment) => {
+                    const user = userMap.get(comment.userIdx);
+                    delete comment.userIdx;
+                    delete comment.placeIdx;
                     return {
-                        user: userMap.get(comment.userIdx),
+                        user,
                         comment: Object.assign({ ...comment }),
                     };
                 })
@@ -683,7 +686,7 @@ const placeController = {
             subComments.forEach((comment) => {
                 const pid = comment.comment.parentIdx;
                 delete comment.comment.parentIdx;
-                commentMap.get(pid).comment.subComment.push(comment);
+                commentMap.get(pid).comment.subComments.push(comment);
             });
 
             res.status(statusCode.OK).send(
