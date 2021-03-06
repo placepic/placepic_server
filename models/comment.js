@@ -24,7 +24,6 @@ const comment = {
         const query = `SELECT * FROM ${table} WHERE placeIdx = ${placeIdx}`;
         try {
             const result = await pool.queryParam(query);
-            result.map((comment) => {});
             return result;
         } catch (err) {
             throw err;
