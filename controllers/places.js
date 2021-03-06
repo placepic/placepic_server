@@ -13,12 +13,24 @@ const _ = require('lodash');
 const placeController = {
     addPlace: async (req, res) => {
         const userIdx = req.userIdx;
-        let { title, address, roadAddress, mapx, mapy, placeReview, categoryIdx, groupIdx, tags, infoTags, subwayIdx } = req.body;
+        let {
+            title,
+            address,
+            roadAddress,
+            mapx,
+            mapy,
+            placeReview,
+            categoryIdx,
+            groupIdx,
+            tags,
+            infoTags,
+            subwayIdx,
+        } = req.body;
         const imageFiles = req.files;
 
-        subwayIdx = typeof (subwayIdx) === "object" ? subwayIdx : JSON.parse(subwayIdx);
-        tags = typeof (tags) === "object" ? tags : JSON.parse(tags);
-        infoTags = typeof (infoTags) === "object" ? infoTags : JSON.parse(infoTags);
+        subwayIdx = typeof subwayIdx === 'object' ? subwayIdx : JSON.parse(subwayIdx);
+        tags = typeof tags === 'object' ? tags : JSON.parse(tags);
+        infoTags = typeof infoTags === 'object' ? infoTags : JSON.parse(infoTags);
 
         if (imageFiles === undefined || imageFiles.length === 0) {
             console.log('이미지 입력해주세요.');
@@ -50,8 +62,10 @@ const placeController = {
 
             const isValidUserGroup = await groupDB.validUserGroup(userIdx, groupIdx);
             if (isValidUserGroup[0] === undefined) {
-                console.log('잘못된 접근입니다.')
-                return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.INVALID_GROUP_USER));
+                console.log('잘못된 접근입니다.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.INVALID_GROUP_USER));
             }
 
             const isValidCategory = await categoryDB.getOneCategory(categoryIdx);
@@ -81,7 +95,12 @@ const placeController = {
                     console.log('기본 정보 태그 에러');
                     return res
                         .status(statusCode.BAD_REQUEST)
-                        .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_MATCHED_CATEGORY_TAG));
+                        .send(
+                            util.fail(
+                                statusCode.BAD_REQUEST,
+                                responseMessage.NO_MATCHED_CATEGORY_TAG
+                            )
+                        );
                 }
             }
 
@@ -90,13 +109,20 @@ const placeController = {
                     console.log('유용한 정보 태그 에러');
                     return res
                         .status(statusCode.BAD_REQUEST)
-                        .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_MATCHED_CATEGORY_INFO_TAG));
+                        .send(
+                            util.fail(
+                                statusCode.BAD_REQUEST,
+                                responseMessage.NO_MATCHED_CATEGORY_INFO_TAG
+                            )
+                        );
                 }
             }
 
             //4. subway 유효성 검사
             for (let it in subwayIdx) {
-                let isMatchedSubway = subwayIdx[it] ? await subwayDB.isMatchedStation(subwayIdx[it]) : null;
+                let isMatchedSubway = subwayIdx[it]
+                    ? await subwayDB.isMatchedStation(subwayIdx[it])
+                    : null;
                 if (isMatchedSubway === undefined) {
                     console.log('올바르지 않는 지하철 정보입니다.');
                     return res
@@ -120,12 +146,19 @@ const placeController = {
                 userIdx,
                 imageUrl,
             });
-            return await res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_PLACE));
+            return await res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.POST_PLACE));
         } catch (e) {
             console.log('장소 추가 에러 :', e);
             return await res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     addLike: async (req, res) => {
@@ -148,12 +181,19 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_LIKE));
             }
             const result = await placeDB.addLike({ userIdx, placeIdx });
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.ADD_LIKE));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.ADD_LIKE));
         } catch (err) {
             console.log('좋아요 에러.', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     addBookmark: async (req, res) => {
@@ -178,29 +218,43 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_BOOKMARK));
             }
             const result = await placeDB.addBookmark({ userIdx, placeIdx });
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.ADD_BOOKMARK));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.ADD_BOOKMARK));
         } catch (err) {
             console.log('좋아요 에러.', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getAllPlaces: async (req, res) => {
         try {
             const result = await placeDB.getAllPlaces();
-            if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
+            if (req.query.sort === 'asc')
+                result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
-            return res
-                .status(statusCode.OK)
-                .send(
-                    util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, { result, count: result.length })
-                );
+            return res.status(statusCode.OK).send(
+                util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {
+                    result,
+                    count: result.length,
+                })
+            );
         } catch (e) {
             console.log('get all places error :', e);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getPlace: async (req, res) => {
@@ -219,25 +273,37 @@ const placeController = {
             console.log('get places error :', e);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getPlacesByGroup: async (req, res) => {
         try {
             const result = await placeDB.getPlacesByGroup(req.params.groupIdx, req.query);
 
-            if (req.query.sort === 'asc') result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
+            if (req.query.sort === 'asc')
+                result.sort((a, b) => a.placeCreatedAt - b.placeCreatedAt);
             else result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
-            return res
-                .status(statusCode.OK)
-                .send(
-                    util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, { result, count: result.length })
-                );
+            return res.status(statusCode.OK).send(
+                util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {
+                    result,
+                    count: result.length,
+                })
+            );
         } catch (e) {
             console.log('getPlacesByGroup error :', e);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getPlacesByQuery: async (req, res) => {
@@ -248,32 +314,44 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.BAD_REQUEST));
             const result = await placeDB.getPlacesByQuery(req.params.groupIdx, req.query.query);
             result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
-            return res
-                .status(statusCode.OK)
-                .send(
-                    util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, { result, count: result.length })
-                );
+            return res.status(statusCode.OK).send(
+                util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {
+                    result,
+                    count: result.length,
+                })
+            );
         } catch (e) {
             console.log('get places By Query error :', e);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getPlacesWithBookmark: async (req, res) => {
         try {
             const result = await placeDB.getPlacesWithBookmark(req.userIdx, req.params.groupIdx);
             result.sort((a, b) => b.placeCreatedAt - a.placeCreatedAt);
-            return res
-                .status(statusCode.OK)
-                .send(
-                    util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, { result, count: result.length })
-                );
+            return res.status(statusCode.OK).send(
+                util.success(statusCode.OK, responseMessage.SEARCH_PLACE_SUCCESS, {
+                    result,
+                    count: result.length,
+                })
+            );
         } catch (e) {
             console.log('get places With Bookmarked error :', e);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getLikeList: async (req, res) => {
@@ -288,12 +366,19 @@ const placeController = {
             }
 
             const result = await placeDB.getLikeList(placeIdx);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_LIKE_LIST, result));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.GET_LIKE_LIST, result));
         } catch (err) {
             console.log('getLike err', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
 
@@ -309,12 +394,19 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
             }
             const result = await placeDB.getOnePlace({ userIdx, placeIdx });
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
         } catch (err) {
             console.log('place 생성 에러 ', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     deleteLike: async (req, res) => {
@@ -337,12 +429,19 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_LIKE));
             }
             const result = await placeDB.deleteLike({ userIdx, placeIdx });
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.DELETE_LIKE));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.DELETE_LIKE));
         } catch (err) {
             console.log('deleteLike err ', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     deleteBookmark: async (req, res) => {
@@ -366,12 +465,19 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_BOOKMARK));
             }
             const result = await placeDB.deleteBookmark({ userIdx, placeIdx });
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.DELETE_BOOKMARK));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.DELETE_BOOKMARK));
         } catch (err) {
             console.log('deleteLike err ', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     deletePlace: async (req, res) => {
@@ -403,24 +509,38 @@ const placeController = {
             }
 
             const result = await placeDB.deletePlace(placeIdx);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.DELETE_PLACE));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.DELETE_PLACE));
         } catch (err) {
             console.log('place 삭제 에러', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getPlacesAtHome: async (req, res) => {
         const groupIdx = req.params.groupIdx;
         const result = await placeDB.getPlacesAtHome(groupIdx);
         try {
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.READ_PLACES, result));
         } catch (err) {
             console.log('친생픽 불러오기 에러', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getPlacesAtHomeByPage: async (req, res) => {
@@ -432,12 +552,21 @@ const placeController = {
         const result = await placeDB.getPlacesAtHomeByPage(page, groupIdx);
         const isAdmin = await placeDB.isAdminByGroupIdx(req.userIdx, groupIdx);
         try {
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_PLACES, { isAdmin, ...result }));
+            return res
+                .status(statusCode.OK)
+                .send(
+                    util.success(statusCode.OK, responseMessage.READ_PLACES, { isAdmin, ...result })
+                );
         } catch (err) {
             console.log('친생픽 불러오기 에러', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
     },
     getBannerList: async (req, res) => {
@@ -489,19 +618,87 @@ const placeController = {
 
         if (!placeIdx || !content) {
             console.log('필요한 값이 없습니다.');
-            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+            return res
+                .status(statusCode.BAD_REQUEST)
+                .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
         }
 
         try {
-            const result = await commentDB.createComment({ userIdx, content, placeIdx, parentIdx });
-            res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATE_COMMENT_SUCCESS, result));
+            await commentDB.createComment({ userIdx, content, placeIdx, parentIdx });
+            res.status(statusCode.OK).send(
+                util.success(statusCode.OK, responseMessage.CREATE_COMMENT_SUCCESS)
+            );
         } catch (err) {
             console.log('댓글 생성 에러', err);
             return res
                 .status(statusCode.INTERNAL_SERVER_ERROR)
-                .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
         }
-    }
+    },
+    getCommentsByPlaceIdx: async (req, res) => {
+        const placeIdx = parseInt(req.params.placeIdx);
+        const groupIdx = req.body.groupIdx;
+        let users = [];
+        let subComments = [];
+        try {
+            let comments = await commentDB.getCommentsByPlaceIdx(placeIdx);
+            const userIdxs = [...new Set(comments.map((user) => user.userIdx)).values()];
+            for await (let userIdx of userIdxs) {
+                let postCount = await commentDB.getPostCount(userIdx, groupIdx);
+                let profile = await groupDB.getCommentProfile(groupIdx, userIdx);
+                users.push(
+                    Object.assign(
+                        {
+                            userIdx,
+                            postCount,
+                        },
+                        profile[0]
+                    )
+                );
+            }
+
+            const userMap = new Map();
+            users.forEach((user) => userMap.set(user.userIdx, user));
+            comments = comments
+                .map((comment) => {
+                    const user = userMap.get(comment.userIdx);
+                    delete comment.userIdx;
+                    delete comment.placeIdx;
+                    return {
+                        user,
+                        comment: Object.assign({ ...comment }),
+                    };
+                })
+                .filter((comment) => {
+                    if (comment.comment.parentIdx == null) {
+                        delete comment.comment.parentIdx;
+                        return Object.assign(comment, (comment.comment.subComments = []));
+                    }
+                    subComments.push(comment);
+                });
+            const commentMap = new Map();
+            comments.forEach((comment) => commentMap.set(comment.comment.commentIdx, comment));
+            subComments.forEach((comment) => {
+                const pid = comment.comment.parentIdx;
+                delete comment.comment.parentIdx;
+                commentMap.get(pid).comment.subComments.push(comment);
+            });
+
+            res.status(statusCode.OK).send(
+                util.success(statusCode.OK, responseMessage.GET_COMMENTS_SUCCESS, comments)
+            );
+        } catch (err) {
+            console.log(err);
+            res.status(statusCode.INTERNAL_SERVER_ERROR).send(
+                util.success(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_COMMENTS_FAIL)
+            );
+        }
+    },
 };
 
 module.exports = placeController;
