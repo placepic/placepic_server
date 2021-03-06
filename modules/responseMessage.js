@@ -114,4 +114,6 @@ module.exports = {
     //COMMENT
     CREATE_COMMENT_SUCCESS: '댓글 생성 완료.',
     CREATE_COMMENT_FAIL: '댓글 생성 실패.',
+    GET_COMMENTS_SUCCESS: '댓글 가져오기 성공',
+    GET_COMMENTS_FAIL: '댓글 가져오기 실패',
 };

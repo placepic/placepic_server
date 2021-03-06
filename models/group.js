@@ -1,6 +1,6 @@
 const pool = require('../modules/pool');
 const table = 'GROUP_USER_RELATION_TB';
-const groupTable = 'GROUP_TB';
+const userTable = 'USER_TB';
 const STATE_PENDING = 2;
 const _ = require('lodash');
 
@@ -355,6 +355,15 @@ const group = {
         } catch (e) {
             console.log('다른유저의 프로필 불러오기 실패 :', e);
             throw e;
+        }
+    },
+    getCommentProfile: async (groupIdx, userIdx) => {
+        const query = `SELECT profileImageUrl, userName from ${table} natural left outer join ${userTable} WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            throw err;
         }
     },
 };

@@ -11,6 +11,7 @@ router.post('/bookmark', authUtils.checkToken, controller.addBookmark);
 router.delete('/bookmark/:placeIdx', authUtils.checkToken, controller.deleteBookmark);
 router.delete('/like/:placeIdx', authUtils.checkToken, controller.deleteLike);
 router.get('/like/:placeIdx', authUtils.checkToken, controller.getLikeList);
+router.get('/:placeIdx/comment', authUtils.checkToken, controller.getCommentsByPlaceIdx);
 router.get('/:placeIdx', authUtils.checkToken, controller.getOnePlace);
 router.post('/:placeIdx/comment', authUtils.checkToken, controller.createComment);
 router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);

@@ -20,6 +20,28 @@ const comment = {
             throw err;
         }
     },
+    getCommentsByPlaceIdx: async (placeIdx, groupIdx) => {
+        const query = `SELECT * FROM ${table} WHERE placeIdx = ${placeIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            result.map((comment) => {});
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    },
+    getPostCount: async (userIdx, groupIdx) => {
+        const query = `SELECT count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} GROUP BY groupIdx`;
+        const result = pool
+            .queryParam(query)
+            .then((count) => {
+                return count[0].postCount || 0;
+            })
+            .catch((err) => {
+                throw err;
+            });
+        return result;
+    },
 };
 
 module.exports = comment;
