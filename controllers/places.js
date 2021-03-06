@@ -674,7 +674,7 @@ const placeController = {
                 .filter((comment) => {
                     if (comment.comment.parentIdx == null) {
                         delete comment.comment.parentIdx;
-                        return Object.assign(comment, (comment.comment.subComment = []));
+                        return Object.assign(comment, (comment.comment.subComments = []));
                     }
                     subComments.push(comment);
                 });
