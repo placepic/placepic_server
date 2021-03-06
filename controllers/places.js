@@ -644,8 +644,9 @@ const placeController = {
         const placeIdx = parseInt(req.params.placeIdx);
         const groupIdx = req.body.groupIdx;
         let users = [];
+        let subComments = [];
         try {
-            const comments = await commentDB.getCommentsByPlaceIdx(placeIdx);
+            let comments = await commentDB.getCommentsByPlaceIdx(placeIdx);
             const userIdxs = [...new Set(comments.map((user) => user.userIdx)).values()];
             for await (let userIdx of userIdxs) {
                 let postCount = await commentDB.getPostCount(userIdx, groupIdx);
@@ -660,18 +661,39 @@ const placeController = {
                     )
                 );
             }
+
             const userMap = new Map();
             users.forEach((user) => userMap.set(user.userIdx, user));
-            const result = comments.map((comment) => {
-                return { user: userMap.get(comment.userIdx), comment };
+            comments = comments
+                .map((comment) => {
+                    return {
+                        user: userMap.get(comment.userIdx),
+                        comment: Object.assign({ ...comment }),
+                    };
+                })
+                .filter((comment) => {
+                    if (comment.comment.parentIdx == null) {
+                        delete comment.comment.parentIdx;
+                        return Object.assign(comment, (comment.comment.subComment = []));
+                    }
+                    subComments.push(comment);
+                });
+            const commentMap = new Map();
+            comments.forEach((comment) => commentMap.set(comment.comment.commentIdx, comment));
+            console.log(commentMap);
+            subComments.forEach((comment) => {
+                const pid = comment.comment.parentIdx;
+                delete comment.comment.parentIdx;
+                commentMap.get(pid).comment.subComment.push(comment);
             });
+
             res.status(statusCode.OK).send(
-                util.success(statusCode.OK, responseMessage.GET_COMMENTS_SUCCESS, result)
+                util.success(statusCode.OK, responseMessage.GET_COMMENTS_SUCCESS, comments)
             );
         } catch (err) {
             console.log(err);
-            res.status(statusCode.OK).send(
-                util.success(statusCode.OK, responseMessage.GET_COMMENTS_FAIL)
+            res.status(statusCode.INTERNAL_SERVER_ERROR).send(
+                util.success(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_COMMENTS_FAIL)
             );
         }
     },
