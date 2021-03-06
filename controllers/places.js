@@ -680,7 +680,6 @@ const placeController = {
                 });
             const commentMap = new Map();
             comments.forEach((comment) => commentMap.set(comment.comment.commentIdx, comment));
-            console.log(commentMap);
             subComments.forEach((comment) => {
                 const pid = comment.comment.parentIdx;
                 delete comment.comment.parentIdx;
