@@ -20,8 +20,32 @@ const comment = {
             throw err;
         }
     },
+    deleteComments : async ({commentIdx,parentIdx}) => {
+        // 대댓글 삭제
+        console.log(parentIdx)
+        let query = `DELETE FROM ${table} WHERE commentIdx = ${commentIdx}`;
+        if (!_.isNil(parentIdx)) { 
+            query = `DELETE FROM ${table} WHERE commentsIdx = ${commentIdx} and parentIdx = ${parentIdx}`
+        }
+
+        try {
+            await pool.queryParam(query);
+        }
+        catch (err) {
+            throw err;
+        }
+    },
     getCommentsByPlaceIdx: async (placeIdx, groupIdx) => {
         const query = `SELECT * FROM ${table} WHERE placeIdx = ${placeIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    },
+    isCommentWriter: async(commentIdx,userIdx) => {
+        const query = `SELECT * FROM ${table} WHERE commentIdx = ${commentIdx} and userIdx = ${userIdx}`;
         try {
             const result = await pool.queryParam(query);
             return result;
