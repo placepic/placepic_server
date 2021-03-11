@@ -349,7 +349,7 @@ const group = {
             }
 
             let retObj = {};
-            retObj.UserInfo = [...resultMap.values()];
+            retObj.UserInfo = resultMap.get(placeResult[0].groupIdx);
             retObj.UserPlace = [...result.values()];
             return retObj;
         } catch (e) {

@@ -726,7 +726,7 @@ const placeController = {
           console.log(isCommentWriter)
           const isAdmin = await placeDB.isAdmin(userIdx, placeIdx); // 관리자
           
-          if (!(!_.isNil(isCommentWriter)|| isAdmin === 0)) {
+          if (!(isCommentWriter.length || isAdmin === 0)) {
               console.log('삭제 권한이 없는 아이디.');
               return res
                   .status(statusCode.BAD_REQUEST)
