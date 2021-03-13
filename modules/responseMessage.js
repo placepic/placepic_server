@@ -115,4 +115,10 @@ module.exports = {
     POST_BANNER_FAIL: '배너 등록 실패',
     DELETE_BANNER_SUCCESS: '배너 삭제 성공',
     DELETE_BANNER_FAIL: '배너 삭제 실패',
+    POST_BANNER_PLACE_SUCCESS: '배너 장소 등록 성공',
+    POST_BANNER_PLACE_FAIL: '배너 장소 등록 실패',
+    DELETE_BANNER_PLACE_SUCCESS: '배너 장소 삭제 성공',
+    DELETE_BANNER_PLACE_FAIL: '배너 장소 삭제 실패',
+    ALREADY_POST_BANNER_PLACE: '이미 등록된 장소',
+    ALREADY_DELETE_BANNER_PLACE: '이미 삭제된 장소',
 };

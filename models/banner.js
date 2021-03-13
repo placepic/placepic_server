@@ -1,6 +1,5 @@
 const table = 'BANNER_TB';
 const pool = require('../modules/pool');
-
 const moment = require('moment');
 
 const banner = {
@@ -47,6 +46,34 @@ const banner = {
         try {
             const result = await pool.queryParam(bannerQuery);
             return result;
+        } catch(err) {
+            throw err;
+        }
+    },
+    addBannerPlace: async (bannerIdx, placeIdx) => {
+        const bannerQuery = `INSERT INTO PLACE_BANNER_RELATION_TB (placeIdx, bannerIdx) VALUES (?,?)`;
+        try {
+            const result = await pool.queryParamArr(bannerQuery, [placeIdx, bannerIdx]);
+            return result;
+        } catch(err) {
+            throw err;
+        }
+    },
+    deleteBannerPlace: async (bannerIdx, placeIdx) => {
+        const bannerQuery = `DELETE FROM PLACE_BANNER_RELATION_TB WHERE placeIdx = ${placeIdx} and bannerIdx = ${bannerIdx}`;
+        try {
+            const result = await pool.queryParam(bannerQuery);
+            return result;
+        } catch(err) {
+            throw err;
+        }
+    },
+    checkBannerHasPlace: async (bannerIdx, placeIdx) => {
+        const bannerQuery = `SELECT count(*) as cnt WHERE placeIdx = ${placeIdx} and bannerIdx = ${bannerIdx}`;
+        try {
+            const result = await pool.queryParamArr(bannerQuery, [placeIdx, bannerIdx]);
+            if (result.cnt > 0) return false;
+            return true;
         } catch(err) {
             throw err;
         }
