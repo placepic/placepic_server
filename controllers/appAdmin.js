@@ -18,18 +18,19 @@ module.exports = {
                 .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_BANNER_FAIL));
         }
     },
-    getBannerListByGroup: async (req, res) => {
-        const groupIdx = req.params.groupIdx;
-        if (!groupIdx) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
-        try {
-            const bannerList = await bannerDB.getBannerListByGroup(groupIdx);
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, bannerList));
-        } catch (err) {
-            console.log('배너 조회 실패');
-            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_BANNER_FAIL));
-        }
-    },
+    // getBannerListByGroup: async (req, res) => {
+    //     const groupIdx = req.params.groupIdx;
+    //     if (!groupIdx) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+    //     try {
+    //         const bannerList = await bannerDB.getBannerListByGroup(groupIdx);
+    //         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, bannerList));
+    //     } catch (err) {
+    //         console.log('배너 조회 실패');
+    //         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_BANNER_FAIL));
+    //     }
+    // },
     getBannerPlaces: async (req, res) => {
+        // 영훈 코드 수정 (placeDB의 getBannerPlace에서 인증 부분만 제거함)
         const { bannerIdx } = req.params;
         if (!bannerIdx) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
         try {
@@ -75,10 +76,11 @@ module.exports = {
     addPlaceToBanner: async (req, res) => {
         const { bannerIdx, placeIdx } = req.params;
         if (!bannerIdx || !placeIdx) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
-        
         try {
+            // TODO 예외처리
+            // 1 장소 있는지 확인
+            // 2 장소와 배너가 같은 그룹에 있는지 확인
             if (await bannerDB.checkBannerHasPlace(bannerIdx, placeIdx)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_POST_BANNER_PLACE));
-
             const result = await bannerDB.addBannerPlace(bannerIdx, placeIdx);
             return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_BANNER_PLACE_SUCCESS));
         } catch (err) {

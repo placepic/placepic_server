@@ -69,11 +69,11 @@ const banner = {
         }
     },
     checkBannerHasPlace: async (bannerIdx, placeIdx) => {
-        const bannerQuery = `SELECT count(*) as cnt WHERE placeIdx = ${placeIdx} and bannerIdx = ${bannerIdx}`;
+        const bannerQuery = `SELECT count(*) as cnt FROM PLACE_BANNER_RELATION_TB WHERE placeIdx = ${placeIdx} and bannerIdx = ${bannerIdx}`;
         try {
             const result = await pool.queryParamArr(bannerQuery, [placeIdx, bannerIdx]);
-            if (result.cnt > 0) return false;
-            return true;
+            if (result.cnt > 0) return true;
+            return false;
         } catch(err) {
             throw err;
         }
