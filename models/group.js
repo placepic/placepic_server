@@ -1,36 +1,35 @@
 const pool = require('../modules/pool');
 const table = 'GROUP_USER_RELATION_TB';
-const groupTable = 'GROUP_TB';
+const userTable = 'USER_TB';
 const STATE_PENDING = 2;
 const _ = require('lodash');
 
-const group = {    
-    apply : async({userName,userIdx,groupIdx,part}) => {
+const group = {
+    apply: async ({ userName, userIdx, groupIdx, part }) => {
         const editName = `UPDATE USER_TB SET userName = '${userName}' WHERE userIdx = ?`;
         const insertPart = `INSERT INTO GROUP_USER_RELATION_TB(groupIdx,userIdx,part,state) VALUES(?,?,?,?)`;
-        try{
-            await pool.Transaction( async (conn) =>{
-                let editNameResult = await conn.query(editName,userIdx)
-                let addPartResult = await conn.query(insertPart,[groupIdx,userIdx,part,1]);
-            
-            }).catch((err)=>{
-                console.log('그룹유저 추가 트랜잭션 오류! :',err)
-                throw err;
-            })
-        }catch(e){
-            console.log("그룹유저 추가 에러 :", e);
-            throw(e);
+        try {
+            await pool
+                .Transaction(async (conn) => {
+                    let editNameResult = await conn.query(editName, userIdx);
+                    let addPartResult = await conn.query(insertPart, [groupIdx, userIdx, part, 1]);
+                })
+                .catch((err) => {
+                    console.log('그룹유저 추가 트랜잭션 오류! :', err);
+                    throw err;
+                });
+        } catch (e) {
+            console.log('그룹유저 추가 에러 :', e);
+            throw e;
         }
-
     },
-    
-    editStatusApplyUser : async(userIdx,groupIdx) => {
+
+    editStatusApplyUser: async (userIdx, groupIdx) => {
         const editStatusApplyUser = `UPDATE ${table} SET state = 1 WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
-        try{
+        try {
             const result = await pool.queryParam(editStatusApplyUser);
             return result;
-    
-        }catch(err) {
+        } catch (err) {
             console.log('editStatusApplyUser ERROR : ', err);
             throw err;
         }
@@ -76,7 +75,7 @@ const group = {
         }
     },
     callMygroupPostCnt: async (userIdx) => {
-        const getMygroupInfo2 = `SELECT COUNT(*) postCnt FROM  GROUP_USER_RELATION_TB, PLACE_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} GROUP BY GROUP_USER_RELATION_TB.groupIdx`
+        const getMygroupInfo2 = `SELECT COUNT(*) postCnt FROM  GROUP_USER_RELATION_TB, PLACE_TB  WHERE GROUP_USER_RELATION_TB.userIdx = ${userIdx} GROUP BY GROUP_USER_RELATION_TB.groupIdx`;
         try {
             const result = await pool.queryParam(getMygroupInfo2);
             return result;
@@ -101,12 +100,18 @@ const group = {
         try {
             const getGroupResult = await pool.queryParam(getGroupbyUser);
             if (getGroupResult.length === 0) {
-                console.log("불러올 지원가능한 그룹이 없습니다.");
+                console.log('불러올 지원가능한 그룹이 없습니다.');
                 return getGroupResult; //groupResult 가 [] 일때.
             }
-            const groupIdxs = getGroupResult.map(group => group.groupIdx);
-            const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')}) GROUP BY groupIdx`);
-            const getState = await pool.queryParam(`SELECT * FROM placepic.GROUP_USER_RELATION_TB where userIdx = ${userIdx} group by groupIdx;`);
+            const groupIdxs = getGroupResult.map((group) => group.groupIdx);
+            const placeResult = await pool.queryParam(
+                `SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx IN (${
+                    groupIdxs.length === 1 ? groupIdxs.join('') : groupIdxs.join(', ')
+                }) GROUP BY groupIdx`
+            );
+            const getState = await pool.queryParam(
+                `SELECT * FROM placepic.GROUP_USER_RELATION_TB where userIdx = ${userIdx} group by groupIdx;`
+            );
 
             const resultMap = new Map();
             getGroupResult.forEach((group) => {
@@ -120,13 +125,13 @@ const group = {
                     postCount: 0,
                 });
             });
-            placeResult.forEach(place => {
-                resultMap.get(place.groupIdx).postCount = place.postCount
+            placeResult.forEach((place) => {
+                resultMap.get(place.groupIdx).postCount = place.postCount;
             });
-            getState.forEach(ele => {
-                resultMap.get(ele.groupIdx).state = ele.state // 만약 getState가 없으면 이 로직을 실행하면 안댐
-            })
-            
+            getState.forEach((ele) => {
+                resultMap.get(ele.groupIdx).state = ele.state; // 만약 getState가 없으면 이 로직을 실행하면 안댐
+            });
+
             return [...resultMap.values()];
         } catch (e) {
             console.log('getMygroupList error(그룹목록을 불러오지 못했습니다.) :', e);
@@ -138,7 +143,6 @@ const group = {
         try {
             const result = await pool.queryParam(getMygroup);
             return result;
-
         } catch (err) {
             console.log('getMyWaitGroupList ERROR : ', err);
             throw err;
@@ -150,7 +154,6 @@ const group = {
         try {
             const result = await pool.queryParam(getGroupUserCnt);
             return result[0].userCount;
-
         } catch (err) {
             console.log('getGroupUserCnt ERROR : ', err);
             throw err;
@@ -162,21 +165,17 @@ const group = {
         try {
             const result = await pool.queryParam(getGroupPostCnt);
             return result[0].postCount;
-
         } catch (err) {
             console.log('getGroupPostCnt ERROR : ', err);
             throw err;
         }
-
     },
     getMywaitUserList: async (groupIdx) => {
-
         const getMywaitUserList = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and state = 2) AS MYGROUPWAITUSER natural join USER_TB `;
 
         try {
             const result = await pool.queryParam(getMywaitUserList);
             return result;
-
         } catch (err) {
             console.log('getMywaitUserList ERROR : ', err);
             throw err;
@@ -188,7 +187,6 @@ const group = {
         try {
             const result = await pool.queryParam(editStatusApplyUser);
             return result;
-
         } catch (err) {
             console.log('editStatusApplyUser ERROR : ', err);
             throw err;
@@ -200,7 +198,6 @@ const group = {
         try {
             const result = await pool.queryParam(deleteStatusApplyUser);
             return result;
-
         } catch (err) {
             console.log('deleteStatusApplyUser ERROR : ', err);
             throw err;
@@ -225,12 +222,12 @@ const group = {
             throw e;
         }
     },
-    isGroup : async (groupIdx)=>{
+    isGroup: async (groupIdx) => {
         const query = `SELECT  * FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
-        try{
+        try {
             const result = await pool.queryParam(query);
             return result[0];
-        }catch(e){
+        } catch (e) {
             console.log('그룹 존재여부 체크 :', e);
             throw e;
         }
@@ -252,10 +249,10 @@ const group = {
                 resultMap.set(group.userIdx, {
                     userIdx: group.userIdx,
                     userName: group.userName,
-                    profileImageUrl: group.profileImageUrl.replace("origin", "w_200"),
+                    profileImageUrl: group.profileImageUrl.replace('origin', 'w_200'),
                     part: group.part,
                     postCount: group.postCount,
-                    rank: 0
+                    rank: 0,
                 });
             });
 
@@ -263,23 +260,26 @@ const group = {
             let stack = [];
             let cnt = 0;
             groupResult[0].rank = 1;
-            [...resultMap.values()][0].rank = 1
+            [...resultMap.values()][0].rank = 1;
             stack.push(groupResult[0].postCount);
-            for(let i = 1; i< groupResult.length; i++){
-                if((groupResult[i].postCount < stack[stack.length -1]) && groupResult[i].postCount !==0 ){
-                    while((stack.length) > 0){
-                        stack.pop()
+            for (let i = 1; i < groupResult.length; i++) {
+                if (
+                    groupResult[i].postCount < stack[stack.length - 1] &&
+                    groupResult[i].postCount !== 0
+                ) {
+                    while (stack.length > 0) {
+                        stack.pop();
                         cnt++;
                     }
                     rank = rank + cnt;
                     [...resultMap.values()][i].rank = rank;
                     cnt = 0;
                     stack.push(groupResult[i].postCount);
-                }else if(groupResult[i].postCount === 0){
+                } else if (groupResult[i].postCount === 0) {
                     [...resultMap.values()][i].rank = -1;
-                }else{
+                } else {
                     stack.push(groupResult[i].postCount);
-                    [...resultMap.values()][i].rank =rank;
+                    [...resultMap.values()][i].rank = rank;
                 }
             }
             return [...resultMap.values()];
@@ -289,72 +289,82 @@ const group = {
         }
     },
 
-   
-    getProfileInfo: async (userIdx, groupIdx) => { 
-            try {
-                const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join USER_TB `;
-                const groupResult = await pool.queryParam(getMyInfo);
-                const getPlacesWithUser =  `SELECT placeIdx,placeImageUrl,placeName FROM (SELECT placeIdx,placeImageUrl,placeName, groupIdx, userIdx FROM PLACE_TB as p natural left outer join PLACEIMAGE_TB as i where p.placeIdx = i.placeIdx)as a WHERE a.groupIdx = ${groupIdx} and userIdx = ${userIdx} group by placeIdx`
-                const placeResult = await pool.queryParam(`SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} GROUP BY groupIdx`);
-                    const getPlacesInfo = await pool.queryParam(getPlacesWithUser); // 작성한 이름,이미지,placeIdx
-                    if (_.isNil(getPlacesInfo)) {
-                        return getPlacesInfo; //groupResult 가 [] 일때.
-                    }
-        
-                    const likeCountQuery = `SELECT COUNT(*) as likeCnt,placeIdx FROM LIKE_TB group by placeIdx`; 
-                    const getSubwayName = `SELECT * FROM SUBWAY_PLACE_RELATION_TB as a natural left outer join SUBWAY_TB as b;`;
-                    const getLikeCnt = await pool.queryParam(likeCountQuery); // 작성한 글 좋아요 갯수 목록
-                    const getSubwayNames = await pool.queryParam(getSubwayName); // 작성한 글 지하철 목록
-                    let result = new Map();
-        
-                    getPlacesInfo.forEach((it) => {
-                        it.likeCnt = 0;
-                        it.subwayName = [];
-                    });
-        
-                    getPlacesInfo.forEach(ele => result.set(ele.placeIdx, {
-                        placeIdx: ele.placeIdx,
-                        placeName: ele.placeName,
-                        placeImageUrl:  ele.placeImageUrl,
-                        likeCnt: ele.likeCnt,
-                        subwayName: ele.subwayName
-                    }))
-        
-                    getLikeCnt.forEach(ele => {
-                        if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt
-                    })
-        
-                    getSubwayNames.forEach(ele => {
-                        if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subwayName.push(ele.subwayName)
-                    })
-        
-            
-                const resultMap = new Map();
-
-                groupResult.forEach((group) => {
-                    resultMap.set(group.groupIdx, {
-                        userName: group.userName,
-                        part: group.part,
-                        userImage: group.profileImageUrl,
-                        state: group.state,
-                        postCount: 0,
-                    });
-                });
-    
-            
-                if(placeResult.length !== 0) {
-                    resultMap.get(placeResult[0].groupIdx).postCount = placeResult[0].postCount
-                }
-
-                let retObj = {};
-                retObj.UserInfo = [...resultMap.values()]
-                retObj.UserPlace  = [...result.values()];
-                return retObj;
-            }  catch (e) {
-                console.log('다른유저의 프로필 불러오기 실패 :', e);
-                throw e;
+    getProfileInfo: async (userIdx, groupIdx) => {
+        try {
+            const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join USER_TB `;
+            const groupResult = await pool.queryParam(getMyInfo);
+            const getPlacesWithUser = `SELECT placeIdx,placeImageUrl,placeName FROM (SELECT placeIdx,placeImageUrl,placeName, groupIdx, userIdx FROM PLACE_TB as p natural left outer join PLACEIMAGE_TB as i where p.placeIdx = i.placeIdx)as a WHERE a.groupIdx = ${groupIdx} and userIdx = ${userIdx} group by placeIdx`;
+            const placeResult = await pool.queryParam(
+                `SELECT *, count(*) as postCount FROM PLACE_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} GROUP BY groupIdx`
+            );
+            const getPlacesInfo = await pool.queryParam(getPlacesWithUser); // 작성한 이름,이미지,placeIdx
+            if (_.isNil(getPlacesInfo)) {
+                return getPlacesInfo; //groupResult 가 [] 일때.
             }
-        }
 
-}
+            const likeCountQuery = `SELECT COUNT(*) as likeCnt,placeIdx FROM LIKE_TB group by placeIdx`;
+            const getSubwayName = `SELECT * FROM SUBWAY_PLACE_RELATION_TB as a natural left outer join SUBWAY_TB as b;`;
+            const getLikeCnt = await pool.queryParam(likeCountQuery); // 작성한 글 좋아요 갯수 목록
+            const getSubwayNames = await pool.queryParam(getSubwayName); // 작성한 글 지하철 목록
+            let result = new Map();
+
+            getPlacesInfo.forEach((it) => {
+                it.likeCnt = 0;
+                it.subwayName = [];
+            });
+
+            getPlacesInfo.forEach((ele) =>
+                result.set(ele.placeIdx, {
+                    placeIdx: ele.placeIdx,
+                    placeName: ele.placeName,
+                    placeImageUrl: ele.placeImageUrl,
+                    likeCnt: ele.likeCnt,
+                    subwayName: ele.subwayName,
+                })
+            );
+
+            getLikeCnt.forEach((ele) => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
+            });
+
+            getSubwayNames.forEach((ele) => {
+                if (result.has(ele.placeIdx))
+                    result.get(ele.placeIdx).subwayName.push(ele.subwayName);
+            });
+
+            const resultMap = new Map();
+
+            groupResult.forEach((group) => {
+                resultMap.set(group.groupIdx, {
+                    userName: group.userName,
+                    part: group.part,
+                    userImage: group.profileImageUrl,
+                    state: group.state,
+                    postCount: 0,
+                });
+            });
+
+            if (placeResult.length !== 0) {
+                resultMap.get(placeResult[0].groupIdx).postCount = placeResult[0].postCount;
+            }
+
+            let retObj = {};
+            retObj.UserInfo = resultMap.get(placeResult[0].groupIdx);
+            retObj.UserPlace = [...result.values()];
+            return retObj;
+        } catch (e) {
+            console.log('다른유저의 프로필 불러오기 실패 :', e);
+            throw e;
+        }
+    },
+    getCommentProfile: async (groupIdx, userIdx) => {
+        const query = `SELECT profileImageUrl, userName from ${table} natural left outer join ${userTable} WHERE userIdx = ${userIdx} and groupIdx = ${groupIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    },
+};
 module.exports = group;

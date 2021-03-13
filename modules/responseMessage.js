@@ -104,7 +104,7 @@ module.exports = {
     EDIT_MYINFO: '프로필사진, 소속 변경 완료',
 
     //Your INFO
-    CALL_YOUR_INFO : '다른유저의 프로필을 불러오는데 성공',
+    CALL_YOUR_INFO: '다른유저의 프로필을 불러오는데 성공',
 
     //BANNER
     GET_BANNER_SUCCESS: '배너 리스트 조회 성공.',
@@ -121,4 +121,12 @@ module.exports = {
     DELETE_BANNER_PLACE_FAIL: '배너 장소 삭제 실패',
     ALREADY_POST_BANNER_PLACE: '이미 등록된 장소',
     ALREADY_DELETE_BANNER_PLACE: '이미 삭제된 장소',
+    
+    //COMMENT
+    CREATE_COMMENT_SUCCESS: '댓글 생성 완료.',
+    CREATE_COMMENT_FAIL: '댓글 생성 실패.',
+    GET_COMMENTS_SUCCESS: '댓글 가져오기 성공',
+    GET_COMMENTS_FAIL: '댓글 가져오기 실패',
+    DELETE_COMMENTS_SUCCESS : '댓글 삭제 성공',
+    DELETE_COMMENTS_FAIL : '댓글 삭제 실패'
 };

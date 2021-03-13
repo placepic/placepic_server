@@ -5,35 +5,39 @@ const CATEGORY_TAG = 0;
 const table = require('../modules/table');
 
 const tag = {
-    getAllTags : () =>{
-        try{
+    getAllTags: () => {
+        try {
             const allTagsDto = table.getTag();
             console.log(allTagsDto);
             return allTagsDto;
-        }catch(err){
+        } catch (err) {
             console.log('get All Tags error:', err);
-            throw(err);
+            throw err;
         }
     },
-    getCategoryTags : (categoryIdx) =>{
-        try{
+    getCategoryTags: (categoryIdx) => {
+        try {
             let allTagsDto = table.getTag();
-            const categoryTagDto = allTagsDto.filter((it)=>it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === CATEGORY_TAG);
+            const categoryTagDto = allTagsDto.filter(
+                (it) => it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === CATEGORY_TAG
+            );
             return categoryTagDto;
-        }catch(err){
-            console.log('getCategoryTags err :',err);
-            throw(err);
+        } catch (err) {
+            console.log('getCategoryTags err :', err);
+            throw err;
         }
     },
-    getCategoryDefaultTags: (categoryIdx) =>{
-        try{
+    getCategoryDefaultTags: (categoryIdx) => {
+        try {
             let allTagsDto = table.getTag();
-            const categoryDefaultTagDto = allTagsDto.filter((it)=>it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === DEFAULT_TAG);
+            const categoryDefaultTagDto = allTagsDto.filter(
+                (it) => it.categoryIdx === parseInt(categoryIdx) && it.tagIsBasic === DEFAULT_TAG
+            );
             return categoryDefaultTagDto;
-        }catch(err){
+        } catch (err) {
             console.log('getCategoryDefaultTags err :', err);
-            throw(err);
+            throw err;
         }
-    }
-}
+    },
+};
 module.exports = tag;

@@ -5,8 +5,8 @@ const table = {
     category: 'CATEGORY_TB',
     tag: 'TAG_TB',
     subway: 'SUBWAY_TB',
-    subwayLine: 'SUBWAY_LINE_TB'
-}
+    subwayLine: 'SUBWAY_LINE_TB',
+};
 
 const queryResult = {};
 (async () => {
@@ -14,7 +14,9 @@ const queryResult = {};
     queryResult.tag = await pool.queryParam(`SELECT * FROM ${table.tag}`);
     queryResult.subway = await pool.queryParam(`SELECT * FROM ${table.subway}`);
     queryResult.subwayLine = await pool.queryParam(`SELECT * FROM ${table.subwayLine}`);
-    queryResult.subwayAndLine = await pool.queryParam(`SELECT * FROM ${table.subway} NATURAL LEFT JOIN ${table.subwayLine};`);
+    queryResult.subwayAndLine = await pool.queryParam(
+        `SELECT * FROM ${table.subway} NATURAL LEFT JOIN ${table.subwayLine};`
+    );
     queryResult.tagName = await pool.queryParam(`SELECT tagIdx, tagName FROM ${table.tag}`);
 })();
 
@@ -22,25 +24,26 @@ module.exports = {
     getCategory: () => queryResult.category,
     getTag: () => queryResult.tag,
     getSubway: () => queryResult.subway,
-    getOneCategory : (categoryIdx) => queryResult.category[parseInt(categoryIdx)-1],
-    getSubwayJoinLine : () => queryResult.subwayAndLine,
-    getTagName : () => queryResult.tagName,
+    getOneCategory: (categoryIdx) => queryResult.category[parseInt(categoryIdx) - 1],
+    getSubwayJoinLine: () => queryResult.subwayAndLine,
+    getTagName: () => queryResult.tagName,
     getSubwayGroup: () => {
         return _(queryResult.subwayAndLine)
             .groupBy('subwayIdx')
             .values()
-            .map(subArr => {
+            .map((subArr) => {
                 let subwayObject;
                 subArr.forEach((sub, i) => {
                     if (i === 0) {
                         subwayObject = {
                             subwayIdx: sub.subwayIdx,
                             subwayName: sub.subwayName,
-                            subwayLine: [sub.subwayLine]
+                            subwayLine: [sub.subwayLine],
                         };
                     } else subwayObject.subwayLine.push(sub.subwayLine);
                 });
                 return subwayObject;
-            }).value();
+            })
+            .value();
     },
 };
