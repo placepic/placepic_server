@@ -60,6 +60,7 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }
 
+            /* 1. 그룹 ,유저 relation TB 확인해서 유효성 검사 하기*/
             const isValidUserGroup = await groupDB.validUserGroup(userIdx, groupIdx);
             if (isValidUserGroup[0] === undefined) {
                 console.log('잘못된 접근입니다.');
