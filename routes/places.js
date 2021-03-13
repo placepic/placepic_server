@@ -17,7 +17,7 @@ router.get(
     controller.getCommentsByPlaceIdx
 );
 router.get('/:placeIdx', authUtils.checkToken, controller.getOnePlace);
-router.post('/:placeIdx/comment', authUtils.checkToken, controller.createComment);
+router.post('/:placeIdx/group/:groupIdx/comment', authUtils.checkToken, controller.createComment);
 router.delete('/:placeIdx/comment/:commentIdx', authUtils.checkToken, controller.deleteComment);
 router.get('/group/:groupIdx', authUtils.checkToken, controller.getPlacesByGroup);
 router.get('/group/:groupIdx/banner', authUtils.checkToken, controller.getBannerList);

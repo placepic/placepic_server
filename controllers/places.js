@@ -613,6 +613,7 @@ const placeController = {
     },
     createComment: async (req, res) => {
         const placeIdx = parseInt(req.params.placeIdx);
+        const groupIdx = parseInt(req.params.groupIdx);
         const userIdx = req.userIdx;
         const content = req.body.content;
         const parentIdx = req.body.parentIdx || null;
@@ -625,6 +626,13 @@ const placeController = {
         }
 
         try {
+            const isNotGroupUser = await groupDB.checkAlreadyGroup(userIdx, groupIdx);
+            if (isNotGroupUser) {
+                console.log('그룹에 권한이 없음.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_GROUP_USER));
+            }
             await commentDB.createComment({ userIdx, content, placeIdx, parentIdx });
             res.status(statusCode.OK).send(
                 util.success(statusCode.OK, responseMessage.CREATE_COMMENT_SUCCESS)
