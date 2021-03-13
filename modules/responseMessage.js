@@ -111,4 +111,8 @@ module.exports = {
     GET_BANNER_FAIL: '배너 가져오기 실패',
     NOT_ACCESS_BANNER: '배너 접근 권한 없음. 그룹 불일치!',
     NO_BANNER: '해당 배너 없음',
+    POST_BANNER_SUCCESS: '배너 등록 성공',
+    POST_BANNER_FAIL: '배너 등록 실패',
+    DELETE_BANNER_SUCCESS: '배너 삭제 성공',
+    DELETE_BANNER_FAIL: '배너 삭제 실패',
 };
