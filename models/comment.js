@@ -20,18 +20,17 @@ const comment = {
             throw err;
         }
     },
-    deleteComments : async ({commentIdx,parentIdx}) => {
+    deleteComments: async ({ commentIdx, parentIdx }) => {
         // 대댓글 삭제
-        console.log(parentIdx)
+        console.log(parentIdx);
         let query = `DELETE FROM ${table} WHERE commentIdx = ${commentIdx}`;
-        if (!_.isNil(parentIdx)) { 
-            query = `DELETE FROM ${table} WHERE commentsIdx = ${commentIdx} and parentIdx = ${parentIdx}`
+        if (!_.isNil(parentIdx)) {
+            query = `DELETE FROM ${table} WHERE commentsIdx = ${commentIdx} and parentIdx = ${parentIdx}`;
         }
 
         try {
             await pool.queryParam(query);
-        }
-        catch (err) {
+        } catch (err) {
             throw err;
         }
     },
@@ -44,7 +43,7 @@ const comment = {
             throw err;
         }
     },
-    isCommentWriter: async(commentIdx,userIdx) => {
+    isCommentWriter: async (commentIdx, userIdx) => {
         const query = `SELECT * FROM ${table} WHERE commentIdx = ${commentIdx} and userIdx = ${userIdx}`;
         try {
             const result = await pool.queryParam(query);
