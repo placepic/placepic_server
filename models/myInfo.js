@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { getSubway } = require('../modules/table');
 const myInfo = {
     getMyInfo: async (userIdx, groupIdx) => {
-        //이름,소속,이미지,상태,유저 총 글 수
+        //이름,소속,이미지,상태,유저 총 글 수 그룹이름
         try {
             const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join USER_TB `;
             const groupResult = await pool.queryParam(getMyInfo);
@@ -12,13 +12,16 @@ const myInfo = {
             );
             const bookMarkQuery = `SELECT *,count(*) as bookMarkCnt FROM (SELECT * FROM PLACE_TB WHERE placeIdx IN (SELECT placeIdx FROM BOOKMARK_TB WHERE userIdx=${userIdx}) AND groupIdx=${groupIdx}) as PLACE natural join USER_TB`;
             const bookMarkCnt = await pool.queryParam(bookMarkQuery);
-
+            const getGroupName = `SELECT groupName FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
+            const nameResult = await pool.queryParam(getGroupName);
+            console.log(nameResult[0].groupName);
             const resultMap = new Map();
 
             groupResult.forEach((group) => {
                 resultMap.set(group.groupIdx, {
                     userName: group.userName,
                     part: group.part,
+                    groupName : nameResult[0].groupName,
                     userImage: group.profileImageUrl,
                     state: group.state,
                     postCount: 0,
