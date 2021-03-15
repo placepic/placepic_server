@@ -57,6 +57,7 @@ module.exports = {
     //그룹 리스트 불러오기
     CALL_GROUP_LIST: '그룹 리스트 불러오기 성공',
     CALL_GROUP_FAIL: '해당 그룹이 존재하지 않습니다.',
+    NO_GROUP_USER: '해당 그룹에 댓글을 달 수 없는 유저 입니다.',
 
     // 신청대기 갯수 불러오기
     CALL_APPLYCOUNT_SUCCESS: '대기목록 갯수 불러오기 성공',
@@ -110,12 +111,23 @@ module.exports = {
     GET_BANNER_SUCCESS: '배너 리스트 조회 성공.',
     GET_BANNER_FAIL: '배너 가져오기 실패',
     NOT_ACCESS_BANNER: '배너 접근 권한 없음. 그룹 불일치!',
+    NO_BANNER: '해당 배너 없음',
+    POST_BANNER_SUCCESS: '배너 등록 성공',
+    POST_BANNER_FAIL: '배너 등록 실패',
+    DELETE_BANNER_SUCCESS: '배너 삭제 성공',
+    DELETE_BANNER_FAIL: '배너 삭제 실패',
+    POST_BANNER_PLACE_SUCCESS: '배너 장소 등록 성공',
+    POST_BANNER_PLACE_FAIL: '배너 장소 등록 실패',
+    DELETE_BANNER_PLACE_SUCCESS: '배너 장소 삭제 성공',
+    DELETE_BANNER_PLACE_FAIL: '배너 장소 삭제 실패',
+    ALREADY_POST_BANNER_PLACE: '이미 등록된 장소',
+    ALREADY_DELETE_BANNER_PLACE: '이미 삭제된 장소',
 
     //COMMENT
     CREATE_COMMENT_SUCCESS: '댓글 생성 완료.',
     CREATE_COMMENT_FAIL: '댓글 생성 실패.',
     GET_COMMENTS_SUCCESS: '댓글 가져오기 성공',
     GET_COMMENTS_FAIL: '댓글 가져오기 실패',
-    DELETE_COMMENTS_SUCCESS : '댓글 삭제 성공',
-    DELETE_COMMENTS_FAIL : '댓글 삭제 실패'
+    DELETE_COMMENTS_SUCCESS: '댓글 삭제 성공',
+    DELETE_COMMENTS_FAIL: '댓글 삭제 실패',
 };

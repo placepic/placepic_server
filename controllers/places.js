@@ -60,6 +60,7 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
             }
 
+            /* 1. 그룹 ,유저 relation TB 확인해서 유효성 검사 하기*/
             const isValidUserGroup = await groupDB.validUserGroup(userIdx, groupIdx);
             if (isValidUserGroup[0] === undefined) {
                 console.log('잘못된 접근입니다.');
@@ -612,6 +613,7 @@ const placeController = {
     },
     createComment: async (req, res) => {
         const placeIdx = parseInt(req.params.placeIdx);
+        const groupIdx = parseInt(req.params.groupIdx);
         const userIdx = req.userIdx;
         const content = req.body.content;
         const parentIdx = req.body.parentIdx || null;
@@ -624,6 +626,13 @@ const placeController = {
         }
 
         try {
+            const isNotGroupUser = await groupDB.checkAlreadyGroup(userIdx, groupIdx);
+            if (isNotGroupUser) {
+                console.log('그룹에 권한이 없음.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_GROUP_USER));
+            }
             await commentDB.createComment({ userIdx, content, placeIdx, parentIdx });
             res.status(statusCode.OK).send(
                 util.success(statusCode.OK, responseMessage.CREATE_COMMENT_SUCCESS)
@@ -642,13 +651,14 @@ const placeController = {
     },
     getCommentsByPlaceIdx: async (req, res) => {
         const placeIdx = parseInt(req.params.placeIdx);
-        const groupIdx = req.body.groupIdx;
+        const groupIdx = parseInt(req.params.groupIdx);
         let users = [];
         let subComments = [];
         try {
             let comments = await commentDB.getCommentsByPlaceIdx(placeIdx);
             const userIdxs = [...new Set(comments.map((user) => user.userIdx)).values()];
             for await (let userIdx of userIdxs) {
+                console.log(userIdx);
                 let postCount = await commentDB.getPostCount(userIdx, groupIdx);
                 let profile = await groupDB.getCommentProfile(groupIdx, userIdx);
                 users.push(
@@ -700,55 +710,53 @@ const placeController = {
         }
     },
 
-    deleteComment : async (req,res) => {
-      const commentIdx = req.params.commentIdx // 댓글 idx
-      const userIdx = req.userIdx;
-      const placeIdx = req.params.placeIdx;
-      const parentIdx = req.body.parentIdx;
-      console.log(userIdx ,placeIdx,commentIdx,parentIdx)
-      try {
-          if (!userIdx || !placeIdx || !commentIdx) {
-              console.log('파라미터 오류입니다.');
-              return res
-                  .status(statusCode.BAD_REQUEST)
-                  .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
-          }
+    deleteComment: async (req, res) => {
+        const commentIdx = req.params.commentIdx; // 댓글 idx
+        const userIdx = req.userIdx;
+        const placeIdx = req.params.placeIdx;
+        const parentIdx = req.body.parentIdx;
+        try {
+            if (!userIdx || !placeIdx || !commentIdx) {
+                console.log('파라미터 오류입니다.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+            }
 
-          const isPlace = await placeDB.isCheckPlace(placeIdx);
-          if (isPlace.length === 0) {
-              console.log('유효하지 않는 placeIdx 입니다.');
-              return res
-                  .status(statusCode.BAD_REQUEST)
-                  .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
-          }
+            const isPlace = await placeDB.isCheckPlace(placeIdx);
+            if (isPlace.length === 0) {
+                console.log('유효하지 않는 placeIdx 입니다.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_PLACE));
+            }
 
-          const isCommentWriter = await commentDB.isCommentWriter(commentIdx,userIdx); 
-          console.log(isCommentWriter)
-          const isAdmin = await placeDB.isAdmin(userIdx, placeIdx); // 관리자
-          
-          if (!(isCommentWriter.length || isAdmin === 0)) {
-              console.log('삭제 권한이 없는 아이디.');
-              return res
-                  .status(statusCode.BAD_REQUEST)
-                  .send(util.fail(statusCode.BAD_REQUEST, responseMessage.DELETE_COMMENTS_FAIL));
-          }
+            const isCommentWriter = await commentDB.isCommentWriter(commentIdx, userIdx);
+            const isAdmin = await placeDB.isAdmin(userIdx, placeIdx); // 관리자
 
-          const result = await commentDB.deleteComments({commentIdx,parentIdx});
-          return res
-              .status(statusCode.OK)
-              .send(util.success(statusCode.OK, responseMessage.DELETE_COMMENTS_SUCCESS));
-      } catch (err) {
-          console.log('댓글 삭제 에러', err);
-          return res
-              .status(statusCode.INTERNAL_SERVER_ERROR)
-              .send(
-                  util.fail(
-                      statusCode.INTERNAL_SERVER_ERROR,
-                      responseMessage.INTERNAL_SERVER_ERROR
-                  )
-              );
-      }
-    }
+            if (!(isCommentWriter.length || isAdmin === 0)) {
+                console.log('삭제 권한이 없는 아이디.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.DELETE_COMMENTS_FAIL));
+            }
+
+            const result = await commentDB.deleteComments({ commentIdx, parentIdx });
+            return res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.DELETE_COMMENTS_SUCCESS));
+        } catch (err) {
+            console.log('댓글 삭제 에러', err);
+            return res
+                .status(statusCode.INTERNAL_SERVER_ERROR)
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
+        }
+    },
 };
 
 module.exports = placeController;
