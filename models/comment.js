@@ -20,7 +20,7 @@ const comment = {
             throw err;
         }
     },
-    deleteComments: async ({ commentIdx, parentIdx }) => {
+    deleteComment: async ({ commentIdx, parentIdx }) => {
         // 대댓글 삭제
         console.log(parentIdx);
         let query = `DELETE FROM ${table} WHERE commentIdx = ${commentIdx}`;

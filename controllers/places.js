@@ -741,7 +741,7 @@ const placeController = {
                     .send(util.fail(statusCode.BAD_REQUEST, responseMessage.DELETE_COMMENTS_FAIL));
             }
 
-            const result = await commentDB.deleteComments({ commentIdx, parentIdx });
+            const result = await commentDB.deleteComment({ commentIdx, parentIdx });
             return res
                 .status(statusCode.OK)
                 .send(util.success(statusCode.OK, responseMessage.DELETE_COMMENTS_SUCCESS));
