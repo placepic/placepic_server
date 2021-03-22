@@ -622,12 +622,14 @@ const place = {
         // plaecIdx포함된 쿼리문 뽑아내면 댐
         const tagResult = `SELECT placeIdx,tagName,tagIsBasic FROM TAG_TB natural join PLACE_TAG_RELATION_TB`;
         const likeResult = `SELECT placeIdx, count(*) likeCnt FROM LIKE_TB group by placeIdx;`;
-        console.log(likeResult);
+        const commentResult = `SELECT placeIdx, count(*) commentCnt FROM COMMENT_TB group by placeIdx;`;
+
         try {
             const getUserPlace = await pool.queryParam(getPlaceResult);
             const getsubway = await pool.queryParam(subwayResult);
             const getTag = await pool.queryParam(tagResult);
             const getLikeCnt = await pool.queryParam(likeResult);
+            const getCommentCnt = await pool.queryParam(commentResult);
             let result = new Map();
             getUserPlace.forEach((ele) =>
                 result.set(ele.placeIdx, {
@@ -644,6 +646,7 @@ const place = {
                     subway: [],
                     tag: [],
                     likeCnt: 0,
+                    commentCnt: 0,
                 })
             );
             getTag.forEach((ele) => {
@@ -651,6 +654,9 @@ const place = {
             });
             getLikeCnt.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
+            });
+            getCommentCnt.forEach((ele) => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).commentCnt = ele.commentCnt;
             });
             getsubway.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName);
