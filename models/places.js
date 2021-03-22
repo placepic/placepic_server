@@ -673,17 +673,17 @@ const place = {
         const offset = (page - 1) * limit;
         const totalCount = `SELECT count(*) totalCount FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc;`;
         const getPlaceResult = `SELECT userIdx,placeIdx,groupIdx,userName,part,profileImageUrl,placeName,placeReview,placeImageUrl,placeCreatedAt FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc limit ${limit} offset ${offset};`;
-        // 유저정보, 장소정보 목록
         const subwayResult = `SELECT * FROM SUBWAY_TB natural join SUBWAY_PLACE_RELATION_TB;`;
-        // plaecIdx포함된 쿼리문 뽑아내면 댐
         const tagResult = `SELECT placeIdx,tagName,tagIsBasic FROM TAG_TB natural join PLACE_TAG_RELATION_TB`;
         const likeResult = `SELECT placeIdx, count(*) likeCnt FROM LIKE_TB group by placeIdx;`;
+        const commentResult = `SELECT placeIdx, count(*) commentCnt FROM COMMENT_TB group by placeIdx;`;
         try {
             const getUserPlace = await pool.queryParam(getPlaceResult);
             const getsubway = await pool.queryParam(subwayResult);
             const getTag = await pool.queryParam(tagResult);
             const getLikeCnt = await pool.queryParam(likeResult);
             const getTotalCount = await pool.queryParam(totalCount);
+            const getCommentCnt = await pool.queryParam(commentResult);
             let totalPage = parseInt(getTotalCount[0].totalCount / limit);
             if (getTotalCount[0].totalCount % limit > 0) totalPage = totalPage + 1;
 
@@ -706,6 +706,7 @@ const place = {
                     subway: [],
                     tag: [],
                     likeCnt: 0,
+                    commentCnt: 0,
                 })
             );
             getTag.forEach((ele) => {
@@ -715,8 +716,13 @@ const place = {
             getLikeCnt.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).likeCnt = ele.likeCnt;
             });
+
             getsubway.forEach((ele) => {
                 if (result.has(ele.placeIdx)) result.get(ele.placeIdx).subway.push(ele.subwayName);
+            });
+
+            getCommentCnt.forEach((ele) => {
+                if (result.has(ele.placeIdx)) result.get(ele.placeIdx).commentCnt = ele.commentCnt;
             });
             const resultValue = [...result.values()];
 
