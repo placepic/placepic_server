@@ -337,9 +337,10 @@ const place = {
             const placeSubwayQuery = `SELECT * FROM 
                 (SELECT * FROM (${placeTable}) as PLACE natural left outer join SUBWAY_PLACE_RELATION_TB) as PLACESUBWAY 
                 natural left outer join USER_TB`;
+            const likeQuery = `SELECT placeIdx, COUNT(*) as likeCnt FROM LIKE_TB group by placeIdx`;
+            const commentCountQuery = `SELECT placeIdx, count(*) as commentCnt FROM COMMENT_TB group by placeIdx`;
 
             const queryResult = new Map();
-
             (await pool.queryParam(placeTagQuery))
                 .concat(await pool.queryParam(placeSubwayQuery))
                 .forEach((ele) => {
@@ -383,6 +384,8 @@ const place = {
                                     : '',
                             },
                             imageUrl: [],
+                            likeCnt: 0,
+                            commentCnt: 0,
                         });
                     }
                 });
@@ -403,6 +406,27 @@ const place = {
                         .imageUrl.push(img.placeImageUrl.replace('origin', 'w_400'));
             });
 
+            const like = await pool.queryParam(likeQuery);
+            like.forEach((like) => {
+                if (queryResult.has(like.placeIdx)) {
+                    queryResult.set(
+                        like.placeIdx,
+                        Object.assign(queryResult.get(like.placeIdx), { likeCnt: like.likeCnt })
+                    );
+                }
+            });
+
+            const comment = await pool.queryParam(commentCountQuery);
+            comment.forEach((comment) => {
+                if (queryResult.has(comment.placeIdx)) {
+                    queryResult.set(
+                        comment.placeIdx,
+                        Object.assign(queryResult.get(comment.placeIdx), {
+                            commentCnt: comment.commentCnt,
+                        })
+                    );
+                }
+            });
             // filtering
             let result = [...queryResult.values()];
 
@@ -427,8 +451,7 @@ const place = {
                     return false;
                 });
             }
-
-            console.log('GET places in group');
+            //console.log(result);
             return result;
         } catch (e) {
             throw e;
