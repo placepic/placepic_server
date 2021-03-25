@@ -59,6 +59,15 @@ const banner = {
             throw err;
         }
     },
+    addBannerPlaces: async (bannerIdx, placeList) => {
+        try {
+            const promises = [];
+            placeList.forEach(placeIdx => promises.push(pool.queryParam(`INSERT INTO PLACE_BANNER_RELATION_TB (placeIdx, bannerIdx) VALUES (${placeIdx}, ${bannerIdx})`)));
+            return await Promise.all(promises);
+        } catch(e) {
+            throw err;
+        }
+    },
     deleteBannerPlace: async (bannerIdx, placeIdx) => {
         const bannerQuery = `DELETE FROM PLACE_BANNER_RELATION_TB WHERE placeIdx = ${placeIdx} and bannerIdx = ${bannerIdx}`;
         try {
