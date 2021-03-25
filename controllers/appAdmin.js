@@ -88,6 +88,22 @@ module.exports = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.POST_BANNER_PLACE_FAIL));
         }
     },
+    addPlacesToBanner: async (req, res) => {
+        const { bannerIdx } = req.params;
+        const { placeIdxList } = req.body;
+        if (!bannerIdx || !placeIdxList) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+        try {
+            // TODO 예외처리
+            // 1 장소 있는지 확인
+            // 2 장소와 배너가 같은 그룹에 있는지 확인
+            // if (await bannerDB.checkBannerHasPlace(bannerIdx, placeIdx)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_POST_BANNER_PLACE));
+            const result = await bannerDB.addBannerPlaces(bannerIdx, placeIdxList);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.POST_BANNER_PLACE_SUCCESS));
+        } catch (err) {
+            console.log('배너 장소 추가 실패');
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.POST_BANNER_PLACE_FAIL));
+        }
+    },
     deletePlaceToBanner: async (req, res) => {
         const { bannerIdx, placeIdx } = req.params;
         if (!bannerIdx || !placeIdx) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
