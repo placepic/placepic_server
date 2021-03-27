@@ -12,6 +12,7 @@ router.delete('/banners/:bannerIdx', authUtils.checkAdmin, controller.deleteBann
 router.post('/banners/:bannerIdx/place/:placeIdx', authUtils.checkAdmin, controller.addPlaceToBanner);
 router.post('/banners/:bannerIdx/place', authUtils.checkAdmin, controller.addPlacesToBanner);
 router.delete('/banners/:bannerIdx/place/:placeIdx', authUtils.checkAdmin, controller.deletePlaceToBanner);
+router.delete('/banners/:bannerIdx/place', authUtils.checkAdmin, controller.deletePlacesToBanner);
 
 
 module.exports = router;

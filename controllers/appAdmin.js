@@ -115,6 +115,22 @@ module.exports = {
             console.log('배너 장소 삭제 실패');
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.DELETE_BANNER_PLACE_FAIL));
         }
+    },
+    deletePlacesToBanner: async (req, res) => {
+        const { bannerIdx } = req.params;
+        const { placeIdxList } = req.body;
+        const promises = [];
+        if (!bannerIdx || !placeIdxList) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+        try {
+            placeIdxList.forEach(placeIdx => {
+                promises.push(bannerDB.deleteBannerPlace(bannerIdx, placeIdx));
+            });
+            await Promise.all(promises);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.DELETE_BANNER_PLACE_SUCCESS));
+        } catch(err) {
+            console.log('배너 장소 삭제 실패');
+            return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.DELETE_BANNER_PLACE_FAIL));
+        }
     }
 
 };
