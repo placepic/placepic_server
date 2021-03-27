@@ -96,4 +96,58 @@ module.exports = {
                 .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
         }
     },
+
+    addGroup : async (req, res) => {
+        // 관리자인지 유효성 검사
+        const {
+            groupName,
+            groupCode,
+        } = req.body;
+        const groupImage = req.file; // 이미지 파일은 따로 받을 수 밖에 없지
+        
+        if (groupImage === undefined || groupImage.length === 0) {
+            console.log('그룹이미지 입력해주세요.');
+            return res
+                .status(statusCode.BAD_REQUEST)
+                .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+        }
+
+        
+        const groupImageUrl = groupImage.location;
+        try {
+            if (
+                !groupName ||
+                !groupCode ||
+                !groupImageUrl
+            ) {
+                console.log('필수 입력 값이 없습니다.');
+                return res
+                    .status(statusCode.BAD_REQUEST)
+                    .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+            }
+
+
+            const GroupResult = await Group.addGroup({
+               groupName,
+               groupCode,
+               groupImageUrl,
+            });
+            return await res
+                .status(statusCode.OK)
+                .send(util.success(statusCode.OK, responseMessage.POST_GROUP));
+        } catch (e) {
+            console.log('그룹 추가 에러 :', e);
+            return await res
+                .status(statusCode.INTERNAL_SERVER_ERROR)
+                .send(
+                    util.fail(
+                        statusCode.INTERNAL_SERVER_ERROR,
+                        responseMessage.INTERNAL_SERVER_ERROR
+                    )
+                );
+        }
+
+    
+}
+
 };
