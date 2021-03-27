@@ -84,6 +84,7 @@ module.exports = {
     NO_READ_SUBWAY: '지히철 일치 실패.',
 
     //GROUP
+    POST_GROUP: '그룹 추가 성공',
     INVALID_GROUP_USER: '일치하지 않는 유저 그룹.',
     ALREADY_GROUP_USER: '이미 가입된 그룹',
     CALL_APPLY_GROUP: '지원 가능한 그룹조회 불러오기 성공',

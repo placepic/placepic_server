@@ -30,4 +30,5 @@ router.get('/myInfo/:groupIdx', authUtil.checkToken, myInfo.getMyInfo); //만약
 router.get('/myInfo/places/:groupIdx', authUtil.checkToken, myInfo.getPlacesWithUser); // 수정 x
 router.get('/groups/userlist/:groupIdx', authUtil.checkToken, groups.getMyGroupRanking); // 수정
 router.get('/groups/:groupIdx/userInfo/:userIdx', groups.getProfileInfo);
+router.post('/groups',upload.single('groupImage'),groups.addGroup);
 module.exports = router;

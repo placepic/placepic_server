@@ -38,23 +38,6 @@ const MyInfo = {
             return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
         }
     },
-    // editMyInfo : async(req,res) => {
-    //     const userIdx = req.userIdx;
-    //     const profileImageUrl = req.file.location;
-    //     const groupIdx = req.params.groupIdx;
-    //     const part = req.body.part;
-    //     console.log("파트 : ",part)
-    //     console.log(req.file.location)
-
-    //     try {
-    //         if(profileImageUrl)
-    //         const editProfileResult = await myInfo.editMyInfo(userIdx,groupIdx,profileImageUrl,part);
-    //         return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.EDIT_MYINFO));
-    //     }catch(e) {
-    //         console.log('getMyInfo error', e);
-    //         return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, e.message));
-    //     }
-    // },
 
     getPlacesWithUser : async (req,res) => {
         const userIdx = req.userIdx;

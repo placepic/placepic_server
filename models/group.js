@@ -366,5 +366,21 @@ const group = {
             throw err;
         }
     },
+
+    addGroup: async ({
+            groupName,
+            groupCode,
+            groupImageUrl,
+    }) => {
+            let query = `INSERT INTO GROUP_TB (groupName, groupImage, groupCode) VALUES (?,?,?)`;
+            let value = [groupName, groupImageUrl, groupCode];
+            try {
+                const result = await pool.queryParamArr(query, value);
+                return result.insertId;
+            } catch (e) {
+                console.log('그룹 추가 에러 :', e);
+                throw e;
+            }
+    }
 };
 module.exports = group;
