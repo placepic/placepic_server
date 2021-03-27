@@ -584,8 +584,12 @@ const placeController = {
                 .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.GET_BANNER_FAIL));
         }
     },
+    /**
+     * TODO BANNER INFO
+     */
     getBannerPlaces: async (req, res) => {
         const { bannerIdx, groupIdx } = req.params;
+
         try {
             const isAccessBannerGroup = await placeDB.isGroupBanner({ groupIdx, bannerIdx });
             if (!isAccessBannerGroup) {
@@ -594,16 +598,25 @@ const placeController = {
                     .status(statusCode.BAD_REQUEST)
                     .send(util.success(statusCode.BAD_REQUEST, responseMessage.NOT_ACCESS_BANNER));
             }
+
+            const banner = await placeDB.getOneBanner({ bannerIdx });
             const existPlace = await placeDB.isGetBannerPlace(bannerIdx);
             if (!existPlace) {
-                return res
-                    .status(statusCode.OK)
-                    .send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, []));
+                return res.status(statusCode.OK).send(
+                    util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, {
+                        banner,
+                        places: [],
+                    })
+                );
             }
-            const bannerList = await placeDB.getBannerPlaces(bannerIdx);
-            return res
-                .status(statusCode.OK)
-                .send(util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, bannerList));
+
+            const places = await placeDB.getBannerPlaces(bannerIdx);
+            return res.status(statusCode.OK).send(
+                util.success(statusCode.OK, responseMessage.GET_BANNER_SUCCESS, {
+                    banner,
+                    places,
+                })
+            );
         } catch (err) {
             console.log('배너 리스트 조회 실패.');
             return res

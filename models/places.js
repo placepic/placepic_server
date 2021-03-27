@@ -744,7 +744,6 @@ const place = {
     },
     getBannerPlaces: async (bannerIdx) => {
         try {
-            const getOneBannerQuery = `SELECT bannerTitle, bannerBadgeName, bannerDescription, bannerBadgeColor, bannerCreatedAt, bannerImageUrl FROM BANNER_TB WHERE bannerIdx = ${bannerIdx}`;
             const getPlaceIndexQuery = `SELECT placeIdx FROM PLACE_BANNER_RELATION_TB WHERE bannerIdx = ${bannerIdx}`;
             const getPlaceList = await pool.queryParam(getPlaceIndexQuery);
             let placeIdxs = getPlaceList.map((it) => it.placeIdx);
@@ -761,7 +760,6 @@ const place = {
                 LEFT JOIN SUBWAY_TB as s on sp.subwayIdx = s.subwayIdx 
                 WHERE sp.placeIdx in (${[...placeIdxs].join(', ')})`;
 
-            const getOneBanner = await pool.queryParam(getOneBannerQuery);
             const getLike = await pool.queryParam(getLikeQuery);
             const getPlace = await pool.queryParam(getPlaceQuery);
             const getPlaceImage = await pool.queryParam(getPlaceImageQuery);
@@ -789,10 +787,17 @@ const place = {
                 if (result.has(ele.placeIdx))
                     result.get(ele.placeIdx).subwayName.push(ele.subwayName);
             });
-            return {
-                banner: getOneBanner[0],
-                places: [...result.values()],
-            };
+            return [...result.values()];
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    },
+    getOneBanner: async ({ bannerIdx }) => {
+        try {
+            const getOneBannerQuery = `SELECT bannerTitle, bannerBadgeName, bannerDescription, bannerBadgeColor, bannerCreatedAt, bannerImageUrl FROM BANNER_TB WHERE bannerIdx = ${bannerIdx}`;
+            const getOneBanner = await pool.queryParam(getOneBannerQuery);
+            return getOneBanner[0];
         } catch (err) {
             console.log(err);
             throw err;
