@@ -13,15 +13,18 @@ const myInfo = {
             const bookMarkQuery = `SELECT *,count(*) as bookMarkCnt FROM (SELECT * FROM PLACE_TB WHERE placeIdx IN (SELECT placeIdx FROM BOOKMARK_TB WHERE userIdx=${userIdx}) AND groupIdx=${groupIdx}) as PLACE natural join USER_TB`;
             const bookMarkCnt = await pool.queryParam(bookMarkQuery);
             const getGroupName = `SELECT groupName FROM GROUP_TB WHERE groupIdx = ${groupIdx}`;
-            const nameResult = await pool.queryParam(getGroupName);
-            console.log(nameResult[0].groupName);
+            let nameResult = await pool.queryParam(getGroupName);
+            /* Boss의 뜻대로 둘러보기 그룹에 코드 숨기는 용.. */
+            if (groupIdx == 19) {
+                nameResult[0].groupName = '둘러보기';
+            }
             const resultMap = new Map();
 
             groupResult.forEach((group) => {
                 resultMap.set(group.groupIdx, {
                     userName: group.userName,
                     part: group.part,
-                    groupName : nameResult[0].groupName,
+                    groupName: nameResult[0].groupName,
                     userImage: group.profileImageUrl,
                     state: group.state,
                     postCount: 0,
