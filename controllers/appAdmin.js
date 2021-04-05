@@ -153,7 +153,7 @@ module.exports = {
             // 2 장소와 배너가 같은 그룹에 있는지 확인
             // if (await bannerDB.checkBannerHasPlace(bannerIdx, placeIdx)) return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADY_POST_BANNER_PLACE));
             const promises = [];
-            placeList.forEach((placeIdx) =>
+            placeIdxList.forEach((placeIdx) =>
                 promises.push(bannerDB.addBannerPlace(bannerIdx, placeIdx))
             );
             await Promise.all(promises);
