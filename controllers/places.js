@@ -662,13 +662,13 @@ const placeController = {
     getCommentsByPlaceIdx: async (req, res) => {
         const placeIdx = parseInt(req.params.placeIdx);
         const groupIdx = parseInt(req.params.groupIdx);
+        const isAdmin = (await placeDB.isAdminByGroupIdx(req.userIdx, groupIdx)) === 0;
         let users = [];
         let subComments = [];
         try {
             let comments = await commentDB.getCommentsByPlaceIdx(placeIdx);
             const userIdxs = [...new Set(comments.map((user) => user.userIdx)).values()];
             for await (let userIdx of userIdxs) {
-                console.log(userIdx);
                 let postCount = await commentDB.getPostCount(userIdx, groupIdx);
                 let profile = await groupDB.getCommentProfile(groupIdx, userIdx);
                 users.push(
@@ -691,7 +691,13 @@ const placeController = {
                     delete comment.placeIdx;
                     return {
                         user,
-                        comment: Object.assign({ ...comment }),
+                        comment: Object.assign(
+                            { ...comment },
+                            {
+                                deleteBtn:
+                                    user.userIdx === req.userIdx ? true : isAdmin ? true : false,
+                            }
+                        ),
                     };
                 })
                 .filter((comment) => {
