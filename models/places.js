@@ -468,8 +468,7 @@ const place = {
         const bookmarkCountQuery = `SELECT COUNT(*) as bookmarkCnt FROM ${bookmarkTB} WHERE userIdx = ${userIdx} and placeIdx = ${placeIdx}`;
         const userQuery = `SELECT u.userIdx, u.userName, g.profileImageUrl, g.part 
                         FROM USER_TB as u LEFT JOIN GROUP_USER_RELATION_TB as g on u.userIdx= g.userIdx 
-                        WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and u.userIdx = (SELECT userIdx FROM PLACE_TB WHERE placeIdx =${placeIdx});;`;
-        const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`;
+                        WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and u.userIdx = (SELECT userIdx FROM PLACE_TB WHERE placeIdx =${placeIdx})`;
         const isMyPlaceQuery = `SELECT u.userIdx, p.placeIdx FROM USER_TB as u LEFT JOIN PLACE_TB as p on u.userIdx = p.userIdx WHERE u.userIdx = ${userIdx} and p.placeIdx = ${placeIdx}`;
         const isAdminQuery = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and userIdx = ${userIdx}`;
         try {
@@ -483,7 +482,6 @@ const place = {
             const likeCount = await pool.queryParam(likeCountQuery);
             const bookmarkCount = await pool.queryParam(bookmarkCountQuery);
             const writer = await pool.queryParam(userQuery);
-            const postCount = await pool.queryParam(postQuery);
             const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
             const isAdminResult = await pool.queryParam(isAdminQuery);
 
@@ -513,7 +511,8 @@ const place = {
                     retObj.placeInfo.push(tag[it].tagName);
                 }
             }
-
+            const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${writer[0].userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`;
+            const postCount = await pool.queryParam(postQuery);
             writer[0].postCount = postCount[0].postCount;
             writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]) || isAdminResult[0].state === 0;
             writer[0].profileImageUrl = writer[0].profileImageUrl.replace('origin', 'w_200');
