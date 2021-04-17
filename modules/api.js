@@ -56,7 +56,6 @@ module.exports = {
 
             request.get(api_uri, async (error, response, body) => {
                 let responseData = response.body;
-                console.log(responseData);
                 if (error) {
                     console.log('subway request API error : ' + error);
                     reject(error);
@@ -82,7 +81,6 @@ module.exports = {
                 .update('\n')
                 .update(ncp.accessKey)
                 .digest('base64');
-            console.log('SIGNATURE:', signature);
 
             const options = {
                 json: true,
