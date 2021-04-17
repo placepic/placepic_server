@@ -290,6 +290,7 @@ const group = {
     },
 
     getProfileInfo: async (userIdx, groupIdx) => {
+        groupIdx = parseInt(groupIdx);
         try {
             const getMyInfo = `SELECT * FROM (SELECT * FROM GROUP_USER_RELATION_TB WHERE groupIdx = ${groupIdx} and userIdx = ${userIdx} and state NOT IN (2)) AS MYGROUPWAITUSER natural join USER_TB `;
             const groupResult = await pool.queryParam(getMyInfo);
@@ -347,10 +348,10 @@ const group = {
             if (placeResult.length !== 0) {
                 resultMap.get(placeResult[0].groupIdx).postCount = placeResult[0].postCount;
             }
-
-            let retObj = {};
-            retObj.UserInfo = resultMap.get(placeResult[0].groupIdx);
-            retObj.UserPlace = [...result.values()];
+            let retObj = Object.assign({
+                UserInfo: resultMap.get(groupIdx),
+                UserPlace: [...result.values()],
+            });
             return retObj;
         } catch (e) {
             console.log('다른유저의 프로필 불러오기 실패 :', e);
@@ -367,20 +368,16 @@ const group = {
         }
     },
 
-    addGroup: async ({
-            groupName,
-            groupCode,
-            groupImageUrl,
-    }) => {
-            let query = `INSERT INTO GROUP_TB (groupName, groupImage, groupCode) VALUES (?,?,?)`;
-            let value = [groupName, groupImageUrl, groupCode];
-            try {
-                const result = await pool.queryParamArr(query, value);
-                return result.insertId;
-            } catch (e) {
-                console.log('그룹 추가 에러 :', e);
-                throw e;
-            }
-    }
+    addGroup: async ({ groupName, groupCode, groupImageUrl }) => {
+        let query = `INSERT INTO GROUP_TB (groupName, groupImage, groupCode) VALUES (?,?,?)`;
+        let value = [groupName, groupImageUrl, groupCode];
+        try {
+            const result = await pool.queryParamArr(query, value);
+            return result.insertId;
+        } catch (e) {
+            console.log('그룹 추가 에러 :', e);
+            throw e;
+        }
+    },
 };
 module.exports = group;

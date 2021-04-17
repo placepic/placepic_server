@@ -472,7 +472,6 @@ const place = {
         const isMyPlaceQuery = `SELECT u.userIdx, p.placeIdx FROM USER_TB as u LEFT JOIN PLACE_TB as p on u.userIdx = p.userIdx WHERE u.userIdx = ${userIdx} and p.placeIdx = ${placeIdx}`;
         const isAdminQuery = `SELECT state FROM GROUP_USER_RELATION_TB WHERE groupIdx = (SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx}) and userIdx = ${userIdx}`;
         try {
-            let retObj = {};
             const placeResult = await pool.queryParam(placeQuery);
             const subwayName = await pool.queryParam(subwayNameQuery);
             const placeImageUrl = await pool.queryParam(placeImageQuery);
@@ -484,25 +483,23 @@ const place = {
             const writer = await pool.queryParam(userQuery);
             const isMyPlaceResult = await pool.queryParam(isMyPlaceQuery);
             const isAdminResult = await pool.queryParam(isAdminQuery);
-
-            retObj = { ...placeResult[0] };
-            retObj.isLiked = !_.isNil(isLikedResult[0]);
-            retObj.isBookmarked = !_.isNil(isBookmarkedResult[0]);
-            retObj.likeCount = likeCount[0].likeCnt;
-            retObj.bookmarkCount = bookmarkCount[0].bookmarkCnt;
-
-            retObj.subway = [];
+            let retObj = Object.assign(
+                placeResult[0],
+                { isLiked: !_.isNil(isLikedResult[0]) },
+                { isBookmarked: !_.isNil(isBookmarkedResult[0]) },
+                { isLikeCount: likeCount[0].likeCnt },
+                { bookmarkCount: bookmarkCount[0].bookmarkCnt },
+                { subway: [] },
+                { imageUrl: [] },
+                { keyword: [] },
+                { placeInfo: [] }
+            );
             for (let it in subwayName) {
                 retObj.subway.push(subwayName[it].subwayName);
             }
-
-            retObj.imageUrl = [];
             for (let it in placeImageUrl) {
                 retObj.imageUrl.push(placeImageUrl[it].placeImageUrl);
             }
-
-            retObj.keyword = [];
-            retObj.placeInfo = [];
 
             for (let it in tag) {
                 if (tag[it].tagIsBasic === 0) {
@@ -513,14 +510,18 @@ const place = {
             }
             const postQuery = `SELECT COUNT(*) as postCount FROM PLACE_TB WHERE userIdx = ${writer[0].userIdx} and groupIdx =(SELECT groupIdx FROM PLACE_TB WHERE placeIdx = ${placeIdx})`;
             const postCount = await pool.queryParam(postQuery);
-            writer[0].postCount = postCount[0].postCount;
-            writer[0].deleteBtn = !_.isNil(isMyPlaceResult[0]) || isAdminResult[0].state === 0;
-            writer[0].profileImageUrl = writer[0].profileImageUrl.replace('origin', 'w_200');
-            retObj.uploader = writer[0];
-            retObj.mobileNaverMapLink =
-                'http://m.map.naver.com/search2/search.nhn?query=' +
-                placeResult[0].placeName +
-                '&sm=hty&style=v5#/map/1';
+            const uploader = Object.assign(writer[0], {
+                postCount: postCount[0].postCount,
+                deleteBtn: !_.isNil(isMyPlaceResult[0]) || isAdminResult[0].state === 0,
+                profileImageUrl: writer[0].profileImageUrl.replace('origin', 'w_200'),
+            });
+            Object.assign(retObj, {
+                uploader: uploader,
+                mobileNaverMapLink:
+                    'http://m.map.naver.com/search2/search.nhn?query=' +
+                    placeResult[0].placeName +
+                    '&sm=hty&style=v5#/map/1',
+            });
             return retObj;
         } catch (err) {
             console.log('get one place err', err);
