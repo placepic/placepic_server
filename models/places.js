@@ -617,7 +617,9 @@ const place = {
         }
     },
     getPlacesAtHome: async (groupIdx) => {
-        const getPlaceResult = `SELECT userIdx,placeIdx,groupIdx,userName,part,profileImageUrl,placeName,placeReview,placeImageUrl,placeCreatedAt FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc;`;
+        console.log('getPlaceAtHom groupIdx:', groupIdx);
+        const getPlaceResult = `SELECT userIdx, placeIdx, groupIdx, userName, part, profileImageUrl, placeName, placeReview, placeImageUrl, placeCreatedAt FROM (SELECT * FROM (SELECT * FROM PLACE_TB as p1 natural join PLACEIMAGE_TB as p2 where p1.groupIdx = ${groupIdx} group by p1.placeIdx) as a natural left outer join GROUP_USER_RELATION_TB as b WHERE a.userIdx = b.userIdx) as c natural join USER_TB as d order by placeIdx desc;`;
+
         // 유저정보, 장소정보 목록
         const subwayResult = `SELECT * FROM SUBWAY_TB natural join SUBWAY_PLACE_RELATION_TB;`;
         // plaecIdx포함된 쿼리문 뽑아내면 댐
